@@ -4,6 +4,7 @@
 
 1. [Introduction](#introduction)  
 2. [Program Structure](#program-structure)
+3. [Executing Instructions](#executing-instructions)
 ---
 
 ## Introduction
@@ -11,7 +12,7 @@ MTDS project is a tool for designing and calculating mixer and its components me
 
 ---
 
-## Project Structure
+## Program Structure
 ```
 .
 └── apps                                   # Root folder
@@ -35,5 +36,29 @@ MTDS project is a tool for designing and calculating mixer and its components me
           └── models                       # Models folder
               ├── component.routes.js      # Manages database interactions and data queries
               └── ...
+```
+---
+
+## Executing Instructions
+1. Clone the repository to local folder
+``` git clone https://github.com/byutan/MTDS-Mixer-Transmission-Design-System.git  ```
+2. Change directory to root folder
+``` cd MTDS-Mixer-Transmission-Design-System ```
+3. Install nodeJS library
+``` npm install ```
+4. Change directory to backend folder
+``` cd apps/backend ```
+5. Create .env with below content
+```
+DB_USER=postgres
+DB_PASSWORD=(your postgreSQL password)
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=do_an_da_nganh_db
+```
+6. Run frontend & backend
+```
+cd apps/backend(frontend)
+npm run dev
 ```
 ---
