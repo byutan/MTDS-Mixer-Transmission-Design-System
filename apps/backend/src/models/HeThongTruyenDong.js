@@ -1,30 +1,37 @@
-import {HopGiamToc} from './HopGiamToc.js'
-import {DongCo} from './DongCo.js'
-import {BoTruyenDai} from './BoTruyenDai.js'
-import {TySoTruyen} from './TySoTruyen.js'
-
+import { DongCo } from "../models/DongCo.js"
+import { HopGiamToc } from "../models/HopGiamToc.js"
+import { NoiTrucVongDanHoi } from "../models/NoiTrucVongDanHoi.js"
+import { BoTruyenDai } from "./BoTruyenDai.js";
+import { OLan } from "./OLan.js";
 export class HeThongTruyenDong {
-    /*
-    dongCo: Đối tượng Động cơ
-    boTruyenDai: Đối tượng Bộ truyền đai 
-    hopGiamToc: Đối tượng Hộp giảm tốc 
-    danhSachTruc: Mảng chứa các đối tượng Trục 
-    danhSachOLan: Mảng chứa các đối tượng Ổ lăn 
-    tySoTruyen: Bộ Tỷ số truyền của toàn hệ thống
-    hieuSuatTungCap: Mảng chứa hiệu suất các bộ truyền và ổ lăn 
-    */
-    constructor(dongCo, boTruyenDai, hopGiamToc, danhSachTruc, danhSachOLan, tySoTruyen, hieuSuatTungCap) {
-        if (dongCo instanceof DongCo 
-        && boTruyenDai instanceof BoTruyenDai
-        && hopGiamToc instanceof HopGiamToc
-        && tySoTruyen instanceof TySoTruyen) { 
-            this.dongCo = dongCo;
-            this.boTruyenDai = boTruyenDai;
-            this.hopGiamToc = hopGiamToc;
-            this.danhSachTruc = danhSachTruc || [];
-            this.danhSachOLan = danhSachOLan || [];
-            this.tySoTruyen = tySoTruyen;
-            this.hieuSuatTungCap = hieuSuatTungCap;
-        }
+    /**
+     * @param {{ 
+     * dongCo: DongCo,
+     * hopGiamToc: HopGiamToc
+     * noiTrucVongDanHoi: NoiTrucVongDanHoi
+     * boTruyenDai: BoTruyenDai
+     * oLan: OLan
+     *  }} params
+     */
+    constructor({ dongCo, hopGiamToc, noiTrucVongDanHoi, boTruyenDai, oLan }) {
+        this.dongCo = dongCo;
+        this.hopGiamToc = hopGiamToc;
+        this.noiTrucVongDanHoi = noiTrucVongDanHoi
+        this.boTruyenDai = boTruyenDai
+        this.oLan = oLan
+    }
+    // hàm tính hiệu suất chung hệ thống
+    tinhHieuSuatHeThong() {
+        const soTruc = this.hopGiamToc.getSoCap() + 1
+        return this.noiTrucVongDanHoi.getHieuSuat() 
+        * this.boTruyenDai.getHieuSuat() 
+        * this.hopGiamToc.getHieuSuat() 
+        * Math.pow(this.oLan.getHieuSuat(), soTruc)
+    }
+    // hàm tính tỷ số truyền chung sơ bộ
+    tinhTySoTruyenChungSoBo() {
+        const tySoTruyenHGT = this.hopGiamToc.getTySoTruyenSoBo()
+        const tySoTruyenDai = this.boTruyenDai.getTySoTruyenSoBo()
+        return tySoTruyenHGT * tySoTruyenDai
     }
 }

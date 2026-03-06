@@ -1,11 +1,11 @@
-import * as HeThongTruyenDongServices from "../services/HeThongTruyenDong.services.js";
-export const tinhHieuSuat = (req, res) => {
+import * as ThungTronServices from "../services/ThungTron.services.js";
+export const tinhCongSuatCanThiet = (req, res) => {
     try {
         const { duLieuDauVao } = req.body
         if (!duLieuDauVao || typeof duLieuDauVao !== "object" || Array.isArray(duLieuDauVao)) {
             return res.status(400).json({ message: "Component detail list type error."})
         } 
-        const result = HeThongTruyenDongServices.tinhHieuSuatHeThong(duLieuDauVao)
+        const result = ThungTronServices.tinhCongSuatCanThiet(duLieuDauVao)
         return res.status(200).json({
             success: true,
             message: "Computed successfully.",
@@ -19,13 +19,13 @@ export const tinhHieuSuat = (req, res) => {
     }
 }
 
-export const tinhTySoTruyenChungSoBo = (req, res) => {
+export const tinhVongQuayCanThiet = (req, res) => {
     try {
         const { duLieuDauVao } = req.body
         if (!duLieuDauVao || typeof duLieuDauVao !== "object" || Array.isArray(duLieuDauVao)) {
             return res.status(400).json({ message: "Component detail list type error."})
         } 
-        const result = HeThongTruyenDongServices.tinhTySoTruyenChungSoBo(duLieuDauVao)
+        const result = ThungTronServices.tinhVongQuaySoBo(duLieuDauVao)
         return res.status(200).json({
             success: true,
             message: "Computed successfully.",
