@@ -1,26 +1,48 @@
-export class BoTruyenDai {
-    /*
-    d1: Đường kính bánh đai nhỏ (mm)
-    d2: Đường kính bánh đai lớn (mm)
-    khoangCachTruc: Khoảng cách giữa 2 tâm trục(mm)
-    chieuDaiDai: Chiều dài dây đai (mm)
-    vanTocDai: Vận tốc vòng của đai (m/s)
-    gocOm: Góc ôm trên bánh đai nhỏ (Độ)
-    soDai: Số lượng dây đai cần thiết (Đai)
-    lucTacDungTruc: Lực do đai tác dụng lên trục (N)
-    ungSuat: Ứng suất lớn nhất trong dây đai (MPa)
-    tuoiTho: Tuổi thọ của đai (h)
-    */
-    constructor(d1, d2, khoangCachTruc, chieuDaiDai, vanTocDai, gocOm, soDai, lucTacDungTruc, ungSuat, tuoiTho) {
-        this.d1 = d1;
-        this.d2 = d2;
-        this.khoangCachTruc = khoangCachTruc;
-        this.chieuDaiDai = chieuDaiDai;
-        this.vanTocDai = vanTocDai;
-        this.gocOm = gocOm;
-        this.soDai = soDai;
-        this.lucTacDungTruc = lucTacDungTruc;
-        this.ungSuat = ungSuat;
-        this.tuoiTho = tuoiTho;
-    }   
+import { BoTruyen } from "../builders.interface/BoTruyen.interface.js"
+export class BoTruyenDai extends BoTruyen {
+    static HIEU_SUAT_MIN = 0.95
+    static HIEU_SUAT_MAX = 0.96
+    static HIEU_SUAT_DEFAULT = 0.955
+
+    static TY_SO_TRUYEN_SB_MIN = 3
+    static TY_SO_TRUYEN_SB_MAX = 5
+    static TY_SO_TRUYEN_SB_DEFAULT = 3.6
+    #hieuSuat
+    #tySoTruyenSoBo
+    /**
+     * @param {{ 
+     * hieuSuat?: number
+     * tySoTruyenSoBo?: number   
+     * }} params
+     */
+    constructor({ hieuSuat = BoTruyenDai.HIEU_SUAT_DEFAULT, tySoTruyenSoBo = BoTruyenDai.TY_SO_TRUYEN_SB_DEFAULT} = {}) {
+        super()
+        if (!BoTruyenDai.kiemTraHieuSuat(hieuSuat)) {
+            throw new Error(`${hieuSuat} is out of [${BoTruyenDai.HIEU_SUAT_MIN}, ${BoTruyenDai.HIEU_SUAT_MAX}] range.`)
+        } else if (!BoTruyenDai.kiemTraTySoTruyenSoBo(tySoTruyenSoBo)) {
+            throw new Error(`${tySoTruyenSoBo} is out of [${BoTruyenDai.TY_SO_TRUYEN_SB_MIN}, ${BoTruyenDai.TY_SO_TRUYEN_SB_MAX}] range.`)
+        }
+        this.#hieuSuat = hieuSuat
+        this.#tySoTruyenSoBo = tySoTruyenSoBo
+    }
+    
+    // Kiểm tra hiệu suất hợp lệ theo bảng 2.3 trang 19
+    static kiemTraHieuSuat(hieuSuat) {
+        return (hieuSuat >= BoTruyenDai.HIEU_SUAT_MIN && hieuSuat <= BoTruyenDai.HIEU_SUAT_MAX)
+    }
+    
+    // Kiểm tra hiệu suất hợp lệ theo bảng 2.4 trang 21
+    static kiemTraTySoTruyenSoBo(tySoTruyenSoBo) {
+        return (tySoTruyenSoBo >= BoTruyenDai.TY_SO_TRUYEN_SB_MIN && tySoTruyenSoBo <= BoTruyenDai.TY_SO_TRUYEN_SB_MAX)
+    }
+    
+    // getter hieuSuat
+    getHieuSuat() {
+        return this.#hieuSuat
+    }
+
+    // getter tySoTruyenSoBo
+    getTySoTruyenSoBo() {
+        return this.#tySoTruyenSoBo
+    }
 }

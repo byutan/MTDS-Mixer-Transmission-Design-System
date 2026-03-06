@@ -1,10 +1,11 @@
 export class DongCo {
-    /*
-    Pdc: Công suất động cơ (kW)
-    ndc: Số vòng quay động cơ (Vòng/phút)
-    */
-    constructor(Pdc, ndc) {
-        this.Pdc = Pdc
-        this.ndc = ndc
+    constructor({kieuDongCo, congSuat, vanTocQuay, heSoCongSuat, hieuSuat, tiSoMomentMax, tiSoMomentKhoiDong}) {
+        this.kieuDongCo = kieuDongCo 
+        this.congSuat = congSuat 
+        this.vanTocQuay = vanTocQuay 
+        this.heSoCongSuat = heSoCongSuat 
+        this.hieuSuat = hieuSuat 
+        this.tiSoMomentMax = tiSoMomentMax 
+        this.tiSoMomentKhoiDong = tiSoMomentKhoiDong 
     }
 }
