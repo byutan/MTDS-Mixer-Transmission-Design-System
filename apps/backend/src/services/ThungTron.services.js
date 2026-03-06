@@ -25,7 +25,7 @@ export const tinhVongQuaySoBo = (duLieuDauVao) => {
     const soVongQuay = tTron.getSoVongQuay()
 
     const res = tinhTySoTruyenChungSoBo(duLieuDauVao)
-    const vongQuaySoBo = Number(soVongQuay * res.tySoTruyenChungSoBo).toFixed(3)
+    const vongQuaySoBo = Number(soVongQuay * res.tySoTruyenChungSoBo).toFixed(0)
     return {
         tySoTruyenChungSoBo: res.tySoTruyenChungSoBo,
         soVongQuay: soVongQuay,
