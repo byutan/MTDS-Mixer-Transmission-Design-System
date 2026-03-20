@@ -54,4 +54,14 @@ export class BanhRangTru extends BoTruyenBanhRang {
             }
         }
     }
+    /**
+     * @param {Object} params 
+     */
+    tinhTySoTruyen({ u_h, u_con }) {
+        if (!u_h || !u_con) {
+            throw new Error("Missing value.");
+        }
+        const u3 = u_h / u_con;
+        return Number(u3.toFixed(2));
+    }
 }

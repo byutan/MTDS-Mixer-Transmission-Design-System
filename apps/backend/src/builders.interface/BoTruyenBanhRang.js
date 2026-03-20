@@ -28,4 +28,11 @@ export class BoTruyenBanhRang extends BoTruyen {
     isCheKin() { 
         return this.#cheKin;
     }
+    /**
+     * @abstract
+     * @param {Object} params -
+     */
+    tinhTySoTruyen(params) {
+        throw new Error("Inherited class must override Base class method.");
+    }
 }   

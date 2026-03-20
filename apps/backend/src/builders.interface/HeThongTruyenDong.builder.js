@@ -6,6 +6,7 @@ export class HeThongTruyenDongBuilder {
     #noiTrucVongDanHoi
     #boTruyenDai
     #oLan
+    #thungTron
     withDongCo(dongCo) {
         this.#dongCo = dongCo;
         return this;
@@ -26,8 +27,13 @@ export class HeThongTruyenDongBuilder {
         this.#oLan = oLan;
         return this;
     }
+    withThungTron(thungTron) {
+        this.#thungTron = thungTron;
+        return this;
+
+    }
     build() {
-        if (!this.#dongCo || !this.#hopGiamToc|| !this.#noiTrucVongDanHoi|| !this.#boTruyenDai|| !this.#oLan) {
+        if (!this.#dongCo || !this.#hopGiamToc|| !this.#noiTrucVongDanHoi|| !this.#boTruyenDai|| !this.#oLan || !this.#thungTron) {
             throw new Error (`Missing component in builder object.`)
         }
         return new HeThongTruyenDong({
@@ -35,7 +41,8 @@ export class HeThongTruyenDongBuilder {
             hopGiamToc: this.#hopGiamToc,
             noiTrucVongDanHoi: this.#noiTrucVongDanHoi,
             boTruyenDai: this.#boTruyenDai,
-            oLan: this.#oLan
+            oLan: this.#oLan,
+            thungTron: this.#thungTron
         });
     }
 }
