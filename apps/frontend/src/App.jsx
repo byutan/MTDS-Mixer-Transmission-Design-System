@@ -1,4 +1,5 @@
-import SignupPage from "./components/signup-page"
+import SignupPage from "./features/auth/signup-page"
+
 
 function App() {
   return (
