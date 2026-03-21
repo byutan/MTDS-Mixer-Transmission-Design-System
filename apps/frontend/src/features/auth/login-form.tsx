@@ -40,9 +40,26 @@ export function LoginForm({ onSwitchToSignup }: LoginFormProps) {
     },
   })
 
-  const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    console.log("Login submitted:", values)
-  }
+  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Đăng nhập thành công! Chào mừng " + data.user.fullname);
+        
+      } else {
+        alert(data.message || "Sai email hoặc mật khẩu");
+      }
+    } catch (error) {
+      alert("Không thể kết nối tới server.");
+    }
+  };
 
   return (
     <div className="space-y-6">

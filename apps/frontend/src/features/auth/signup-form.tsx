@@ -52,9 +52,37 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
     },
   })
 
-  const onSubmit = (values: z.infer<typeof signupSchema>) => {
-    console.log("Signup submitted:", values)
-  }
+  const onSubmit = async (values: z.infer<typeof signupSchema>) => {
+    console.log("Signup submitted:", values);
+    
+    try {
+      const response = await fetch('http://localhost:3001/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fullname: values.fullname,
+          studentId: values.studentId,
+          email: values.email,
+          password: values.password,
+          
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert("Đăng ký thành công! Đang chuyển sang đăng nhập...");
+        onSwitchToLogin(); 
+      } else {
+        alert(data.message || "Đăng ký thất bại");
+      }
+    } catch (error) {
+      console.error("Lỗi kết nối Backend:", error);
+      alert("Không thể kết nối tới Server. Hãy kiểm tra xem Backend đã chạy chưa (Port 3001).");
+    }
+  };
 
   return (
     <div className="space-y-6">
