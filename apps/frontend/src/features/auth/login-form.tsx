@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, CheckCircle2, AlertCircle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
@@ -16,12 +16,12 @@ import {
 } from '@/components/ui/form'
 
 const loginSchema = z.object({
-  email: z.string().email("Email không hợp lệ"),
+  email: z.string().email("Invalid email address"),
   password: z.string()
-    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
-    .regex(/[A-Z]/, "Mật khẩu cần ít nhất 1 chữ cái viết hoa")
-    .regex(/[a-z]/, "Mật khẩu cần ít nhất 1 chữ cái viết thường")
-    .regex(/[^A-Za-z0-9]/, "Mật khẩu cần ít nhất 1 ký tự đặc biệt"),
+    .min(8, "Password must be at least 8 characters")
+    .regex(/[A-Z]/, "Password requires at least one uppercase letter")
+    .regex(/[a-z]/, "Password requires at least one lowercase letter")
+    .regex(/[^A-Za-z0-9]/, "Password requires at least one special character"),
 })
 
 interface LoginFormProps {
@@ -30,6 +30,7 @@ interface LoginFormProps {
 
 export function LoginForm({ onSwitchToSignup }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false)
+  const [serverMsg, setServerMsg] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -41,25 +42,29 @@ export function LoginForm({ onSwitchToSignup }: LoginFormProps) {
   })
 
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+    setServerMsg(null)
     try {
       const response = await fetch('http://localhost:3001/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          identifier: values.email, 
+          password: values.password
+        }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        alert("Đăng nhập thành công! Chào mừng " + data.user.fullname);
-        
+        setServerMsg({ type: 'success', text: "Login successful." })
+        console.log("User:", data.user.fullname)
       } else {
-        alert(data.message || "Sai email hoặc mật khẩu");
+        setServerMsg({ type: 'error', text: data.message || "Invalid email or password" })
       }
     } catch (error) {
-      alert("Không thể kết nối tới server.");
+      setServerMsg({ type: 'error', text: "Internal Server Error. Please try again." })
     }
-  };
+  }
 
   return (
     <div className="space-y-6">
@@ -77,7 +82,7 @@ export function LoginForm({ onSwitchToSignup }: LoginFormProps) {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="example@example.com" {...field} className="rounded-lg" />
+                  <Input placeholder="example@email.com" {...field} className="rounded-lg" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -102,7 +107,7 @@ export function LoginForm({ onSwitchToSignup }: LoginFormProps) {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -112,6 +117,18 @@ export function LoginForm({ onSwitchToSignup }: LoginFormProps) {
             )}
           />
 
+          {/* HIỂN THỊ THÔNG BÁO TỪ SERVER */}
+          {serverMsg && (
+            <div className={`flex items-center gap-2 p-3 text-sm rounded-lg border ${
+              serverMsg.type === 'success' 
+                ? 'bg-green-50 text-green-700 border-green-200' 
+                : 'bg-red-50 text-red-700 border-red-200'
+            }`}>
+              {serverMsg.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+              <span>{serverMsg.text}</span>
+            </div>
+          )}
+
           <Button type="submit" className="w-full bg-blue-900 hover:bg-blue-800 text-white py-2 rounded-lg font-medium">
             Đăng nhập
           </Button>
@@ -120,10 +137,7 @@ export function LoginForm({ onSwitchToSignup }: LoginFormProps) {
 
       <div className="text-center text-sm text-gray-600">
         Chưa có tài khoản?{' '}
-        <button
-          onClick={onSwitchToSignup}
-          className="text-blue-600 hover:text-blue-700 font-medium"
-        >
+        <button onClick={onSwitchToSignup} className="text-blue-600 hover:text-blue-700 font-medium">
           Tạo tài khoản
         </button>
       </div>
