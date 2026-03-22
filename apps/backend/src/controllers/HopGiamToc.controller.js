@@ -1,7 +1,7 @@
 import * as hopGiamTocService from "../services/HopGiamToc.services.js";
 export const tinhHieuSuat = (req, res) => {
     try {
-        const { danhSachBanhRang } = req.body
+        const danhSachBanhRang = req.body?.duLieuDauVao?.heThongTruyenDong?.hopGiamToc?.danhSachBanhRang;
         if(!danhSachBanhRang || !Array.isArray(danhSachBanhRang)) {
             return res.status(400).json({ message: "Component detail list type error."})
         } 

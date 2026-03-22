@@ -31,4 +31,8 @@ export class DongCo {
     getVanTocQuay() {
         return this.#vanTocQuay
     }
+
+    getCongSuat() {
+        return this.#congSuat
+    }
 }

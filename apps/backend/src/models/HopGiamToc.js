@@ -1,12 +1,15 @@
 import { BoTruyen } from "../builders.interface/BoTruyen.interface.js";
+import { Truc } from "../models/Truc.js"
 import { BanhRangCon } from "./BanhRangCon.js";
 import { BanhRangTru } from "./BanhRangTru.js";
+import { chuyenSoLaMa }  from "../utils/utils.js";
 export class HopGiamToc extends BoTruyen{
     static TY_SO_TRUYEN_SB_MIN = 10
     static TY_SO_TRUYEN_SB_MAX = 25
     static TY_SO_TRUYEN_SB_DEFAULT = 11.5
     
     #danhSachBoTruyen = [];
+    #danhSachTruc = []
     #tySoTruyenSoBo
     /**
      * @param {{ 
@@ -23,6 +26,7 @@ export class HopGiamToc extends BoTruyen{
             throw new Error(`${tySoTruyenSoBo} is out of [${HopGiamToc.TY_SO_TRUYEN_SB_MIN}, ${HopGiamToc.TY_SO_TRUYEN_SB_MAX}] range.`)
         }
         this.#tySoTruyenSoBo = tySoTruyenSoBo
+        this.#addTruc();
     }
 
     // Kiểm tra hiệu suất hợp lệ theo bảng 2.4 trang 21
@@ -30,13 +34,28 @@ export class HopGiamToc extends BoTruyen{
         return (tySoTruyenSoBo >= HopGiamToc.TY_SO_TRUYEN_SB_MIN && tySoTruyenSoBo <= HopGiamToc.TY_SO_TRUYEN_SB_MAX)
     }
 
+    // Hàm khởi tạo danh sách trục
+    #addTruc() {
+        const soTruc = this.getSoCap() + 1;
+        this.#danhSachTruc = [];
+        for (let i = 1; i <= soTruc; i++) {
+            this.#danhSachTruc.push(new Truc({
+                tenTruc: `${chuyenSoLaMa(i)}`, // Tự động convert i thành I, II, III...
+                congSuat: 0,      
+                tySoTruyen: null, 
+                soVongQuay: 0,    
+                momentXoan: 0     
+            }));
+        }
+
+    }
     // Thêm bộ truyền vào động cơ
     addBoTruyen(boTruyen) {
         if (!(boTruyen instanceof BoTruyen)) {
             throw new Error("Only BoTruyen object is allowed.");
-            return;
         }
         this.#danhSachBoTruyen.push(boTruyen);
+        this.#addTruc();
     }
 
     // override method
@@ -58,6 +77,17 @@ export class HopGiamToc extends BoTruyen{
     // getter tySoTruyenSoBo
     getTySoTruyenSoBo() {
         return this.#tySoTruyenSoBo
+    }
+
+    // getter danhSachTruc
+    getDanhSachTruc() {
+        return this.#danhSachTruc;
+    }
+
+
+    // getter danhSachBoTruyen
+    getDanhSachBoTruyen() {
+        return this.#danhSachBoTruyen;
     }
 
     // hàm tính tỷ số truyền thực tế
