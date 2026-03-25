@@ -8,6 +8,42 @@ interface Step2MotorProps {
 }
 
 export default function Step2Motor({ step2Data, setStep2Data }: Step2MotorProps) {
+  
+  // Hàm xử lý khi thay đổi u_d (Tỉ số truyền đai)
+  const handleBeltRatioChange = (val: string) => {
+    const ud = parseFloat(val) || 0;
+    const ut = parseFloat(step2Data.totalRatio) || 41.74;
+    
+    // Tính u_h = u_t / u_d
+    const uh = ud > 0 ? (ut / ud).toFixed(2) : '0';
+    
+    // Tính lại u_2 dựa trên u_h mới và u_1 hiện tại
+    const u1 = parseFloat(step2Data.u1) || 1;
+    const u2 = u1 > 0 ? (parseFloat(uh) / u1).toFixed(2) : '0';
+
+    setStep2Data({
+      ...step2Data,
+      beltRatio: val,
+      gearboxRatio: uh,
+      u2: u2
+    });
+  };
+
+  // Hàm xử lý khi thay đổi u_1 (Cấp nhanh côn)
+  const handleU1Change = (val: string) => {
+    const u1 = parseFloat(val) || 0;
+    const uh = parseFloat(step2Data.gearboxRatio) || 0;
+    
+    // Tính u_2 = u_h / u_1
+    const u2 = u1 > 0 ? (uh / u1).toFixed(2) : '0';
+
+    setStep2Data({
+      ...step2Data,
+      u1: val,
+      u2: u2
+    });
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in duration-500">
       {/* Left Column - Calculations & Ratios */}
@@ -46,11 +82,12 @@ export default function Step2Motor({ step2Data, setStep2Data }: Step2MotorProps)
 
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <Label className="text-sm font-bold text-slate-700 block mb-2">u_d (Bộ truyền đai)</Label>
+                <Label className="text-sm font-bold text-slate-700 block mb-2">u_đ (Bộ truyền đai)</Label>
                 <Input
                   value={step2Data.beltRatio}
-                  onChange={(e) => setStep2Data({...step2Data, beltRatio: e.target.value})}
+                  onChange={(e) => handleBeltRatioChange(e.target.value)}
                   className="border border-slate-200 rounded-md text-sm h-11 font-bold text-blue-600"
+                  placeholder="Nhập u_đ..."
                 />
               </div>
 
@@ -58,8 +95,9 @@ export default function Step2Motor({ step2Data, setStep2Data }: Step2MotorProps)
                 <Label className="text-sm font-bold text-slate-700 block mb-2">u_1 (Cấp nhanh côn)</Label>
                 <Input
                   value={step2Data.u1}
-                  onChange={(e) => setStep2Data({...step2Data, u1: e.target.value})}
-                  className="border border-slate-200 rounded-md text-sm h-11"
+                  onChange={(e) => handleU1Change(e.target.value)}
+                  className="border border-slate-200 rounded-md text-sm h-11 font-bold text-blue-600"
+                  placeholder="Nhập u_1..."
                 />
               </div>
 
@@ -67,8 +105,9 @@ export default function Step2Motor({ step2Data, setStep2Data }: Step2MotorProps)
                 <Label className="text-sm font-bold text-slate-700 block mb-2">u_2 (Cấp chậm trụ)</Label>
                 <Input
                   value={step2Data.u2}
-                  onChange={(e) => setStep2Data({...step2Data, u2: e.target.value})}
-                  className="border border-slate-200 rounded-md text-sm h-11"
+                  disabled
+                  className="bg-slate-50 border border-slate-200 rounded-md text-sm h-11 font-bold text-gray-500"
+                  placeholder="Tự động tính..."
                 />
               </div>
             </div>
