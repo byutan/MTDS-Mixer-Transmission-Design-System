@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Clock, Target, Database, ArrowRight } from 'lucide-react'
@@ -6,9 +6,19 @@ import { Navbar } from '../common/navbar'
 
 export default function LandingPage() {
   const [activeIndex, setActiveIndex] = useState(1);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('mtds_user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
+      <Navbar isLoggedIn={!!user} username={user?.fullname} />
+
 
 
 
@@ -42,11 +52,12 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <Link to="/signup">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
-                  Bắt đầu thiết kế <ArrowRight className="ml-2 w-4 h-4" />
+              <Link to={user ? "/design" : "/signup"}>
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto font-bold shadow-lg shadow-blue-100 transition-all active:scale-95">
+                  {user ? "Tiếp tục thiết kế" : "Bắt đầu thiết kế"} <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </Link>
+
             </div>
 
             {/* Right - Interactive Product Images Gallery */}

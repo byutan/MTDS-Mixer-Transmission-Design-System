@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { ChevronRight, Check } from 'lucide-react'
 import Step1Init from './steps/step1-init'
@@ -14,7 +14,16 @@ const steps = [
 ]
 
 export default function DesignProject() {
+  const [user, setUser] = useState<any>(null)
   const [currentStep, setCurrentStep] = useState(1)
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('mtds_user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
   const [formData, setFormData] = useState({
     projectName: 'Hệ thống dẫn động thùng trộn',
     major: 'Cơ Kỹ Thuật',
@@ -24,7 +33,7 @@ export default function DesignProject() {
     createdDate: '2026-03-05',
     power: '5.5',
     speed: '70',
-    lifespan: '9',
+    lifespan: '15000',
     type: 'Quay 1 chiều',
     loadCharacter: 'Tải va đập nhẹ',
     workMode: '2 ca',
@@ -34,16 +43,17 @@ export default function DesignProject() {
   })
 
   const [step2Data, setStep2Data] = useState({
-    efficiency: '0.876',
-    requiredPower: '6.278',
-    preliminarySpeed: '2898',
-    totalRatio: '3.6',
-    beltRatio: '3.14',
-    gearboxRatio: '3.6',
+    efficiency: '0.875',
+    requiredPower: '6.285',
+    preliminarySpeed: '2922',
+    totalRatio: '41.74',
+    beltRatio: '3.6',
+    gearboxRatio: '11.5',
     fastConeRatio: '3.14',
     slowShaftRatio: '3.14',
     motor: '4A112M2Y6 (7.5 kW, 2922 v/ph)',
   })
+
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
@@ -69,7 +79,7 @@ export default function DesignProject() {
   return (
     <div className="min-h-screen bg-slate-50 font-sans">
       {/* Reused Navbar */}
-      <Navbar isLoggedIn={true} username="Nguyễn Văn Học" />
+      <Navbar isLoggedIn={!!user} username={user?.fullname || "Nguyễn Văn Học"} />
 
       <div className="flex">
         {/* Sidebar */}

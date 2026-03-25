@@ -102,7 +102,7 @@ export default function Step1Init({ formData, handleInputChange }: Step1InitProp
               />
             </div>
             <div>
-              <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Tuổi thọ (năm)</Label>
+              <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Tuổi thọ (giờ)</Label>
               <Input
                 value={formData.lifespan}
                 onChange={(e) => handleInputChange('lifespan', e.target.value)}
@@ -174,7 +174,7 @@ export default function Step1Init({ formData, handleInputChange }: Step1InitProp
             <div>
               <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Chế độ tải</Label>
               <Select value={formData.loadMode} onValueChange={(value) => handleInputChange('loadMode', value)}>
-                <SelectTrigger className="border border-slate-200 rounded-md text-sm px-3 py-2 h-11 flex items-center bg-white hover:bg-slate-50 focus:ring-blue-500">
+                <SelectTrigger className="w-full border border-slate-200 rounded-md text-sm px-3 py-2 h-11 flex items-center bg-white hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 transition-all">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white z-50">

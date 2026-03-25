@@ -3,6 +3,7 @@ import { Eye, EyeOff, CheckCircle2, AlertCircle } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
+import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -29,6 +30,7 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onSwitchToSignup }: LoginFormProps) {
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [serverMsg, setServerMsg] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
@@ -56,8 +58,16 @@ export function LoginForm({ onSwitchToSignup }: LoginFormProps) {
       const data = await response.json();
 
       if (response.ok) {
-        setServerMsg({ type: 'success', text: "Login successful." })
-        console.log("User:", data.user.fullname)
+        setServerMsg({ type: 'success', text: "Login successful. Redirecting..." })
+        
+        // Lưu thông tin user vào localStorage
+        localStorage.setItem('mtds_user', JSON.stringify(data.user))
+        
+        // Chuyển hướng về trang chủ sau 1s để kịp thấy thông báo thành công
+        setTimeout(() => {
+          navigate('/')
+          window.location.reload() // Reload để navbar cập nhật trạng thái mới
+        }, 1000)
       } else {
         setServerMsg({ type: 'error', text: data.message || "Invalid email or password" })
       }
