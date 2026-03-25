@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Clock, Target, Database, ArrowRight } from 'lucide-react'
@@ -6,9 +6,19 @@ import { Navbar } from '../common/navbar'
 
 export default function LandingPage() {
   const [activeIndex, setActiveIndex] = useState(1);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('mtds_user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
+      <Navbar isLoggedIn={!!user} username={user?.fullname} />
+
 
 
 
@@ -42,11 +52,12 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <Link to="/signup">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
-                  Bắt đầu thiết kế <ArrowRight className="ml-2 w-4 h-4" />
+              <Link to={user ? "/design" : "/signup"}>
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto font-bold shadow-lg shadow-blue-100 transition-all active:scale-95">
+                  {user ? "Tiếp tục thiết kế" : "Bắt đầu thiết kế"} <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </Link>
+
             </div>
 
             {/* Right - Interactive Product Images Gallery */}
@@ -66,19 +77,39 @@ export default function LandingPage() {
                   positionClasses = "z-30 scale-110 shadow-2xl translate-x-0 opacity-100";
                 } else if (displayPosition === 0) {
                   // Ở bên trái (phía sau)
-                  positionClasses = "z-10 scale-90 shadow-lg -translate-x-[50%] opacity-50 cursor-pointer hover:opacity-100 group";
+                  positionClasses = "z-10 scale-90 shadow-lg -translate-x-[50%] opacity-50 hover:opacity-100 group";
                 } else {
                   // Ở bên phải (phía sau)
-                  positionClasses = "z-10 scale-90 shadow-lg translate-x-[50%] opacity-50 cursor-pointer hover:opacity-100 group";
+                  positionClasses = "z-10 scale-90 shadow-lg translate-x-[50%] opacity-50 hover:opacity-100 group";
                 }
+
 
                 return (
                   <div
                     key={index}
-                    onClick={() => setActiveIndex(index)}
                     className={`absolute w-1/2 h-4/5 bg-white rounded-2xl border border-slate-200 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] flex items-center justify-center p-6 ${positionClasses}`}
                   >
-                    <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                    {/* Clickable regions for side images */}
+                    {displayPosition === 0 && (
+                      <div 
+                        onClick={() => setActiveIndex((prev) => (prev - 1 + 3) % 3)}
+                        className="absolute inset-y-0 left-0 w-1/2 z-40 cursor-pointer group/click"
+                      >
+                        <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover/click:opacity-100 transition-opacity" />
+                      </div>
+                    )}
+                    
+                    {displayPosition === 2 && (
+                      <div 
+                        onClick={() => setActiveIndex((prev) => (prev + 1 + 3) % 3)}
+                        className="absolute inset-y-0 right-0 w-1/2 z-40 cursor-pointer group/click"
+                      >
+                        <div className="absolute inset-0 bg-blue-600/5 opacity-0 group-hover/click:opacity-100 transition-opacity" />
+                      </div>
+                    )}
+
+
+                    <div className="absolute inset-0 bg-slate-50 opacity-0 transition-opacity pointer-events-none" />
                     <img
                       src={img.src}
                       alt={img.alt}
@@ -86,6 +117,7 @@ export default function LandingPage() {
                     />
                   </div>
                 );
+
               })}
             </div>
 
