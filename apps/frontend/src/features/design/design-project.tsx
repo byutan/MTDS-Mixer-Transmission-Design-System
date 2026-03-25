@@ -49,10 +49,14 @@ export default function DesignProject() {
     totalRatio: '41.74',
     beltRatio: '3.6',
     gearboxRatio: '11.5',
-    fastConeRatio: '3.14',
-    slowShaftRatio: '3.14',
+    u1: '3.8',
+    u2: '3.03',
+    cosPhi: '0.88',
+    tMaxTdm: '2.2',
+    tKdTdm: '2.0',
     motor: '4A112M2Y6 (7.5 kW, 2922 v/ph)',
   })
+
 
 
   const handleInputChange = (field: string, value: string) => {
