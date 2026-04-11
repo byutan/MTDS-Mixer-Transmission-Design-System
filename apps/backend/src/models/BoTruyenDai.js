@@ -7,12 +7,33 @@ export class BoTruyenDai extends BoTruyen {
     static TY_SO_TRUYEN_SB_MIN = 3
     static TY_SO_TRUYEN_SB_MAX = 5
     static TY_SO_TRUYEN_SB_DEFAULT = 3.6
+
+    static DUONG_KINH_SO_BO_DEFAULT = 140
+    static DUONG_KINH_BANH_DAN_DEFAULT = 500
+    static CHIEU_DAI_DAI_DEFAULT = 2240
     #hieuSuat
     #tySoTruyenSoBo
+    // thong so chi tiet bo truyen dai
+    #bp
+    #bo
+    #h
+    #yo
+    #A
+    #d1
+    #L
+    #lo
     /**
      * @param {{ 
      * hieuSuat?: number
-     * tySoTruyenSoBo?: number   
+     * tySoTruyenSoBo?: number
+     * bp?: number
+     * bo?: number
+     * h?: number
+     * yo?: number
+     * A?: number
+     * d1?: number
+     * L?: number
+     * lo?: number
      * }} params
      */
     constructor({ hieuSuat = BoTruyenDai.HIEU_SUAT_DEFAULT, tySoTruyenSoBo = BoTruyenDai.TY_SO_TRUYEN_SB_DEFAULT} = {}) {
@@ -44,5 +65,61 @@ export class BoTruyenDai extends BoTruyen {
     // getter tySoTruyenSoBo
     getTySoTruyenSoBo() {
         return this.#tySoTruyenSoBo
+    }
+    // setter tietDienDai
+    setTietDienDai(congSuat, vanTocQuay) {
+        if (congSuat > 400 || vanTocQuay < 200) {
+            throw new Error(`${congSuat} or ${vanTocQuay} is out of bound`)
+        } 
+        const k = vanTocQuay/congSuat
+        if (k >= 250) {
+            return 'A'
+        } else if (k >= 63.6 && k < 250){
+            return 'B'
+        } else if (k >= 10 && k < 63.6){
+            return 'C'
+        } else if (k >= 4 && k < 10){
+            return 'D'
+        } else if (k < 4){
+            return 'E'
+        }
+    }
+    setThongSoDai(tietDienDai) {
+        if (tietDienDai === 'A') {
+            this.#bp = 11
+            this.#bo =13
+            this.#h = 8
+            this.#yo = 2.8
+            this.#A = 81
+            this.#d1 = BoTruyenDai.DUONG_KINH_SO_BO_DEFAULT
+            this.#lo = 1700
+        }
+    }
+    getDuongKinhSoBo() {
+        return this.#d1
+    }
+
+    getLo(){
+        return this.#lo
+    }
+    getThongSoT(tietDienDai) {
+        if (tietDienDai === 'A') {
+            return 15
+        }
+    }
+    getThongSoE(tietDienDai) {
+        if (tietDienDai === 'A') {
+            return 10
+        }
+    }
+    getThongSoH0(tietDienDai) {
+        if (tietDienDai === 'A') {
+            return 3.3
+        }
+    }
+    getKhoiLuong1MChieuDaiDai(tietDienDai) {
+        if (tietDienDai === 'A') {
+            return 0.105
+        }
     }
 }
