@@ -64,3 +64,9 @@ export const tinhBangDacTinhKyThuat = (duLieuDauVao) => {
     const BangDacTinh = heThong.tinhBangDacTinhKyThuat(ketQuaPhanPhoi)
     return BangDacTinh
 }
+
+export const tinhThongSoBoTruyenDaiThang = (duLieuDauVao) => {
+    const heThong = taoHeThongTruyenDong(duLieuDauVao);
+    const ketQua = heThong.tinhThongSoBoTruyenDaiThang()
+    return ketQua
+}
