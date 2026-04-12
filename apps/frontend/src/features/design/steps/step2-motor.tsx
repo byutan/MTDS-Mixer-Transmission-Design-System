@@ -176,7 +176,7 @@ export default function Step2Motor({ step2Data, setStep2Data, formData, tableDat
             <div className="flex justify-between items-center">
               <span className="text-gray-600 font-medium font-sans italic">Vòng quay sơ bộ (nsb)</span>
               <span className="text-lg font-black text-blue-600 font-sans">
-                {hasMotor ? step2Data.preliminarySpeed : '---'} v/ph
+                {step2Data.preliminarySpeed !== '0' ? step2Data.preliminarySpeed : '---'} v/ph
               </span>
             </div>
           </div>

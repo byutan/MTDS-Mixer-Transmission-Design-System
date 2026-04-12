@@ -150,6 +150,11 @@ export default function DesignProject() {
             const hieuSuat = dataEff.data.hieuSuatHeThong;
             const P_yc = (parseFloat(formData.power) / hieuSuat).toFixed(3);
             
+            // Tính n_sb = n_out * u_sb_total
+            const n_out = parseFloat(formData.speed) || 0;
+            const u_total_sb = parseFloat(dataRatio.data.tySoTruyenChungSoBo) || 1;
+            const n_sb = (n_out * u_total_sb).toFixed(0);
+
             setStep2Data(prev => ({
                 ...prev,
                 systemEfficiency: hieuSuat.toString(),
@@ -157,6 +162,7 @@ export default function DesignProject() {
                 totalRatio: dataRatio.data.tySoTruyenChungSoBo,
                 beltRatio: dataRatio.data.tySoTruyenDai,
                 gearboxRatio: dataRatio.data.tySoTruyenHGT,
+                preliminarySpeed: n_sb,
             }));
             setCurrentStep(2);
         }
