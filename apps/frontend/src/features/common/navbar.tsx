@@ -85,9 +85,9 @@ export function Navbar({ isLoggedIn = false, username = "Người dùng" }: Navb
                       <p className="text-sm font-bold text-slate-900 truncate">{username}</p>
                     </div>
                     
-                    <button className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+                    <Link to="/profile" className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
                       <User className="w-4 h-4" /> Hồ sơ cá nhân
-                    </button>
+                    </Link>
                     <button className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
                       <Settings className="w-4 h-4" /> Cài đặt
                     </button>

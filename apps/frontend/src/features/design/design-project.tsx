@@ -4,6 +4,7 @@ import { ChevronRight, Check } from 'lucide-react'
 import Step1Init from './steps/step1-init'
 import Step2Motor from './steps/step2-motor'
 import Step3Belt from './steps/step3-belt'
+import Step4Gearbox from './steps/step4-gearbox'
 import { Navbar } from '../common/navbar'
 
 import demoData from '../../../../../demodata.json'
@@ -296,15 +297,20 @@ export default function DesignProject() {
                     />
                 )}
                 
-                {currentStep > 3 && (
+                {currentStep === 4 && (
+                    <Step4Gearbox 
+                        formData={formData}
+                        step2Data={step2Data}
+                    />
+                )}
+                
+                {currentStep === 5 && (
                     <div className="flex flex-col items-center justify-center py-32 bg-white rounded-2xl border-2 border-dashed border-slate-200">
-                        <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-6">
-                            <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                        <div className="bg-slate-50 p-6 rounded-full mb-6">
+                            <span className="text-4xl font-black text-slate-200">5</span>
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2 font-sans">Đang xử lý dữ liệu</h3>
-                        <p className="text-gray-500 text-center max-w-sm font-sans">
-                            Module <b>{steps[currentStep-1].title}</b> hiện đang trong quá trình phát triển và sẽ sớm được cập nhật trong phiên bản tiếp theo.
-                        </p>
+                        <h3 className="text-2xl font-black text-slate-900 mb-2 font-sans tracking-tight">Trục & Ổ lăn</h3>
+                        <p className="text-slate-500 font-medium italic">Tính năng này đang được phát triển...</p>
                     </div>
                 )}
             </div>
