@@ -107,7 +107,7 @@ export default function Step3Belt({ formData, step2Data }: Step3BeltProps) {
 
           <div>
             <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Đường kính bánh bị dẫn lý thuyết (d2_lt)</Label>
-            <Input value={`${(parseFloat(results?.duongKinhBanhBiDan || "0") / (parseFloat(step2Data.beltRatio) || 1)).toFixed(2)} mm`} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-400" />
+            <Input value={`${(parseFloat(results?.duongKinhBanhBiDan || "0") / (parseFloat(step2Data.beltRatio) || 1)).toFixed(2)} mm`} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div>
@@ -172,17 +172,16 @@ export default function Step3Belt({ formData, step2Data }: Step3BeltProps) {
 
           <div>
             <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Số dây đai thiết kế (z)</Label>
-            <Input value={results?.soDayDai} readOnly className="h-10 bg-blue-50 border-blue-100 text-blue-700 font-black" />
+            <Input value={results?.soDayDai} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div>
             <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Lực tác dụng lên trục (F_r)</Label>
             <Input value={`${results?.lucTacDungLenTruc} N`} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
-
-          <div className="p-4 bg-slate-900 rounded-lg text-white">
-            <span className="text-[10px] text-slate-400 block mb-1 uppercase font-black">Ứng suất lớn nhất</span>
-            <div className="text-lg font-black">{results?.ungSuatLonNhat} MPa</div>
+          <div>
+            <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Ứng suất cho phép</Label>
+            <Input value={`${results?.ungSuatLonNhat} MPa`} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
         </div>
       </div>
