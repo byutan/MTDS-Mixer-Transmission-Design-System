@@ -70,3 +70,10 @@ export const tinhThongSoBoTruyenDaiThang = (duLieuDauVao) => {
     const ketQua = heThong.tinhThongSoBoTruyenDaiThang()
     return ketQua
 }
+
+export const tinhThongSoBoTruyenBanhRangTru = (duLieuDauVao) => {
+    const heThong = taoHeThongTruyenDong(duLieuDauVao);
+    const heSoThietKe = duLieuDauVao.heThongTruyenDong?.hopGiamToc?.heSoThietKe
+    const ketQua = heThong.tinhThongSoBoTruyenBanhRangTru(heSoThietKe, tinhBangDacTinhKyThuat(duLieuDauVao))
+    return ketQua
+}

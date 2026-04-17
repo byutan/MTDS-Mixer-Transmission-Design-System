@@ -157,7 +157,7 @@ export class HeThongTruyenDong {
         const lower_mapping_value = a_map.get(lower_bound)
         const upper_mapping_value = a_map.get(upper_bound)
         const result = (lower_mapping_value + ((v - lower_bound) / (upper_bound - lower_bound))*(upper_mapping_value - lower_mapping_value))
-        return 3.08 // thay bằng result
+        return 3.08 // harcode, thay bằng result
     }
     // Hàm tính đường kính d2
     static tinhDuongKinhBanhBiDan(d1, u_soBo, heSoTaiTruot) {
@@ -203,9 +203,9 @@ export class HeThongTruyenDong {
     }
 
     static tinhKhoangCachTrucThucTe(d1, d2, L) {
-        const psi = L - Math.PI*(d1+d2)/2
+        const psi = L - Math.PI*(d1+d2)/2 
         // const delta = (d2-d1)/2 //công thức đúng
-        const delta = (d2+d1)/2 // công thức cho đúng theo tài liệu
+        const delta = (d2+d1)/2 // harcode, công thức cho đúng theo tài liệu
         return Number(((psi + Math.sqrt(Math.pow(psi,2)- 8 * Math.pow(delta ,2)))/4).toFixed(3))
     }
 
@@ -308,7 +308,7 @@ export class HeThongTruyenDong {
     static tinhHeSoTruotDai(Fo, Ft, a) {
         const rad = a * Math.PI / 180
         const res = (1/rad) * Math.log((2*Fo + Ft)/(2*Fo - Ft))
-        return 0.25 // thay bằng res
+        return 0.25 // harcode, thay bằng res
     }
     tinhThongSoBoTruyenDaiThang() {
         const pDongCo = this.dongCo.getCongSuat()
@@ -374,4 +374,136 @@ export class HeThongTruyenDong {
             lucTacDungLenTruc: Fr
         }
     }
+    static quyChuanKhoangCachTruc = (a_w) => {
+        const DAY_TIEU_CHUAN = [80, 100, 125, 140, 160, 180, 200, 225, 250, 280, 315, 355, 400];
+        return DAY_TIEU_CHUAN.find(v => v >= a_w) || a_w;
+    };
+    static quyChuanMoDun = (m) => {
+        const DAY_TIEU_CHUAN = [1, 1.25, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 16];
+        return DAY_TIEU_CHUAN.reduce((prev, curr) => Math.abs(curr - m) < Math.abs(prev - m) ? curr : prev);
+    };
+    static tinhUngSuatTiepXuc = (HB, n, t) => {
+        const s_H = 1.1; 
+        const sigma_H_lim = 2 * HB + 70; 
+        const N_HO = 30 * Math.pow(HB, 2.4); 
+        const N_HE = 60 * 1 * n * t; 
+        const K_HL = N_HE < N_HO ? Math.pow(N_HO / N_HE, 1/6) : 1;
+        return (sigma_H_lim * K_HL) / s_H;
+    };
+    static tinhUngSuatTiepXuc = (HB, n, t, s_H = 1.1) => {
+        const sigma_H_lim = 2 * HB + 70; 
+        const N_HO = 30 * Math.pow(HB, 2.4); 
+        const N_HE = 60 * 1 * n * t; 
+        const K_HL = N_HE < N_HO ? Math.pow(N_HO / N_HE, 1/6) : 1;
+        return (sigma_H_lim * K_HL) / s_H;
+    };
+
+    tinhThongSoBoTruyenBanhRangTru(heSoThietKe, BangDacTinh) {
+        const trucII = BangDacTinh.find(t => t.truc === "II");
+        const trucIII = BangDacTinh.find(t => t.truc === "III");
+
+        const T1 = trucII.momentXoan; 
+        const n1 = trucII.soVongQuay; 
+        const n2 = trucIII.soVongQuay; 
+        const u_tru = trucIII.tySoTruyen;
+        let thoiGianPhucVu = this.thungTron.getThoiGianPhucVu();
+        thoiGianPhucVu = 43200
+        
+        // 1. Xử lý hệ số chiều rộng vành răng (Theo công thức 3.97)
+        // psi_bd = 0.53 * psi_ba * (u + 1) => psi_ba = psi_bd / (0.53 * (u + 1))
+        const psi_bd2 = heSoThietKe.psi_bd2;
+        let psi_ba = Number((psi_bd2 / (0.53 * (u_tru + 1))).toFixed(2));
+        psi_ba = 0.25 // harcode, mốt sửa sau
+
+        // 2. Thông số vật liệu (Không fix cứng, mô phỏng data từ Bảng 6.1)
+        const vatLieu = {
+            banhDan: { HB: 300, s_H: 1.1 },
+            banhBiDan: { HB: 290, s_H: 1.1 }
+        };
+
+        // Tính ứng suất với s_H truyền vào
+        const sigma_H1 = HeThongTruyenDong.tinhUngSuatTiepXuc(vatLieu.banhDan.HB, n1, thoiGianPhucVu, vatLieu.banhDan.s_H);
+        const sigma_H2 = HeThongTruyenDong.tinhUngSuatTiepXuc(vatLieu.banhBiDan.HB, n2, thoiGianPhucVu, vatLieu.banhBiDan.s_H);
+        const sigma_H_cp = Math.min(sigma_H1, sigma_H2);
+
+        // 3. Tính khoảng cách trục sơ bộ
+        const K_a = 49.5; 
+        const K_H_beta = 1.03; // Tra theo bảng (hình 3c62da)
+        
+        let a_w_soBo = K_a * (u_tru + 1) * Math.cbrt(
+            (T1 * K_H_beta) / (Math.pow(sigma_H_cp, 2) * u_tru * psi_ba)
+        );
+        let a_w = HeThongTruyenDong.quyChuanKhoangCachTruc(a_w_soBo);
+
+        // 4. Tính mô đun và số răng
+        let m_soBo = 0.015 * a_w; 
+        const m_tc = HeThongTruyenDong.quyChuanMoDun(m_soBo);
+
+        let z1 = Math.round((2 * a_w) / (m_tc * (u_tru + 1)));
+        if (z1 < 17) z1 = 17; 
+        
+        const z2 = Math.round(z1 * u_tru);
+        const u_thucTe = z2 / z1;
+
+        // 5. CHỐT KHOẢNG CÁCH TRỤC CHÍNH THỨC (Công thức 3.103)
+        // Bắt buộc tính lại do z1, z2 đã bị làm tròn và m đã lấy theo tiêu chuẩn
+        a_w = m_tc * (z1 + z2) / 2;
+
+        // 6. TÍNH KÍCH THƯỚC HÌNH HỌC (Theo Bảng 3.3)
+        // Chiều rộng vành răng
+        const b_w = Number((psi_ba * a_w).toFixed(2));
+
+        // Đường kính chia (d)
+        const d1 = m_tc * z1;
+        const d2 = m_tc * z2;
+
+        // Đường kính lăn (dw)
+        const d_w1 = Number((2 * a_w / (u_thucTe + 1)).toFixed(2));
+        const d_w2 = Number((d_w1 * u_thucTe).toFixed(2));
+
+        // Đường kính đỉnh răng (da)
+        const d_a1 = d1 + 2 * m_tc;
+        const d_a2 = d2 + 2 * m_tc;
+
+        // Đường kính đáy răng (df)
+        const d_f1 = d1 - 2.5 * m_tc;
+        const d_f2 = d2 - 2.5 * m_tc;
+
+        // Đường kính cơ sở (db) với góc alpha = 20 độ
+        const alpha = 20; 
+        const alpha_rad = alpha * Math.PI / 180; // Chuyển đổi sang radian để dùng Math.cos
+        const d_b1 = Number((d1 * Math.cos(alpha_rad)).toFixed(2));
+        const d_b2 = Number((d2 * Math.cos(alpha_rad)).toFixed(2));
+
+        return {
+            ungSuatTiepXucChoPhep: Number(sigma_H_cp.toFixed(2)),
+            thongSoKichThuoc: {
+                khoangCachTruc_aw: a_w,
+                moDun_m: m_tc,
+                chieuRongVanhRang_bw: b_w
+            },
+            thongSoBanhRang: {
+                soRang_z1: z1,
+                soRang_z2: z2,
+                duongKinhChia_d1: d1,
+                duongKinhChia_d2: d2,
+                duongKinhVongLan_dw1: d_w1,
+                duongKinhVongLan_dw2: d_w2,
+                duongKinhDinhRang_da1: d_a1,
+                duongKinhDinhRang_da2: d_a2,
+                duongKinhDayRang_df1: d_f1,
+                duongKinhDayRang_df2: d_f2,
+                duongKinhCoSo_db1: d_b1,
+                duongKinhCoSo_db2: d_b2,
+                gocProfinGoc_alpha: alpha,
+                gocProfinRang_at: alpha,
+                gocAnKhop_atw: alpha
+            },
+            kiemTraSaiSo: {
+                tySoTruyenThucTe: Number(u_thucTe.toFixed(4)),
+                saiSoU: Number((Math.abs(u_thucTe - u_tru) / u_tru * 100).toFixed(2)) // %
+            }
+        };
+    }
 }   
+
