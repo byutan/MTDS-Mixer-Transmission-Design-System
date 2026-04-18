@@ -6,7 +6,7 @@ import Step2Motor from './steps/step2-motor'
 import Step3Belt from './steps/step3-belt'
 import { Navbar } from '../common/navbar'
 
-import demoData from '../../../../../demodata.json'
+import demoData from './demo-data/step2-demo.json'
 
 const steps = [
   { number: 1, title: 'Khởi tạo', label: 'Khởi tạo' },
@@ -92,7 +92,7 @@ export default function DesignProject() {
         cosPhi: '---'
     }));
     
-    alert("Đã điền dữ liệu mẫu từ demodata.json");
+    alert("Đã điền dữ liệu mẫu từ demo-data/step2-demo.json");
   }
 
   const handleInputChange = (field: string, value: string) => {
@@ -113,7 +113,7 @@ export default function DesignProject() {
     if (currentStep === 1) {
       setIsLoading(true);
       try {
-        // Chuẩn bị payload lấy từ file demodata.json thay vì hardcode
+        // Chuẩn bị payload lấy từ file demo-data/step2-demo.json thay vì hardcode
         const payload = {
           duLieuDauVao: {
             thungTron: {

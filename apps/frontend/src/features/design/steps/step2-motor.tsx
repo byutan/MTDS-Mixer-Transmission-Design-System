@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import demoData from '../../../../../../demodata.json'
+import demoData from '../demo-data/step2-demo.json';
 
 interface Step2MotorProps {
   step2Data: any;

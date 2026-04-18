@@ -124,7 +124,7 @@ export class HeThongTruyenDong {
             "congSuat": Number(row.congSuat.toFixed(3)),
             "tySoTruyen": row.tySoTruyen === "-" ? "-" : Number(row.tySoTruyen.toFixed(2)),
             "soVongQuay": Math.round(row.soVongQuay),
-            "momentXoan": Math.round(row.momenXoan.toFixed(3))
+            "momentXoan": Number(row.momenXoan.toFixed(3))
         }));
     }
     // ham tinh a/d2 
