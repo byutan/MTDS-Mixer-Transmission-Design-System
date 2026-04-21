@@ -4,7 +4,6 @@ export const tinhToanHinhHoc = (req, res) => {
     try {
         const { duLieuDauVao } = req.body;
         
-        // Bắt lỗi y hệt HeThongTruyenDong.controller.js
         if (!duLieuDauVao || typeof duLieuDauVao !== "object" || Array.isArray(duLieuDauVao)) {
             return res.status(400).json({ message: "Component detail list type error." });
         } 
@@ -24,6 +23,7 @@ export const tinhToanHinhHoc = (req, res) => {
     }
 };
 
+// ĐOẠN THÊM VÀO ĐỂ FIX LỖI getAll
 export const getAll = async (req, res) => {
     res.status(200).json({ message: "Chức năng lấy danh sách sẽ hoàn thiện sau." });
 };

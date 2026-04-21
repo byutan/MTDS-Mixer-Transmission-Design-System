@@ -95,7 +95,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Họ và tên</FormLabel>
-                <FormControl><Input placeholder="Nguyễn Văn Học" {...field} className="rounded-lg" /></FormControl>
+                <FormControl><Input placeholder="Nguyễn Văn A" {...field} className="rounded-lg" /></FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -107,7 +107,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Mã số sinh viên</FormLabel>
-                <FormControl><Input placeholder="2013257" {...field} className="rounded-lg" /></FormControl>
+                <FormControl><Input placeholder="1234567" {...field} className="rounded-lg" /></FormControl>
                 <FormMessage />
               </FormItem>
             )}

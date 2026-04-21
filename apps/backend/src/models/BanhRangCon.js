@@ -30,6 +30,11 @@ export class BanhRangCon extends BoTruyenBanhRang {
         }
     } 
 
+    // --- CÁC HÀM BẮT BUỘC KẾ THỪA TỪ HỆ THỐNG OOP ---
+    getHieuSuat() {
+        return this.hieuSuat;
+    }
+
     #giaiPhuongTrinhTimU2(lambda_K, c_K, u_h) {
         const A = lambda_K * Math.pow(c_K, 3);
         const uh2 = Math.pow(u_h, 2);
@@ -51,7 +56,7 @@ export class BanhRangCon extends BoTruyenBanhRang {
         return this.#giaiPhuongTrinhTimU2(lambda_k, c_k, u_h);
     }
 
-    // --- PHẦN TÍNH TOÁN HÌNH HỌC MỚI ĐƯỢC ĐƯA VÀO CLASS ---
+    // --- CÁC HÀM TÍNH TOÁN HÌNH HỌC BÁNH RĂNG CÔN CỦA RIÊNG BẠN ---
     static traBangZ1p(de1, u) {
         const de1_levels = [40, 60, 80, 100, 125, 160, 200];
         const u_levels = [1, 2, 3.15, 4, 6];
@@ -69,11 +74,11 @@ export class BanhRangCon extends BoTruyenBanhRang {
         return table[r][c];
     }
 
-    tinhToanThongSoHinhHoc({ T1, n1, u, custom_z1, custom_z2 }) {
+    tinhToanThongSoHinhHoc({ T1, n1, u, Kbe, custom_z1, custom_z2 }) {
         if (!T1 || !n1 || !u) throw new Error("Missing geometric calculation values (T1, n1, u).");
 
         const STANDARD_MODULES_DAY_1 = [1, 1.25, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10, 12];
-        const Kbe = 0.285, kd = 100, kh_beta = 1.11, hb1 = 310, hb2 = 300, sH = 1.1, KHL = 1;
+        const kd = 100, kh_beta = 1.11, hb1 = 310, hb2 = 300, sH = 1.1, KHL = 1;
 
         const allowable_sigma_H = Math.min(((2 * hb1 + 70) * 0.9 * KHL) / sH, ((2 * hb2 + 70) * 0.9 * KHL) / sH);
         const Kr = 0.5 * kd; 
@@ -100,8 +105,7 @@ export class BanhRangCon extends BoTruyenBanhRang {
         const b_chon = Math.round(b_exact); 
         const Rm = Re - 0.5 * b_exact; 
 
-        const de1 = mte * z1;
-        const de2 = mte * z2;
+        const de1 = mte * z1, de2 = mte * z2;
         const delta1_rad = Math.atan(z1 / z2);
         const delta2_rad = (Math.PI / 2) - delta1_rad;
         const delta1_deg = delta1_rad * (180 / Math.PI);
@@ -115,6 +119,24 @@ export class BanhRangCon extends BoTruyenBanhRang {
         const dae1 = de1 + 2 * hae1 * Math.cos(delta1_rad);
         const dae2 = de2 + 2 * hae2 * Math.cos(delta2_rad);
         const theta_f_deg = Math.atan(hfe1 / Re) * (180 / Math.PI); 
+
+        // ==========================================
+        // PHẦN THÊM MỚI: TÍNH LỰC TÁC DỤNG LÊN BÁNH RĂNG
+        // ==========================================
+        const alpha_rad = 20 * (Math.PI / 180); // Góc ăn khớp tiêu chuẩn 20 độ
+
+        // Lực vòng
+        const Ft1 = (2 * T1 ) / dm1;
+        const Ft2 = Ft1;
+
+        // Lực hướng tâm và lực dọc trục bánh dẫn
+        const Fr1 = Ft1 * Math.tan(alpha_rad) * Math.cos(delta1_rad);
+        const Fa1 = Ft1 * Math.tan(alpha_rad) * Math.sin(delta1_rad);
+
+        // Lực tác dụng lên bánh bị dẫn
+        const Fa2 = Fr1;
+        const Fr2 = Fa1;
+        // ==========================================
 
         return {
             bang_thong_so_hinh_hoc: {
@@ -131,7 +153,8 @@ export class BanhRangCon extends BoTruyenBanhRang {
                 duong_kinh_dinh_rang_ngoai: `dae1 = ${parseFloat(dae1.toFixed(3))}, dae2 = ${parseFloat(dae2.toFixed(3))}`,
                 goc_con_dinh: `delta_a1 = ${parseFloat((delta1_deg + theta_f_deg).toFixed(2))}, delta_a2 = ${parseFloat((delta2_deg + theta_f_deg).toFixed(2))}`,
                 goc_con_day: `delta_f1 = ${parseFloat((delta1_deg - theta_f_deg).toFixed(2))}, delta_f2 = ${parseFloat((delta2_deg - theta_f_deg).toFixed(2))}`
-            }
+            },
+        
         };
     }
 }

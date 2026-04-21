@@ -1,11 +1,27 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import LandingPage from "./features/landing/landing-page"
 import SignupPage from "./features/auth/signup-page"
-
+import NotFound from "./features/common/not-found"
+import DesignProject from "./features/design/design-project"
+import ProfilePage from "./features/profile/profile-page"
 
 function App() {
   return (
-    <SignupPage />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<SignupPage defaultLogin={true} />} />
+        <Route path="/signup" element={<SignupPage defaultLogin={false} />} />
+        <Route path="/design" element={<DesignProject />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
+
+
+
 
 export default App
 

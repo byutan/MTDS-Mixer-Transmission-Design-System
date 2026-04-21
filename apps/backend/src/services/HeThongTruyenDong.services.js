@@ -1,5 +1,5 @@
 import { HeThongTruyenDongBuilder } from "../builders.interface/HeThongTruyenDong.builder.js";
-import { taoHGT } from "../services/HopGiamToc.services.js";
+import { taoHGT, phanPhoiTySoTruyenCapBanhRang } from "../services/HopGiamToc.services.js";
 import { NoiTrucVongDanHoi } from "../models/NoiTrucVongDanHoi.js";
 import { BoTruyenDai } from "../models/BoTruyenDai.js";
 import { OLan } from "../models/OLan.js";
@@ -55,4 +55,25 @@ export const tinhTySoTruyenChungThucTe = (duLieuDauVao) => {
         soVongQuay: heThong.thungTron.getSoVongQuay(),
         tySoTruyenChungThucTe: Number(heThong.tinhTySoTruyenChungThucTe()).toFixed(3)
     }
+}
+
+// hàm tính bảng đặc tính kỹ thuật của trục trong hộp giảm tốc
+export const tinhBangDacTinhKyThuat = (duLieuDauVao) => {
+    const heThong = taoHeThongTruyenDong(duLieuDauVao);
+    const ketQuaPhanPhoi = phanPhoiTySoTruyenCapBanhRang(duLieuDauVao)
+    const BangDacTinh = heThong.tinhBangDacTinhKyThuat(ketQuaPhanPhoi)
+    return BangDacTinh
+}
+
+export const tinhThongSoBoTruyenDaiThang = (duLieuDauVao) => {
+    const heThong = taoHeThongTruyenDong(duLieuDauVao);
+    const ketQua = heThong.tinhThongSoBoTruyenDaiThang()
+    return ketQua
+}
+
+export const tinhThongSoBoTruyenBanhRangTru = (duLieuDauVao) => {
+    const heThong = taoHeThongTruyenDong(duLieuDauVao);
+    const heSoThietKe = duLieuDauVao.heThongTruyenDong?.hopGiamToc?.heSoThietKe
+    const ketQua = heThong.tinhThongSoBoTruyenBanhRangTru(heSoThietKe, tinhBangDacTinhKyThuat(duLieuDauVao))
+    return ketQua
 }
