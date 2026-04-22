@@ -3,13 +3,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import demoData from '../../../../../../demodata.json'
+import { useDesign } from '@/features/design/context/DesignContext'
 
-interface Step4GearboxProps {
-  formData: any;
-  step2Data: any;
-}
-
-export default function Step4Gearbox({ formData, step2Data }: Step4GearboxProps) {
+export default function Step4Gearbox() {
+  const { formData, step2Data } = useDesign();
   const [activeTab, setActiveTab] = useState("bevel"); // bevel: bánh răng côn, spur: bánh răng trụ
   const [isLoading, setIsLoading] = useState(true);
   const [bevelResult, setBevelResult] = useState<any>(null);

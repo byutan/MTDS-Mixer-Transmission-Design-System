@@ -3,13 +3,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react'
+import { useDesign } from '@/features/design/context/DesignContext'
 
-interface Step3BeltProps {
-  formData: any;
-  step2Data: any;
-}
-
-export default function Step3Belt({ formData, step2Data }: Step3BeltProps) {
+export default function Step3Belt() {
+  const { formData, step2Data } = useDesign();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<any>(null);

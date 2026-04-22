@@ -3,16 +3,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import demoData from '../../../../../../demodata.json'
+import { useDesign } from '@/features/design/context/DesignContext'
 
-interface Step2MotorProps {
-  step2Data: any;
-  setStep2Data: (data: any) => void;
-  formData: any;
-  tableData: any[];
-  setTableData: (data: any[]) => void;
-}
-
-export default function Step2Motor({ step2Data, setStep2Data, formData, tableData, setTableData }: Step2MotorProps) {
+export default function Step2Motor() {
+  const { step2Data, setStep2Data, formData, tableData, setTableData } = useDesign();
   const [isCalculating, setIsCalculating] = useState(false);
   
   // Tính toán sai số tỉ số truyền
