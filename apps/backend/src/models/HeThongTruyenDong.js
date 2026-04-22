@@ -503,6 +503,14 @@ export class HeThongTruyenDong {
             kiemTraSaiSo: {
                 tySoTruyenThucTe: Number(u_thucTe.toFixed(4)),
                 saiSoU: Number((Math.abs(u_thucTe - u_tru) / u_tru * 100).toFixed(2)) // %
+            },
+            bangLucTacDung: {
+                Ft1: Number((2 * T1 / d1).toFixed(2)),
+                Fr1: Number(((2 * T1 / d1) * Math.tan(alpha_rad)).toFixed(2)),
+                Fa1: 0, // Bánh răng trụ thẳng
+                Ft2: Number((2 * T1 / d1).toFixed(2)),
+                Fr2: Number(((2 * T1 / d1) * Math.tan(alpha_rad)).toFixed(2)),
+                Fa2: 0
             }
         };
     }

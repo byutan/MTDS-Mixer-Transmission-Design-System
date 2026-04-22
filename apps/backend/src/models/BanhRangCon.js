@@ -151,7 +151,24 @@ export class BanhRangCon extends BoTruyenBanhRang {
                 goc_con_dinh: `delta_a1 = ${parseFloat((delta1_deg + theta_f_deg).toFixed(2))}, delta_a2 = ${parseFloat((delta2_deg + theta_f_deg).toFixed(2))}`,
                 goc_con_day: `delta_f1 = ${parseFloat((delta1_deg - theta_f_deg).toFixed(2))}, delta_f2 = ${parseFloat((delta2_deg - theta_f_deg).toFixed(2))}`
             },
-        
+            bang_luc_tac_dung: {
+                Ft1: parseFloat(Ft1.toFixed(2)),
+                Fr1: parseFloat(Fr1.toFixed(2)),
+                Fa1: parseFloat(Fa1.toFixed(2)),
+                Ft2: parseFloat(Ft2.toFixed(2)),
+                Fr2: parseFloat(Fr2.toFixed(2)),
+                Fa2: parseFloat(Fr2.toFixed(2)),
+            },
+            du_lieu_so: {
+                mte: mte,
+                z1: z1,
+                z2: z2,
+                de1: parseFloat(de1.toFixed(2)),
+                de2: parseFloat(de2.toFixed(2)),
+                b: b_chon,
+                delta1: parseFloat(delta1_deg.toFixed(2)),
+                delta2: parseFloat(delta2_deg.toFixed(2))
+            }
         };
     }
 }

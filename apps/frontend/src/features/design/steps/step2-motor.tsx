@@ -190,7 +190,7 @@ export default function Step2Motor({ step2Data, setStep2Data, formData, tableDat
 
         {/* Card 2: Tỉ số truyền */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-6 font-sans">2. Phân phối tỉ số truyền</h3>
+          <h3 className="text-xl font-bold text-gray-900 mb-6 font-sans">3. Phân phối tỉ số truyền</h3>
           
           <div className="space-y-6">
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
