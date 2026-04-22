@@ -201,9 +201,8 @@ export default function DesignProject() {
           <div className="space-y-2">
             {steps.map((step, index) => (
               <div key={step.number}>
-                <button
-                  onClick={() => setCurrentStep(step.number)}
-                  className="flex items-center gap-3 w-full p-0 transition text-left"
+                <div
+                  className="flex items-center gap-3 w-full p-0 transition text-left cursor-default"
                 >
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition flex-shrink-0 ${
@@ -219,7 +218,7 @@ export default function DesignProject() {
                   <span className={`text-sm ${currentStep === step.number ? 'text-gray-900 font-semibold' : 'text-gray-600'}`}>
                     {step.label}
                   </span>
-                </button>
+                </div>
                 {index < steps.length - 1 && (
                   <div className="flex justify-center pl-5 py-2">
                     <div className="w-px h-6 bg-gray-300"></div>
