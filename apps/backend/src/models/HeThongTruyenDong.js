@@ -98,7 +98,8 @@ export class HeThongTruyenDong {
         chuoiTruyen.forEach((tram, idx) => {
             const hieuSuatNhanOLan = tram.nhanOLan ? hieuSuatOLan : 1
             P = P * tram.hieuSuat * hieuSuatNhanOLan
-            n = n / tram.tySoTruyen;
+            const u_tram = (tram.tySoTruyen && tram.tySoTruyen !== 0) ? tram.tySoTruyen : 1;
+            n = n / u_tram;
             const T = tinhMomment(P,n)
             let tenTruc=""
             if(idx < danhSachTruc.length) {
@@ -121,10 +122,10 @@ export class HeThongTruyenDong {
         })
         return BangDacTinhKyThuat.map(row => ({
             "truc": row.truc,
-            "congSuat": Number(row.congSuat.toFixed(3)),
-            "tySoTruyen": row.tySoTruyen === "-" ? "-" : Number(row.tySoTruyen.toFixed(2)),
-            "soVongQuay": Math.round(row.soVongQuay),
-            "momentXoan": Math.round(row.momenXoan.toFixed(3))
+            "congSuat": typeof row.congSuat === 'number' ? Number(row.congSuat.toFixed(3)) : 0,
+            "tySoTruyen": row.tySoTruyen === "-" ? "-" : (typeof row.tySoTruyen === 'number' ? Number(row.tySoTruyen.toFixed(2)) : 0),
+            "soVongQuay": typeof row.soVongQuay === 'number' ? Math.round(row.soVongQuay) : 0,
+            "momentXoan": typeof row.momenXoan === 'number' ? Math.round(row.momenXoan) : 0
         }));
     }
     // ham tinh a/d2 
@@ -502,6 +503,14 @@ export class HeThongTruyenDong {
             kiemTraSaiSo: {
                 tySoTruyenThucTe: Number(u_thucTe.toFixed(4)),
                 saiSoU: Number((Math.abs(u_thucTe - u_tru) / u_tru * 100).toFixed(2)) // %
+            },
+            bangLucTacDung: {
+                Ft1: Number((2 * T1 / d1).toFixed(2)),
+                Fr1: Number(((2 * T1 / d1) * Math.tan(alpha_rad)).toFixed(2)),
+                Fa1: 0, // Bánh răng trụ thẳng
+                Ft2: Number((2 * T1 / d1).toFixed(2)),
+                Fr2: Number(((2 * T1 / d1) * Math.tan(alpha_rad)).toFixed(2)),
+                Fa2: 0
             }
         };
     }
