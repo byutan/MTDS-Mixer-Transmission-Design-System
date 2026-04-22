@@ -21,34 +21,40 @@ export default function Step2Motor({ step2Data, setStep2Data, formData, tableDat
   const isErrorOk = delta_u <= 5;
 
   // Hàm gọi backend để cập nhật bảng đặc tính kỹ thuật
-  const updateTechnicalTable = async (currentStep2: any) => {
+    const safeParse = (val: any) => {
+        if (typeof val === 'string' && (val === '---' || val === '')) return 0;
+        const parsed = parseFloat(val);
+        return isNaN(parsed) ? 0 : parsed;
+    };
+
+    const updateTechnicalTable = async (currentStep2: any) => {
     setIsCalculating(true);
     try {
         const payload = {
             duLieuDauVao: {
                 thungTron: {
-                    congSuat: parseFloat(formData.power),
-                    soVongQuay: parseFloat(formData.speed)
+                    congSuat: safeParse(formData.power),
+                    soVongQuay: safeParse(formData.speed)
                 },
                 heThongTruyenDong: {
                     dongCo: {
-                        congSuat: parseFloat(currentStep2.motor.match(/\((.*?) kW/)?.[1] || "7.5"),
-                        vanTocQuay: parseFloat(currentStep2.motor.match(/, (.*?) v\/ph/)?.[1] || "2922")
+                        congSuat: safeParse(currentStep2.motor.match(/\((.*?) kW/)?.[1]),
+                        vanTocQuay: safeParse(currentStep2.motor.match(/, (.*?) v\/ph/)?.[1])
                     },
                     hopGiamToc: {
                         ...demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc,
-                        tySoTruyenSoBo: parseFloat(currentStep2.gearboxRatio)
+                        tySoTruyenSoBo: safeParse(currentStep2.gearboxRatio)
                     },
                     boTruyenDai: { 
                         ...demoData.duLieuDauVao.heThongTruyenDong.boTruyenDai,
-                        tySoTruyenSoBo: parseFloat(currentStep2.beltRatio) 
+                        tySoTruyenSoBo: safeParse(currentStep2.beltRatio) 
                     },
                     oLan: demoData.duLieuDauVao.heThongTruyenDong.oLan,
                     noiTrucVongDanHoi: demoData.duLieuDauVao.heThongTruyenDong.noiTrucVongDanHoi,
                     phanPhoiTySoTruyen: {
                         tySoTruyenBanhRang: [
-                            { loai: "BanhRangCon", tySoTruyen: parseFloat(currentStep2.u1) },
-                            { loai: "BanhRangTru", tySoTruyen: parseFloat(currentStep2.u2) }
+                            { loai: "BanhRangCon", tySoTruyen: safeParse(currentStep2.u1) },
+                            { loai: "BanhRangTru", tySoTruyen: safeParse(currentStep2.u2) }
                         ]
                     }
                 }

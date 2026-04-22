@@ -31,9 +31,6 @@ export class BanhRangCon extends BoTruyenBanhRang {
     } 
 
     // --- CÁC HÀM BẮT BUỘC KẾ THỪA TỪ HỆ THỐNG OOP ---
-    getHieuSuat() {
-        return this.hieuSuat;
-    }
 
     #giaiPhuongTrinhTimU2(lambda_K, c_K, u_h) {
         const A = lambda_K * Math.pow(c_K, 3);
