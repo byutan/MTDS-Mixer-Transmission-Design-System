@@ -10,11 +10,12 @@ const steps = [
   { number: 2, title: 'Động cơ', label: 'Động cơ', path: 'step-2' },
   { number: 3, title: 'Bộ truyền đai', label: 'Bộ truyền đai', path: 'step-3' },
   { number: 4, title: 'Hộp giảm tốc', label: 'Hộp giảm tốc', path: 'step-4' },
-  { number: 5, title: 'Trục & Ổ lăn', label: 'Trục & Ổ lăn', path: 'step-5' },
+  { number: 5, title: 'Thiết kế trục', label: 'Thiết kế trục', path: 'step-5' },
+  { number: 6, title: 'Ổ lăn', label: 'Ổ lăn', path: 'step-6' },
 ]
 
 export default function DesignProject() {
-  const { user, formData, step2Data, setStep2Data, loadSampleData } = useDesign();
+  const { user, formData, step2Data, setStep2Data, loadSampleData, saveProject } = useDesign();
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +32,18 @@ export default function DesignProject() {
     }
   }
 
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    await saveProject(currentStep);
+    setIsSaving(false);
+  };
+
   const handleNext = async () => {
+    // Tự động lưu khi nhấn tiếp tục
+    handleSave();
+
     if (currentStep === 1) {
       setIsLoading(true);
       try {
@@ -98,7 +110,7 @@ export default function DesignProject() {
         return;
       }
       navigate('step-3');
-    } else if (currentStep < 5) {
+    } else if (currentStep < 6) {
       navigate(steps[currentStep].path);
     }
     window.scrollTo(0, 0);
@@ -150,18 +162,15 @@ export default function DesignProject() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                {currentStep === 1 && (
-                    <Button variant="ghost" onClick={loadSampleData} className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 font-bold px-4">
-                      Dùng dữ liệu mẫu
-                    </Button>
-                )}
                 {currentStep > 1 && (
                   <Button variant="outline" onClick={handleBack} className="border-slate-200 text-slate-600 px-6 py-2 h-auto text-base font-bold transition-all">
                     Quay lại
                   </Button>
                 )}
-                <Button onClick={handleNext} disabled={isLoading} className="bg-blue-600 hover:bg-blue-700 text-white gap-2 px-6 py-2 h-auto text-base font-bold shadow-lg transition-all active:scale-95 disabled:opacity-70">
-                  {isLoading ? 'Đang tính toán...' : 'Tiếp tục'} {!isLoading && <ChevronRight className="w-5 h-5" />}
+                
+                <Button onClick={handleNext} disabled={isLoading || isSaving} className="bg-blue-600 hover:bg-blue-700 text-white gap-2 px-6 py-2 h-auto text-base font-bold shadow-lg transition-all active:scale-95 disabled:opacity-70">
+                  {isLoading ? 'Đang tính toán...' : (currentStep === 6 ? 'Hoàn thành' : 'Tiếp tục')} 
+                  {!isLoading && <ChevronRight className="w-5 h-5" />}
                 </Button>
               </div>
             </div>
