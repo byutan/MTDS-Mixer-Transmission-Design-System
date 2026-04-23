@@ -2,17 +2,11 @@ import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import demoData from '../demo-data/step2-demo.json';
+import demoData from '@/data/demodata.json'
+import { useDesign } from '@/features/design/context/DesignContext'
 
-interface Step2MotorProps {
-  step2Data: any;
-  setStep2Data: (data: any) => void;
-  formData: any;
-  tableData: any[];
-  setTableData: (data: any[]) => void;
-}
-
-export default function Step2Motor({ step2Data, setStep2Data, formData, tableData, setTableData }: Step2MotorProps) {
+export default function Step2Motor() {
+  const { step2Data, setStep2Data, formData, tableData, setTableData } = useDesign();
   const [isCalculating, setIsCalculating] = useState(false);
   
   // Tính toán sai số tỉ số truyền
@@ -21,34 +15,40 @@ export default function Step2Motor({ step2Data, setStep2Data, formData, tableDat
   const isErrorOk = delta_u <= 5;
 
   // Hàm gọi backend để cập nhật bảng đặc tính kỹ thuật
-  const updateTechnicalTable = async (currentStep2: any) => {
+    const safeParse = (val: any) => {
+        if (typeof val === 'string' && (val === '---' || val === '')) return 0;
+        const parsed = parseFloat(val);
+        return isNaN(parsed) ? 0 : parsed;
+    };
+
+    const updateTechnicalTable = async (currentStep2: any) => {
     setIsCalculating(true);
     try {
         const payload = {
             duLieuDauVao: {
                 thungTron: {
-                    congSuat: parseFloat(formData.power),
-                    soVongQuay: parseFloat(formData.speed)
+                    congSuat: safeParse(formData.power),
+                    soVongQuay: safeParse(formData.speed)
                 },
                 heThongTruyenDong: {
                     dongCo: {
-                        congSuat: parseFloat(currentStep2.motor.match(/\((.*?) kW/)?.[1] || "7.5"),
-                        vanTocQuay: parseFloat(currentStep2.motor.match(/, (.*?) v\/ph/)?.[1] || "2922")
+                        congSuat: safeParse(currentStep2.motor.match(/\((.*?) kW/)?.[1]),
+                        vanTocQuay: safeParse(currentStep2.motor.match(/, (.*?) v\/ph/)?.[1])
                     },
                     hopGiamToc: {
                         ...demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc,
-                        tySoTruyenSoBo: parseFloat(currentStep2.gearboxRatio)
+                        tySoTruyenSoBo: safeParse(currentStep2.gearboxRatio)
                     },
                     boTruyenDai: { 
                         ...demoData.duLieuDauVao.heThongTruyenDong.boTruyenDai,
-                        tySoTruyenSoBo: parseFloat(currentStep2.beltRatio) 
+                        tySoTruyenSoBo: safeParse(currentStep2.beltRatio) 
                     },
                     oLan: demoData.duLieuDauVao.heThongTruyenDong.oLan,
                     noiTrucVongDanHoi: demoData.duLieuDauVao.heThongTruyenDong.noiTrucVongDanHoi,
                     phanPhoiTySoTruyen: {
                         tySoTruyenBanhRang: [
-                            { loai: "BanhRangCon", tySoTruyen: parseFloat(currentStep2.u1) },
-                            { loai: "BanhRangTru", tySoTruyen: parseFloat(currentStep2.u2) }
+                            { loai: "BanhRangCon", tySoTruyen: safeParse(currentStep2.u1) },
+                            { loai: "BanhRangTru", tySoTruyen: safeParse(currentStep2.u2) }
                         ]
                     }
                 }
@@ -184,7 +184,7 @@ export default function Step2Motor({ step2Data, setStep2Data, formData, tableDat
 
         {/* Card 2: Tỉ số truyền */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-6 font-sans">2. Phân phối tỉ số truyền</h3>
+          <h3 className="text-xl font-bold text-gray-900 mb-6 font-sans">3. Phân phối tỉ số truyền</h3>
           
           <div className="space-y-6">
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">

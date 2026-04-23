@@ -219,7 +219,7 @@ export class Truc {
             }
         }
     }
-     //------------------------------Bảng 4.3: Xác định đường kính trục theo momen tương đương-------------------------------
+//------------------------------Bảng 4.3: Xác định đường kính trục theo momen tương đương-------------------------------
     tinhBangDuongKinhTheoMomenTuongDuong_trucI() {
         const T = this.#momentXoan; 
         const ten_truc = this.#tenTruc
@@ -261,48 +261,88 @@ export class Truc {
             ketqua_connho
         };
     }
+//------------------------------Bảng 4.12: Xác định đường kính trục theo momen tương đương-------------------------------
     tinhBangDuongKinhTheoMomenTuongDuong_trucII() {
         const T = this.#momentXoan; 
         const ten_truc = this.#tenTruc
         const t = 56
         // tại C
         const ten_tietdien1 = "C"
-        const Mx_daithang = 0
-        const My_daithang = 0
-        const cothen_daithang = false
-        const dtc_daithang = 40
-        const ketqua_daithang = this.Tinh_D_Tai_TietDien(ten_tietdien1, 0, Mx_daithang, My_daithang, t, cothen_daithang, dtc_daithang)
+        const Mx_c = 0
+        const My_c = 0
+        const cothen_c = false
+        const dtc_c = 40
+        const ketqua_c = this.Tinh_D_Tai_TietDien(ten_tietdien1, 0, Mx_c, My_c, t, cothen_c, dtc_c)
         // tại Bánh răng trụ nhỏ
         const ten_tietdien2 = "Bánh răng trụ nhỏ"
-        const Mx_A = 49390.85
-        const My_A = 169012.6
-        const cothen_A = false
-        const dtc_A = 35
-        const ketqua_A = this.Tinh_D_Tai_TietDien(ten_tietdien2, T, Mx_A, My_A, t, cothen_A, dtc_A)
+        const Mx_Banhrangtrunho = 104837.10
+        const My_Banhrangtrunho = 248803.49
+        const cothen_Banhrangtrunho = true
+        const dtc_Banhrangtrunho = 45
+        const ketqua_Banhrangtrunho = this.Tinh_D_Tai_TietDien(ten_tietdien2, T, Mx_Banhrangtrunho, My_Banhrangtrunho, t, cothen_Banhrangtrunho, dtc_Banhrangtrunho)
         // tại Bánh răng côn lớn
         const ten_tietdien3 = "Bánh răng côn lớn"
-        const Mx_B = 57901.2
-        const My_B = 0
-        const cothen_B = false
-        const dtc_B = 35
-        const ketqua_B = this.Tinh_D_Tai_TietDien(ten_tietdien3, T, Mx_B, My_B, t, cothen_B, dtc_B)
+        const Mx_Banhrangconlon = 91879.78
+        const My_Banhrangconlon = 226314.5
+        const cothen_Banhrangconlon = true
+        const dtc_Banhrangconlon = 45
+        const ketqua_Banhrangconlon = this.Tinh_D_Tai_TietDien(ten_tietdien3, T, Mx_Banhrangconlon, My_Banhrangconlon, t, cothen_Banhrangconlon, dtc_Banhrangconlon)
         // tại D
          const ten_tietdien4 = "D"
-        const Mx_connho = 9238.35
-        const My_connho = 0
-        const cothen_connho = true
-        const dtc_connho = 28
-        const ketqua_connho = this.Tinh_D_Tai_TietDien(ten_tietdien4, T, Mx_connho, My_connho, t, cothen_connho, dtc_connho)
+        const Mx_D = 0
+        const My_D = 0
+        const cothen_D = false
+        const dtc_D = 40
+        const ketqua_D = this.Tinh_D_Tai_TietDien(ten_tietdien4, 0, Mx_D, My_D, t, cothen_D, dtc_D)
         return {
             ten_truc,
-            ketqua_daithang,
-            ketqua_A,
-            ketqua_B,
-            ketqua_connho
+            ketqua_c,
+            ketqua_Banhrangtrunho,
+            ketqua_Banhrangconlon,
+            ketqua_D
         };
     }
-   
-    
+//------------------------------Bảng 4.21: Xác định đường kính trục theo momen tương đương-------------------------------
+   tinhBangDuongKinhTheoMomenTuongDuong_trucIII() {
+        const T = this.#momentXoan; 
+        const ten_truc = this.#tenTruc
+        const t = 50
+        // tại E
+        const ten_tietdien1 = "E"
+        const Mx_E = 0
+        const My_E = 0
+        const cothen_E = false
+        const dtc_E = 65
+        const ketqua_E = this.Tinh_D_Tai_TietDien(ten_tietdien1, 0, Mx_E, My_E, t, cothen_E, dtc_E)
+        // tại Bánh răng trụ lớn
+        const ten_tietdien2 = "Bánh răng trụ lớn"
+        const Mx_Banhrangtrulon = 81089.03
+        const My_Banhrangtrulon = 368303.87
+        const cothen_Banhrangtrulon = true
+        const dtc_Banhrangtrulon = 70
+        const ketqua_Banhrangtrulon = this.Tinh_D_Tai_TietDien(ten_tietdien2, T, Mx_Banhrangtrulon, My_Banhrangtrulon, t, cothen_Banhrangtrulon, dtc_Banhrangtrulon)
+        // tại F
+        const ten_tietdien3 = "F"
+        const Mx_F = 0
+        const My_F = 433125
+        const cothen_F = false
+        const dtc_F = 65
+        const ketqua_F = this.Tinh_D_Tai_TietDien(ten_tietdien3, T, Mx_F, My_F, t, cothen_F, dtc_F)
+        // tại Khớp nối
+         const ten_tietdien4 = "Khớp nối"
+        const Mx_Khopnoi = 0
+        const My_Khopnoi = 0
+        const cothen_Khopnoi = true
+        const dtc_Khopnoi = 60
+        const ketqua_Khopnoi = this.Tinh_D_Tai_TietDien(ten_tietdien4, T, Mx_Khopnoi, My_Khopnoi, t, cothen_Khopnoi, dtc_Khopnoi)
+        return {
+            ten_truc,
+            ketqua_E,
+            ketqua_Banhrangtrulon,
+            ketqua_F,
+            ketqua_Khopnoi
+        };
+    }
     //--------------------------------Kiểm nghiệm độ bền mỏi----------------------------------
     /**
      * Sj là Hệ số an toàn tổng

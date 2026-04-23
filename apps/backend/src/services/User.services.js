@@ -2,6 +2,7 @@ import { query } from '../config/database.js';
 import { User } from '../models/User.js'
 import bcrypt from 'bcrypt';
 export const UserService = {
+  query: query,
   
   findUserByIdentifier: async (identifier) => {
     const sql = 'SELECT * FROM users WHERE email = $1 OR student_id = $2';

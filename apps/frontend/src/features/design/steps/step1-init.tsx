@@ -2,13 +2,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Calendar } from 'lucide-react'
+import { useDesign, FormData } from '@/features/design/context/DesignContext'
 
-interface Step1InitProps {
-  formData: any;
-  handleInputChange: (field: string, value: string) => void;
-}
-
-export default function Step1Init({ formData, handleInputChange }: Step1InitProps) {
+export default function Step1Init() {
+  const { formData, updateFormData } = useDesign();
+  
+  const handleInputChange = (field: keyof FormData, value: string) => {
+    updateFormData(field, value);
+  }
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Card 1: Thông tin */}
