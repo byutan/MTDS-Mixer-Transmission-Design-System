@@ -77,3 +77,11 @@ export const tinhThongSoBoTruyenBanhRangTru = (duLieuDauVao) => {
     const ketQua = heThong.tinhThongSoBoTruyenBanhRangTru(heSoThietKe, tinhBangDacTinhKyThuat(duLieuDauVao))
     return ketQua
 }
+
+export const thietKeVoHopGiamToc = (duLieuDauVao) => {
+    const heThong = taoHeThongTruyenDong(duLieuDauVao);
+    const a_w = tinhThongSoBoTruyenBanhRangTru(duLieuDauVao).thongSoKichThuoc.khoangCachTruc_aw
+    const ketQua = heThong.thietKeVoHopGiamToc(a_w)
+    return ketQua
+}
+
