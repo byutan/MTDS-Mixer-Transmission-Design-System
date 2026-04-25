@@ -6,6 +6,7 @@ import HeThongTruyenDongRoutes from "./src/routes/HeThongTruyenDong.routes.js"
 import ThungTronRoutes from "./src/routes/ThungTron.routes.js"
 import BanhRangConRoutes from './src/routes/BanhRangCon.route.js';
 import authRoutes from "./src/routes/auth.routes.js"
+import projectRoutes from "./src/routes/Project.route.js"
 import { connectDB } from './src/config/database.js';
 
 dotenv.config();
@@ -21,7 +22,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/hop-giam-toc', hopGiamTocRoutes);
 app.use('/api/he-thong-truyen-dong', HeThongTruyenDongRoutes);
 app.use('/api/thung-tron', ThungTronRoutes);
-app.use('/api/banh-rang-con', BanhRangConRoutes);;
+app.use('/api/banh-rang-con', BanhRangConRoutes);
+app.use('/api/projects', projectRoutes);
 
 app.listen(PORT, () => {
   console.log(`Running server at port ${PORT}`);

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { LogOut, ChevronDown, User, Settings } from 'lucide-react'
+import { useDesign } from '../design/context/DesignContext'
 
 interface NavbarProps {
   isLoggedIn?: boolean;
@@ -11,10 +12,10 @@ interface NavbarProps {
 export function Navbar({ isLoggedIn = false, username = "Người dùng" }: NavbarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const navigate = useNavigate()
+  const { clearProjectData } = useDesign()
 
   const handleLogout = () => {
     localStorage.removeItem('mtds_user')
-    // Reset state and redirect
     setIsDropdownOpen(false)
     navigate('/')
     window.location.reload()
@@ -36,24 +37,20 @@ export function Navbar({ isLoggedIn = false, username = "Người dùng" }: Navb
 
         {/* Navigation Links */}
         <nav className="hidden md:flex items-center gap-10">
-          <Link to="/" className="text-slate-700 hover:text-blue-600 font-bold text-sm transition-colors relative group">
+          <Link to="/" className="text-slate-700 hover:text-blue-600 font-bold text-base transition-colors relative group">
             Trang chủ
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
           </Link>
-          <Link to="#" className="text-slate-700 hover:text-blue-600 font-bold text-sm transition-colors relative group">
+          <Link to="/projects" className="text-slate-700 hover:text-blue-600 font-bold text-base transition-colors relative group">
             Dự án
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
           </Link>
-          <Link to="/design" className="text-slate-700 hover:text-blue-600 font-bold text-sm transition-colors relative group">
+          <Link 
+            to="/design/step-1" 
+            onClick={() => clearProjectData?.(false)}
+            className="text-slate-700 hover:text-blue-600 font-bold text-base transition-colors relative group"
+          >
             Thiết kế
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
-          </Link>
-          <Link to="#" className="text-slate-700 hover:text-blue-600 font-bold text-sm transition-colors relative group">
-            Thư viện
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
-          </Link>
-          <Link to="#" className="text-slate-700 hover:text-blue-600 font-bold text-sm transition-colors relative group">
-            Hướng dẫn
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all group-hover:w-full"></span>
           </Link>
         </nav>
@@ -73,27 +70,21 @@ export function Navbar({ isLoggedIn = false, username = "Người dùng" }: Navb
                 <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Dropdown Menu */}
               {isDropdownOpen && (
                 <>
-                  {/* Backdrop */}
                   <div className="fixed inset-0 z-10" onClick={() => setIsDropdownOpen(false)}></div>
-                  
                   <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-20 animate-in fade-in zoom-in-95 duration-200">
                     <div className="px-4 py-3 border-b border-slate-50 mb-1">
                       <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Tài khoản</p>
                       <p className="text-sm font-bold text-slate-900 truncate">{username}</p>
                     </div>
-                    
                     <Link to="/profile" className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
                       <User className="w-4 h-4" /> Hồ sơ cá nhân
                     </Link>
                     <button className="flex items-center gap-3 w-full px-4 py-2 text-sm text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors">
                       <Settings className="w-4 h-4" /> Cài đặt
                     </button>
-                    
                     <div className="h-px bg-slate-50 my-1 mx-2"></div>
-                    
                     <button 
                       onClick={handleLogout}
                       className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors font-bold"
