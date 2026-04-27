@@ -345,6 +345,80 @@ export class Truc {
     }
     //--------------------------------Kiểm nghiệm độ bền mỏi----------------------------------
     /**
+     * 
+     */
+    Tinh_gioimoiuon(g_b){
+        const g_1 = 0.436 * g_b
+        return g_1
+    }
+    /**
+     * 
+     */
+    Tinh_gioihanmoixoan(g_1){
+        const T_1 = 0.58 * g_1
+        return T_1
+    }
+    /**
+     * 
+     */
+    Tinh_biendoungsuatphap(Mj, Wj){
+        const g_aj = Mj/Wj
+        return g_aj
+    }
+    /**
+     * 
+     */
+    Tinh_momentuongtong(Mx,My){
+        const trong_can = Math.pow(Mx,2) + Math.pow(My,2)
+        const Mj = Math.sqrt(trong_can)
+    }
+    /**
+     * 
+     */
+    Tinh_momentchonguon(b, t1, dj, tj){
+        const tu = b*t1*pow((dj-tj),2)
+        const mau = 2*dj
+        const W_oj= tu/mau
+        return W_oj
+    }
+    /**
+     * 
+     */
+    Tinh_heso_Kgdj(Kg, eg, Kx, Ky){
+        const tu = (Kg/eg) + Kx - 1
+        const K_gdj = tu / Ky
+        return K_gdj
+    }
+    /**
+     * 
+     */
+    Tinh_heso_Ktdj(Kt, et, Kx, Ky){
+        
+    }
+     /**
+     * Hệ số an toàn ứng suất pháp
+     * S_gj là hệ số an toàn uốn
+     * g_1 là giới hạn mỏi uốn (Mpa)
+     * g-aj là biên độ ứng suất pháp (Mpa)
+     * g_mj là ứng suất trung bình (Mpa)
+     * K_gdj là Hệ số giảm giới hạn mỏi
+     * W_g là Hệ số ảnh hưởng của ứng suất trung bình
+     * psi là Hệ số xét đến ảnh hưởng của ứng suất trung bình đến giới hạn mỏi của vật liệu
+     */
+    Tinh_hesoantoanuon(g_1, K_gdj, g_aj, W_g, g_mj){
+        const mau = K_gdj * g_aj + W_g * g_mj
+        const S_gj = g_1 / mau
+        return S_gj
+    }
+    /**
+     * 
+     */
+    Tinh_hesoantoanxoan(T_1, K_tdj, T_aj, W_r, T_mj){
+        const mau = K_tdj * T_aj + W_r * T_mj
+        const S_tj = T_1/ mau
+        return S_tj
+    }
+    /**
      * Sj là Hệ số an toàn tổng
      * S_gj là hệ số an toàn uốn
      * S_tj là hệ số an toàn xoắn
@@ -356,16 +430,5 @@ export class Truc {
         const Sj = tu/mau
         return Sj
     }
-    /**
-     * Hệ số an toàn ứng suất pháp
-     * S_gj là hệ số an toàn uốn
-     * g_1 là giới hạn mỏi uốn (Mpa)
-     * g-aj là biên độ ứng suất pháp (Mpa)
-     * g_mj là ứng suất trung bình (Mpa)
-     * K là Hệ số giảm giới hạn mỏi
-     * psi là Hệ số xét đến ảnh hưởng của ứng suất trung bình đến giới hạn mỏi của vật liệu
-     */
-    Tinh_S_gj(g_1, g_aj, g_mj){
 
-    }
 }

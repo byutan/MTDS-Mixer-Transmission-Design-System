@@ -4,6 +4,8 @@ import { tinhBangDuongKinhTruc_I, tinhBangDuongKinh_trucII, tinhBangDuongKinh_tr
 const router = express.Router();
 // Trục I
 router.post('/tinh-bang-duong-kinh-Truc-I', tinhBangDuongKinhTruc_I);
+// Trục II
 router.post('/tinh-bang-duong-kinh-Truc-II', tinhBangDuongKinh_trucII)
+// Trục III
 router.post('/tinh-bang-duong-kinh-Truc-III', tinhBangDuongKinh_trucIII)
 export default router;

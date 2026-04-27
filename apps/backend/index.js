@@ -5,6 +5,7 @@ import hopGiamTocRoutes from "./src/routes/HopGiamToc.routes.js"
 import HeThongTruyenDongRoutes from "./src/routes/HeThongTruyenDong.routes.js"
 import ThungTronRoutes from "./src/routes/ThungTron.routes.js"
 import BanhRangConRoutes from './src/routes/BanhRangCon.route.js';
+import TrucRoutes from "./src/routes/Truc.routes.js"
 import authRoutes from "./src/routes/auth.routes.js"
 import { connectDB } from './src/config/database.js';
 
