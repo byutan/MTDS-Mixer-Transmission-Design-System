@@ -37,6 +37,8 @@ export interface Step2Data {
 
 interface DesignContextType {
   user: any;
+  projectId: number | null;
+  setProjectId: React.Dispatch<React.SetStateAction<number | null>>;
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
   updateFormData: (field: keyof FormData, value: string) => void;
@@ -45,15 +47,19 @@ interface DesignContextType {
   tableData: any[];
   setTableData: React.Dispatch<React.SetStateAction<any[]>>;
   loadSampleData: () => void;
-  clearProjectData: () => void;
+  clearProjectData: (shouldReload?: boolean) => void;
+  saveProject: (currentStep: number) => Promise<void>;
 }
 
 const DesignContext = createContext<DesignContextType | undefined>(undefined);
 
 const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<any>(null)
-  
-  // Khôi phục dữ liệu từ localStorage nếu có
+  const [projectId, setProjectId] = useState<number | null>(() => {
+    const saved = localStorage.getItem('mtds_project_id');
+    return saved ? parseInt(saved) : null;
+  });
+
   const getInitialFormData = (): FormData => {
     const saved = localStorage.getItem('mtds_project_form');
     return saved ? JSON.parse(saved) : {
@@ -95,13 +101,12 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   const [formData, setFormData] = useState<FormData>(getInitialFormData);
-  const [step2Data, setStep2Data] = useState<Step2Data>(getInitialStep2Data);
+  const [step2Data, setStep2Data] = useState<Step2Data>({ ...getInitialStep2Data(), motorEfficiency: '---' });
   const [tableData, setTableData] = useState<any[]>(() => {
     const saved = localStorage.getItem('mtds_project_table');
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Tự động lưu khi có thay đổi
   useEffect(() => {
     localStorage.setItem('mtds_project_form', JSON.stringify(formData));
   }, [formData]);
@@ -115,19 +120,100 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, [tableData]);
 
   useEffect(() => {
+    if (projectId) localStorage.setItem('mtds_project_id', projectId.toString());
+    else localStorage.removeItem('mtds_project_id');
+  }, [projectId]);
+
+  useEffect(() => {
     const savedUser = localStorage.getItem('mtds_user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      const decoded = JSON.parse(savedUser);
+      setUser(decoded);
+      // Đồng bộ MSSV vào form nếu chưa có
+      if (!formData.studentId) {
+        setFormData(prev => ({ ...prev, studentId: decoded.student_id, studentName: decoded.fullname }));
+      }
     }
   }, []);
+
+  const saveProject = async (currentStep: number) => {
+    // Không lưu nếu thiếu thông tin tối thiểu hoặc chưa đăng nhập
+    if (!user) {
+      console.warn("Save skipped: User not logged in");
+      return;
+    }
+    
+    if (!formData.projectName || !formData.power) {
+      console.warn("Save skipped: Project Name or Power is missing");
+      return;
+    }
+
+    // Chuyển đổi an toàn, tránh NaN
+    const payload = {
+      student_id: user.student_id,
+      project_name: formData.projectName,
+      major: formData.major || 'Cơ Kỹ Thuật',
+      instructor: formData.instructor || '',
+      power_kw: parseFloat(formData.power) || 0,
+      speed_rpm: parseFloat(formData.speed) || 0,
+      lifespan_hours: parseInt(formData.lifespan) || 0,
+      rotation_type: formData.type,
+      load_character: formData.loadCharacter,
+      work_mode: formData.workMode,
+      work_days_per_year: parseInt(formData.workDaysYear) || 360,
+      work_hours_per_day: parseInt(formData.workHoursDay) || 8,
+      load_mode: formData.loadMode,
+      current_step: currentStep,
+      // Step 2 data - Chuyển sang số và tránh NaN
+      efficiency_sigma: parseFloat(step2Data.systemEfficiency) || 0,
+      required_power_pk: parseFloat(step2Data.requiredPower) || 0,
+      preliminary_speed_nsb: parseFloat(step2Data.preliminarySpeed) || 0,
+      total_ratio_ut: parseFloat(step2Data.totalRatio) || 0,
+      belt_ratio_ud: parseFloat(step2Data.beltRatio) || 0,
+      gearbox_ratio_uh: parseFloat(step2Data.gearboxRatio) || 0,
+      u1: parseFloat(step2Data.u1) || 0,
+      u2: parseFloat(step2Data.u2) || 0,
+      motor_code: step2Data.motor,
+      motor_cos_phi: parseFloat(step2Data.cosPhi) || 0,
+      motor_t_max_tdm: parseFloat(step2Data.tMaxTdm) || 0,
+      motor_t_kd_tdm: parseFloat(step2Data.tKdTdm) || 0
+    };
+
+    console.log("Saving project payload:", payload);
+
+    try {
+      let url = 'http://localhost:3001/api/projects';
+      let method = 'POST';
+
+      if (projectId) {
+        url = `http://localhost:3001/api/projects/${projectId}`;
+        method = 'PUT';
+      }
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      const result = await res.json();
+      console.log("Save result:", result);
+      
+      if (result.success && !projectId) {
+        setProjectId(result.data.project_id);
+      }
+    } catch (error) {
+      console.error("Save failed due to network error:", error);
+    }
+  };
 
   const loadSampleData = () => {
     setFormData({
       ...formData,
       projectName: 'Hệ thống dẫn động thùng trộn',
       major: 'Cơ Kỹ Thuật',
-      studentId: '2013253',
-      studentName: 'Nguyễn Văn Học',
+      studentId: user?.student_id || '',
+      studentName: user?.fullname || '',
       instructor: 'TS. Nguyễn Duy Khương',
       power: demoData.duLieuDauVao.thungTron.congSuat.toString(),
       speed: demoData.duLieuDauVao.thungTron.soVongQuay.toString(),
@@ -135,11 +221,20 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     });
   };
 
-  const clearProjectData = () => {
+  const clearProjectData = (shouldReload = true) => {
     localStorage.removeItem('mtds_project_form');
     localStorage.removeItem('mtds_project_step2');
     localStorage.removeItem('mtds_project_table');
-    window.location.reload();
+    localStorage.removeItem('mtds_project_id');
+    
+    setProjectId(null);
+    setFormData(getInitialFormData());
+    setStep2Data(getInitialStep2Data());
+    setTableData([]);
+    
+    if (shouldReload) {
+      window.location.reload();
+    }
   };
 
   const updateFormData = (field: keyof FormData, value: string) => {
@@ -148,10 +243,10 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <DesignContext.Provider value={{
-      user, formData, setFormData, updateFormData, 
+      user, projectId, setProjectId, formData, setFormData, updateFormData, 
       step2Data, setStep2Data, 
       tableData, setTableData,
-      loadSampleData, clearProjectData
+      loadSampleData, clearProjectData, saveProject
     }}>
       {children}
     </DesignContext.Provider>
