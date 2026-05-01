@@ -109,8 +109,8 @@ export default function ProjectListPage() {
     .filter(p => p.project_name.toLowerCase().includes(searchTerm.toLowerCase()))
     .filter(p => {
       if (statusFilter === 'all') return true;
-      if (statusFilter === 'completed') return p.current_step === 6;
-      return p.current_step < 6;
+      if (statusFilter === 'completed') return p.current_step === 7;
+      return p.current_step < 7;
     })
     .sort((a, b) => {
       if (sortBy === 'nameAsc') return a.project_name.localeCompare(b.project_name);
@@ -188,8 +188,8 @@ export default function ProjectListPage() {
               <Card key={p.project_id} className="group hover:border-blue-300 transition-all duration-300 hover:shadow-xl hover:shadow-blue-100 cursor-pointer border-2 border-transparent bg-white rounded-2xl overflow-hidden shadow-sm">
                 <CardHeader className="pb-4">
                   <div className="flex justify-between items-start mb-2">
-                    <Badge className={p.current_step === 6 ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-50 text-blue-600 font-bold'}>
-                      {p.current_step === 6 ? 'Đã hoàn thành' : `Bước ${p.current_step || 1}/6`}
+                    <Badge className={p.current_step === 7 ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-50 text-blue-600 font-bold'}>
+                      {p.current_step === 7 ? 'Đã hoàn thành' : `Bước ${p.current_step || 1}/7`}
                     </Badge>
                     <button className="text-slate-300 hover:text-slate-600">
                       <MoreVertical className="w-5 h-5" />
@@ -211,16 +211,16 @@ export default function ProjectListPage() {
                   </div>
                   
                   <div className="space-y-2 pt-2">
-                     <div className="flex justify-between text-[11px] font-bold text-slate-400 uppercase">
-                        <span>Tiến độ thực hiện</span>
-                        <span>{Math.round(((p.current_step || 1) / 6) * 100)}%</span>
-                     </div>
-                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner">
-                        <div 
-                          className={`h-full transition-all duration-1000 ${p.current_step === 6 ? 'bg-emerald-500' : 'bg-blue-500'}`}
-                          style={{ width: `${((p.current_step || 1) / 6) * 100}%` }}
-                        ></div>
-                     </div>
+                      <div className="flex justify-between text-[11px] font-bold text-slate-400 uppercase">
+                         <span>Tiến độ thực hiện</span>
+                         <span>{Math.round(((p.current_step || 1) / 7) * 100)}%</span>
+                      </div>
+                      <div className="h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+                         <div 
+                           className={`h-full transition-all duration-1000 ${p.current_step === 7 ? 'bg-emerald-500' : 'bg-blue-500'}`}
+                           style={{ width: `${((p.current_step || 1) / 7) * 100}%` }}
+                         ></div>
+                      </div>
                   </div>
                 </CardContent>
                 
