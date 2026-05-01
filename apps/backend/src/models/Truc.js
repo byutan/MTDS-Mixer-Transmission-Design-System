@@ -1,9 +1,18 @@
+import {trabangvatLieu, traVatLieuTheoDieuKien} from "../utils/Bangvatlieu.js";
+import {traBangKichThuocThen} from "../utils/Bang_9_1.js"
+import {traHeSoAnhHuongUngSuatTrungBinh} from "../utils/Bang_10_7.js"
+import {traKx} from "../utils/Bang_10_8.js"
+import {traKy} from "../utils/Bang_10_9.js"
+import {traEpsilonSigma, traEpsilonTau} from "../utils/Bang_10_10.js" 
 export class Truc {
     #tenTruc
     #congSuat
     #tySoTruyen
     #soVongQuay
     #momentXoan
+    #nhanhieuthep
+    #nhietluyen
+    #dKinhTieuChuan
     /**
      * @param {{ 
      * tenTruc: string, 
@@ -11,14 +20,20 @@ export class Truc {
      * tySoTruyen: number | null, 
      * soVongQuay: number, 
      * momentXoan: number 
+     * nhanhieuthep: string,
+     * nhietluyen: string,
+     * dKinhTieuChuan: object
      * }} params
      */
-    constructor({ tenTruc, congSuat, tySoTruyen, soVongQuay, momentXoan }) {
+    constructor({ tenTruc, congSuat, tySoTruyen, soVongQuay, momentXoan, nhanhieuthep, nhietluyen, dKinhTieuChuan}) {
         this.#tenTruc = tenTruc;
         this.#congSuat = congSuat;
         this.#tySoTruyen = tySoTruyen; 
         this.#soVongQuay = soVongQuay; 
         this.#momentXoan = momentXoan; 
+        this.#nhanhieuthep = nhanhieuthep;
+        this.#nhietluyen = nhietluyen;
+        this.#dKinhTieuChuan = dKinhTieuChuan || {};
     }
     getTenTruc() {
         return this.#tenTruc
@@ -34,6 +49,29 @@ export class Truc {
     }
     getMomentXoan() {
         return this.#momentXoan
+    }
+    getNhanhieuthep(){
+        return this.#nhanhieuthep
+    }
+    getNhietluyen(){
+        return this.#nhietluyen
+    }
+    getDKinhTieuChuan(){
+        return this.#dKinhTieuChuan
+    }
+    /**
+     * Lấy đường kính tiêu chuẩn cho một tiết diện cụ thể của một trục
+     * @param {string} tenTruc - Tên trục (I, II, hoặc III)
+     * @param {string} tenTietDien - Tên tiết diện
+     * @returns {number} - Đường kính tiêu chuẩn
+     */
+    getDiameterForSection(tenTruc, tenTietDien) {
+        const trucKey = `truc${tenTruc}`;
+        const sectionDiameters = this.#dKinhTieuChuan[trucKey];
+        if (!sectionDiameters || sectionDiameters[tenTietDien] === undefined) {
+            throw new Error(`Không tìm thấy đường kính tiêu chuẩn cho trục ${tenTruc}, tiết diện ${tenTietDien}`);
+        }
+        return sectionDiameters[tenTietDien];
     }
     //----------------------------------------------Tính sơ bộ đường kính trục--------------------------------------
     /**momenxoan trên trục(N.mm)
@@ -229,7 +267,7 @@ export class Truc {
         const Mx_daithang = 0
         const My_daithang = 0
         const cothen_daithang = true
-        const dtc_daithang = 28
+        const dtc_daithang = this.getDiameterForSection("I", ten_tietdien1)
         
         const ketqua_daithang = this.Tinh_D_Tai_TietDien(ten_tietdien1, T, Mx_daithang, My_daithang, t, cothen_daithang, dtc_daithang)
         // tại A
@@ -237,21 +275,21 @@ export class Truc {
         const Mx_A = 49390.85
         const My_A = 169012.6
         const cothen_A = false
-        const dtc_A = 35
+        const dtc_A = this.getDiameterForSection("I", ten_tietdien2)
         const ketqua_A = this.Tinh_D_Tai_TietDien(ten_tietdien2, T, Mx_A, My_A, t, cothen_A, dtc_A)
         // tại B
         const ten_tietdien3 = "B"
         const Mx_B = 57901.2
         const My_B = 0
         const cothen_B = false
-        const dtc_B = 35
+        const dtc_B = this.getDiameterForSection("I", ten_tietdien3)
         const ketqua_B = this.Tinh_D_Tai_TietDien(ten_tietdien3, T, Mx_B, My_B, t, cothen_B, dtc_B)
         // tại bánh răng côn nhỏ
          const ten_tietdien4 = "Bánh răng côn nhỏ"
         const Mx_connho = 9238.35
         const My_connho = 0
         const cothen_connho = true
-        const dtc_connho = 28
+        const dtc_connho = this.getDiameterForSection("I", ten_tietdien4)
         const ketqua_connho = this.Tinh_D_Tai_TietDien(ten_tietdien4, T, Mx_connho, My_connho, t, cothen_connho, dtc_connho)
         return {
             ten_truc,
@@ -271,28 +309,28 @@ export class Truc {
         const Mx_c = 0
         const My_c = 0
         const cothen_c = false
-        const dtc_c = 40
+        const dtc_c = this.getDiameterForSection("II", ten_tietdien1)
         const ketqua_c = this.Tinh_D_Tai_TietDien(ten_tietdien1, 0, Mx_c, My_c, t, cothen_c, dtc_c)
         // tại Bánh răng trụ nhỏ
         const ten_tietdien2 = "Bánh răng trụ nhỏ"
         const Mx_Banhrangtrunho = 104837.10
         const My_Banhrangtrunho = 248803.49
         const cothen_Banhrangtrunho = true
-        const dtc_Banhrangtrunho = 45
+        const dtc_Banhrangtrunho = this.getDiameterForSection("II", ten_tietdien2)
         const ketqua_Banhrangtrunho = this.Tinh_D_Tai_TietDien(ten_tietdien2, T, Mx_Banhrangtrunho, My_Banhrangtrunho, t, cothen_Banhrangtrunho, dtc_Banhrangtrunho)
         // tại Bánh răng côn lớn
         const ten_tietdien3 = "Bánh răng côn lớn"
         const Mx_Banhrangconlon = 91879.78
         const My_Banhrangconlon = 226314.5
         const cothen_Banhrangconlon = true
-        const dtc_Banhrangconlon = 45
+        const dtc_Banhrangconlon = this.getDiameterForSection("II", ten_tietdien3)
         const ketqua_Banhrangconlon = this.Tinh_D_Tai_TietDien(ten_tietdien3, T, Mx_Banhrangconlon, My_Banhrangconlon, t, cothen_Banhrangconlon, dtc_Banhrangconlon)
         // tại D
          const ten_tietdien4 = "D"
         const Mx_D = 0
         const My_D = 0
         const cothen_D = false
-        const dtc_D = 40
+        const dtc_D = this.getDiameterForSection("II", ten_tietdien4)
         const ketqua_D = this.Tinh_D_Tai_TietDien(ten_tietdien4, 0, Mx_D, My_D, t, cothen_D, dtc_D)
         return {
             ten_truc,
@@ -312,28 +350,28 @@ export class Truc {
         const Mx_E = 0
         const My_E = 0
         const cothen_E = false
-        const dtc_E = 65
+        const dtc_E = this.getDiameterForSection("III", ten_tietdien1)
         const ketqua_E = this.Tinh_D_Tai_TietDien(ten_tietdien1, 0, Mx_E, My_E, t, cothen_E, dtc_E)
         // tại Bánh răng trụ lớn
         const ten_tietdien2 = "Bánh răng trụ lớn"
         const Mx_Banhrangtrulon = 81089.03
         const My_Banhrangtrulon = 368303.87
         const cothen_Banhrangtrulon = true
-        const dtc_Banhrangtrulon = 70
+        const dtc_Banhrangtrulon = this.getDiameterForSection("III", ten_tietdien2)
         const ketqua_Banhrangtrulon = this.Tinh_D_Tai_TietDien(ten_tietdien2, T, Mx_Banhrangtrulon, My_Banhrangtrulon, t, cothen_Banhrangtrulon, dtc_Banhrangtrulon)
         // tại F
         const ten_tietdien3 = "F"
         const Mx_F = 0
         const My_F = 433125
         const cothen_F = false
-        const dtc_F = 65
+        const dtc_F = this.getDiameterForSection("III", ten_tietdien3)
         const ketqua_F = this.Tinh_D_Tai_TietDien(ten_tietdien3, T, Mx_F, My_F, t, cothen_F, dtc_F)
         // tại Khớp nối
          const ten_tietdien4 = "Khớp nối"
         const Mx_Khopnoi = 0
         const My_Khopnoi = 0
         const cothen_Khopnoi = true
-        const dtc_Khopnoi = 60
+        const dtc_Khopnoi = this.getDiameterForSection("III", ten_tietdien4)
         const ketqua_Khopnoi = this.Tinh_D_Tai_TietDien(ten_tietdien4, T, Mx_Khopnoi, My_Khopnoi, t, cothen_Khopnoi, dtc_Khopnoi)
         return {
             ten_truc,
@@ -343,46 +381,71 @@ export class Truc {
             ketqua_Khopnoi
         };
     }
-    //--------------------------------Kiểm nghiệm độ bền mỏi----------------------------------
-    /**
-     * 
-     */
-    Tinh_gioimoiuon(g_b){
-        const g_1 = 0.436 * g_b
-        return g_1
+   tinhBangDuongKinhTheoMomenTuongDuong() {
+        switch (this.getTenTruc()) {
+            case "I":
+                return this.tinhBangDuongKinhTheoMomenTuongDuong_trucI()
+            case "II":
+                return this.tinhBangDuongKinhTheoMomenTuongDuong_trucII()
+            case "III":
+                return this.tinhBangDuongKinhTheoMomenTuongDuong_trucIII()
+            default:
+                throw new Error("Loại trục không hợp lệ!")
+        }
     }
+//--------------------------------Kiểm nghiệm độ bền mỏi----------------------------------
     /**
-     * 
-     */
-    Tinh_gioihanmoixoan(g_1){
-        const T_1 = 0.58 * g_1
-        return T_1
-    }
-    /**
-     * 
+     * công thức 4.14 trang 64
      */
     Tinh_biendoungsuatphap(Mj, Wj){
-        const g_aj = Mj/Wj
-        return g_aj
+        if(Mj != 0 && Wj != 0){
+            const g_aj = Mj/Wj
+            return g_aj
+        }
+        else return '-'
     }
     /**
-     * 
+     * công thức 4.15 trang 64
      */
-    Tinh_momentuongtong(Mx,My){
-        const trong_can = Math.pow(Mx,2) + Math.pow(My,2)
+    Tinh_momentuongtong(Mxj,Myj){
+        const trong_can = Math.pow(Mxj,2) + Math.pow(Myj,2)
         const Mj = Math.sqrt(trong_can)
+        return Mj
     }
     /**
-     * 
+     * công thức 4.16 trang 65
      */
     Tinh_momentchonguon(b, t1, dj, tj){
-        const tu = b*t1*pow((dj-tj),2)
+        const part_1 = (Math.PI * Math.pow(dj,3)) / 32
+        const tu = b*t1*Math.pow((dj-tj),2)
         const mau = 2*dj
-        const W_oj= tu/mau
-        return W_oj
+        const part_2= tu/mau
+        const W_j = part_1 - part_2
+        return W_j
     }
     /**
-     * 
+     * công thức 4.17 trang 65
+     */
+    Tinh_Taj(Woj,T){
+        if (Woj != 0 && T !=0){
+            const T_aj = T / (2*Woj)
+            return T_aj
+        }
+        else return '-'
+    }
+    /**
+     * công thức 4.18 trang 65
+     */
+    Tinh_Woj(b, t1, dj, tj){
+         const part_1 = (Math.PI * Math.pow(dj,3)) / 16
+        const tu = b*t1*Math.pow((dj-tj),2)
+        const mau = 2*dj
+        const part_2= tu/mau
+        const Woj = part_1 - part_2
+        return Woj
+    }
+    /**
+     * công thức 4.19 trang 65
      */
     Tinh_heso_Kgdj(Kg, eg, Kx, Ky){
         const tu = (Kg/eg) + Kx - 1
@@ -390,20 +453,15 @@ export class Truc {
         return K_gdj
     }
     /**
-     * 
+     * công thức 4.20 trang 64
      */
     Tinh_heso_Ktdj(Kt, et, Kx, Ky){
-        
+        const tu = (Kt/et) + Kx -1
+        const K_tdj = tu / Ky
+        return K_tdj
     }
      /**
-     * Hệ số an toàn ứng suất pháp
-     * S_gj là hệ số an toàn uốn
-     * g_1 là giới hạn mỏi uốn (Mpa)
-     * g-aj là biên độ ứng suất pháp (Mpa)
-     * g_mj là ứng suất trung bình (Mpa)
-     * K_gdj là Hệ số giảm giới hạn mỏi
-     * W_g là Hệ số ảnh hưởng của ứng suất trung bình
-     * psi là Hệ số xét đến ảnh hưởng của ứng suất trung bình đến giới hạn mỏi của vật liệu
+     * công thức 4.10 trang 64
      */
     Tinh_hesoantoanuon(g_1, K_gdj, g_aj, W_g, g_mj){
         const mau = K_gdj * g_aj + W_g * g_mj
@@ -411,17 +469,14 @@ export class Truc {
         return S_gj
     }
     /**
-     * 
+     * công thức 4.11 trang 64
      */
-    Tinh_hesoantoanxoan(T_1, K_tdj, T_aj, W_r, T_mj){
-        const mau = K_tdj * T_aj + W_r * T_mj
+    Tinh_hesoantoanxoan(T_1, K_tdj, T_aj, W_t, T_mj){
+        const mau = K_tdj * T_aj + W_t * T_mj
         const S_tj = T_1/ mau
         return S_tj
     }
     /**
-     * Sj là Hệ số an toàn tổng
-     * S_gj là hệ số an toàn uốn
-     * S_tj là hệ số an toàn xoắn
      * công thức trang 63 4.9
      */
     Tinh_HSAT(S_gj, S_tj){
@@ -430,5 +485,410 @@ export class Truc {
         const Sj = tu/mau
         return Sj
     }
+    
+//=================================================================================================================
+    Tinh_bang_4_5_taimoitietdien(Tietdien,Mx,My,cothen,d,T){
+        const result = traBangKichThuocThen(d,"9.1a")
+        let b,t1
+        if (cothen==false) {
+            b = 0
+            t1= 0
+        }
+        else { ({b,t1} = result)}
+        const Wj = this.Tinh_momentchonguon(b,t1,d,t1)
+        const Woj = this.Tinh_Woj(b,t1,d,t1)
+        const Mj = this.Tinh_momentuongtong(Mx,My)
+        const Tj = T
+        const g_aj = this.Tinh_biendoungsuatphap(Mj,Wj)
+        const T_aj = this.Tinh_Taj(Woj,T)
+        if (g_aj != '-'&& T_aj != '-'){
+            return{
+                "Tietdientai": Tietdien,
+                "Wj": Number(Wj.toFixed(2)) ,
+                "Woj": Number(Woj.toFixed(2)),
+                "Mj": Number(Mj.toFixed(2)),
+                "Tj": Number(Tj.toFixed(2)),
+                "g_aj": Number(g_aj.toFixed(2)),
+                "T_aj": Number(T_aj.toFixed(2))
+            }
+        }
+        else {
+            return{
+            "Tietdientai": Tietdien,
+            "Wj": Number(Wj.toFixed(2)) ,
+            "Woj": Number(Woj.toFixed(2)),
+            "Mj": Number(Mj.toFixed(2)),
+            "Tj": Number(Tj.toFixed(2)),
+            "g_aj": g_aj,
+            "T_aj": T_aj
+            }
+        }
+    }
+    /**
+     * BẢNG 4.5: Kiểm nghiệm độ bền mỏi của Trục I
+     * Tính toán W_j, W_oj, M_j, T_j, sigma_aj, tau_aj cho 3 tiết diện
+     */
+    kiemnghiemdobentrucI() {
+        //tiết diện bánh đai thang lớn
+        const result = this.tinhBangDuongKinhTheoMomenTuongDuong()
+        const tietdien1 = result.ketqua_daithang
+        let cothen 
+        if (tietdien1.Dtang11!='-') cothen = true 
+        else cothen = false
+        const result_tietdien1 = this.Tinh_bang_4_5_taimoitietdien(tietdien1.Tietdientai, 0, 0, cothen, tietdien1.Dtieuchuan, this.getMomentXoan())
+        // tiết diện ổ lăn
+        const tietdien2 = result.ketqua_A
+        if (tietdien2.Dtang11!='-') cothen = true 
+        else cothen = false
+        const result_tietdien2 = this.Tinh_bang_4_5_taimoitietdien("ổ lăn", 49390.85, 169012.6, cothen, tietdien2.Dtieuchuan, this.getMomentXoan())
+        // tiết diện bánh răng côn nhỏ
+        const tietdien3 = result.ketqua_connho
+          if (tietdien3.Dtang11!='-') cothen = true 
+        else cothen = false
+        const result_tietdien3 = this.Tinh_bang_4_5_taimoitietdien(tietdien3.Tietdientai, 9238.5, 0, cothen,tietdien3.Dtieuchuan, this.getMomentXoan())
+        return{
+            "TenTruc": this.getTenTruc(),
+            result_tietdien1,
+            result_tietdien2,
+            result_tietdien3
+        }
+    }
+    kiemnghiemdobentrucII() {
+        //tiết diện bánh răng trụ nhỏ
+        const result = this.tinhBangDuongKinhTheoMomenTuongDuong()
+        const tietdien1 = result.ketqua_Banhrangtrunho
+        let cothen 
+        if (tietdien1.Dtang11!='-') cothen = true 
+        else cothen = false
+        const result_tietdien1 = this.Tinh_bang_4_5_taimoitietdien(tietdien1.Tietdientai, 104837.10, 248803.49, cothen, tietdien1.Dtieuchuan, this.getMomentXoan())
+        // tiết diện ổ lăn
+        const tietdien2 = result.ketqua_c
+        if (tietdien2.Dtang11!='-') cothen = true 
+        else cothen = false
+        const result_tietdien2 = this.Tinh_bang_4_5_taimoitietdien("ổ lăn", 0, 0, cothen, tietdien2.Dtieuchuan, 0)
+        // tiết diện bánh răng côn lớn
+        const tietdien3 = result.ketqua_Banhrangconlon
+          if (tietdien3.Dtang11!='-') cothen = true 
+        else cothen = false
+        const result_tietdien3 = this.Tinh_bang_4_5_taimoitietdien(tietdien3.Tietdientai, 91879.78, 226314.5, cothen,tietdien3.Dtieuchuan, this.getMomentXoan())
+        return{
+            "TenTruc": this.getTenTruc(),
+            result_tietdien1,
+            result_tietdien2,
+            result_tietdien3
+        }
+    }
+    kiemnghiemdobentrucIII() {
+        //tiết diện bánh răng trụ lớn
+        const result = this.tinhBangDuongKinhTheoMomenTuongDuong()
+        const tietdien1 = result.ketqua_Banhrangtrulon
+        let cothen 
+        if (tietdien1.Dtang11!='-') cothen = true 
+        else cothen = false
+        const result_tietdien1 = this.Tinh_bang_4_5_taimoitietdien(tietdien1.Tietdientai, 81089.03, 368303.87, cothen, tietdien1.Dtieuchuan, this.getMomentXoan())
+        // tiết diện ổ lăn
+        const tietdien2 = result.ketqua_F
+        if (tietdien2.Dtang11!='-') cothen = true 
+        else cothen = false
+        const result_tietdien2 = this.Tinh_bang_4_5_taimoitietdien("ổ lăn", 0, 433125, cothen, tietdien2.Dtieuchuan, this.getMomentXoan())
+        // tiết diện khớp nối
+        const tietdien3 = result.ketqua_Khopnoi
+          if (tietdien3.Dtang11!='-') cothen = true 
+        else cothen = false
+        const result_tietdien3 = this.Tinh_bang_4_5_taimoitietdien(tietdien3.Tietdientai, 0, 0, cothen,tietdien3.Dtieuchuan, this.getMomentXoan())
+        return{
+            "TenTruc": this.getTenTruc(),
+            result_tietdien1,
+            result_tietdien2,
+            result_tietdien3
+        }
+    }
+    Kiemnghiemdobentruc() {
+            switch (this.getTenTruc()) {
+                case "I":
+                    return this.kiemnghiemdobentrucI()
+                case "II":
+                    return this.kiemnghiemdobentrucII()
+                case "III":
+                    return this.kiemnghiemdobentrucIII()
+                default:
+                    throw new Error("Loại trục không hợp lệ!")
+            }
+        }
+//============================================================================================================================
+// Bảng 4.6 - Kiểm nghiệm hệ số an toàn mỏi
+    layThongTinVatLieu() {
+        const vatlieu = trabangvatLieu(this.getNhanhieuthep(), this.getNhietluyen());
+        if (!vatlieu) {
+            throw new Error(`Không tìm thấy vật liệu với nhanhieuthep=${this.getNhanhieuthep()}, nhietluyen=${this.getNhietluyen()}`);
+        }
+        return vatlieu;
+    }
+    tinhGioiHanMoi( sigmaB) {
+        const sigma_minus_1 = 0.436 *  sigmaB;
+        const tau_minus_1 = 0.58 * sigma_minus_1;
+        return { sigma_minus_1, tau_minus_1 };
+    }
+    tinhHesoAnhHuongUngSuatTrungBinh(sigmaB) {
+        const ketQua = traHeSoAnhHuongUngSuatTrungBinh(sigmaB);
+        return { W_g: ketQua.W_g, W_t: ketQua.W_t };
+    }
 
+    tinhBang_4_6_TaiTietDien(tenTietDien,Mx, My, dtc,coThen,T,phuongPhapGiaCong,phuongPhapTangBen) {
+        // Lấy vật liệu
+        const vatlieu = this.layThongTinVatLieu();
+        // 1. Tính epsilon (εσ, ετ) - Hệ số chế độ bề mặt (từ bảng 10.10)
+        const epsilonSigma = traEpsilonSigma(dtc, "thep_carbon");
+        const epsilonTau = traEpsilonTau(dtc);
+
+        // 2. Tính Kσ, Kτ (Hệ số tập trung ứng suất từ bảng 10.8 và 10.9)
+        let Kx, Ky;
+        try {
+            Kx = traKx(phuongPhapGiaCong, vatlieu.gioihanben);
+        } catch (e) {
+            Kx = 1.95; // Giá trị mặc định nếu không tìm thấy
+        }
+
+        try {
+            Ky = traKy({
+                phuongPhapTangBenBeMat: phuongPhapTangBen,
+                sigmaBLoi: vatlieu.gioihanben,
+                nhomTruc: "trucNhan",
+                cachChon: "min"
+            });
+        } catch (e) {
+            Ky = 1.8; // Giá trị mặc định nếu không tìm thấy
+        }
+
+        // 3. Tính Kσdj, Kτdj (Hệ số kích thước bề mặt)
+        const { W_g, W_t } = this.tinhHesoAnhHuongUngSuatTrungBinh( vatlieu.gioihanben);
+        const heSoKx = 1;
+        const heSoKy = 1.35;
+        const Kx_dj = this.Tinh_heso_Kgdj(Kx, epsilonSigma, heSoKx, heSoKy);
+        const Ky_dj = this.Tinh_heso_Ktdj(Ky, epsilonTau, heSoKx, heSoKy);
+
+        // 4. Tính giới hạn mỏi
+        const { sigma_minus_1, tau_minus_1 } = this.tinhGioiHanMoi( vatlieu.gioihanben);
+
+        // 5. Tính Wj và Woj (Moment chống uốn và xoắn)
+        let b = 0, t1 = 0;
+        if (coThen) {
+            const then = traBangKichThuocThen(dtc, "9.1a");
+            b = then.b;
+            t1 = then.t1;
+        }
+
+        const Wj = this.Tinh_momentchonguon(b, t1, dtc, t1);
+        const Woj = this.Tinh_Woj(b, t1, dtc, t1);
+
+        // 6. Tính Mj (Moment uốn tổng)
+        const Mj = this.Tinh_momentuongtong(Mx, My);
+
+        // 7. Tính ứng suất thay đổi
+        const sigma_aj = this.Tinh_biendoungsuatphap(Mj, Wj);
+        const tau_aj = this.Tinh_Taj(Woj, T);
+
+        // 8. Tính hệ số an toàn
+        let sigma_j_safety = "-";
+        let tau_j_safety = "-";
+        let combined_safety = "-";
+
+        if (sigma_aj !== "-" && tau_aj !== "-") {
+            sigma_j_safety = Number(this.Tinh_hesoantoanuon(sigma_minus_1, Kx_dj, sigma_aj, W_g, sigma_minus_1).toFixed(2));
+            tau_j_safety = Number(this.Tinh_hesoantoanxoan(tau_minus_1, Ky_dj, tau_aj, W_t, tau_minus_1).toFixed(2));
+            combined_safety = this.Tinh_HSAT(sigma_j_safety, tau_j_safety);
+            combined_safety = Number(combined_safety.toFixed(2));
+        } else if (sigma_aj !== "-") {
+            sigma_j_safety = Number(this.Tinh_hesoantoanuon(sigma_minus_1, Kx_dj, sigma_aj, W_g, sigma_minus_1).toFixed(2));
+        } else if (tau_aj !== "-") {
+            tau_j_safety = Number(this.Tinh_hesoantoanxoan(tau_minus_1, Ky_dj, tau_aj, W_t, tau_minus_1).toFixed(2));
+        }
+
+        return {
+            "Tietdientai": tenTietDien,
+            "εσ": Number(epsilonSigma.toFixed(3)),
+            "ετ": Number(epsilonTau.toFixed(3)),
+            "Kσ": Kx,
+            "Kτ": Ky,
+            "Kσdj": Number(Kx_dj.toFixed(2)),
+            "Kτdj": Number(Ky_dj.toFixed(2)),
+            "sσj": sigma_j_safety,
+            "sτj": tau_j_safety,
+            "s": combined_safety
+        };
+    }
+    /**
+     * Kiểm nghiệm hệ số an toàn mỏi cho Trục I
+     * Bảng 4.6: Kiểm nghiệm độ bền mỏi
+     */
+    kiemnghiemHesoAnToaTrucI() {
+        const T = this.#momentXoan;
+        const ten_truc = this.#tenTruc;
+        const result = this.tinhBangDuongKinhTheoMomenTuongDuong()
+        // Tiết diện bánh đai thang lớn
+        const tietdien1 = result.ketqua_daithang
+        let cothen 
+        if (tietdien1.Dtang11!='-') cothen = true 
+        else cothen = false
+        const ketqua_tietdien1 = this.tinhBang_4_6_TaiTietDien(tietdien1.Tietdientai, 0, 0, tietdien1.Dtieuchuan, cothen, this.getMomentXoan());
+        // Tiết diện Ổ lăn (điểm A)
+        const tietdien2 = result.ketqua_A
+        if (tietdien2.Dtang11!='-') cothen = true 
+        else cothen = false
+        const ketqua_tietdien2 = this.tinhBang_4_6_TaiTietDien("ổ lăn", 49390.85, 169012.6, tietdien2.Dtieuchuan, cothen, this.getMomentXoan());
+        // Tiết diện bánh răng côn nhỏ
+        const tietdien3 = result.ketqua_connho
+        if (tietdien3.Dtang11!='-') cothen = true 
+        else cothen = false
+        const ketqua_tietdien3 = this.tinhBang_4_6_TaiTietDien(tietdien3.Tietdientai, 9238.5, 0, tietdien3.Dtieuchuan, cothen, this.getMomentXoan());
+        return {
+            "ten_truc": ten_truc,
+            ketqua_tietdien1,
+            ketqua_tietdien2,
+            ketqua_tietdien3
+        };
+    }
+
+    /**
+     * Kiểm nghiệm hệ số an toàn mỏi cho Trục II
+     * Bảng 4.6: Kiểm nghiệm độ bền mỏi
+     */
+    kiemnghiemHesoAnToaTrucII() {
+        const T = this.#momentXoan;
+        const ten_truc = this.#tenTruc;
+        const result = this.tinhBangDuongKinhTheoMomenTuongDuong()
+        //tiết diện bánh răng trụ nhỏ
+        const tietdien1 = result.ketqua_Banhrangtrunho
+        let cothen 
+        if (tietdien1.Dtang11!='-') cothen = true 
+        else cothen = false
+        const ketqua_tietdien1 = this.tinhBang_4_6_TaiTietDien(tietdien1.Tietdientai, 104837.10, 248803.49, tietdien1.Dtieuchuan, cothen, this.getMomentXoan());
+        // tiết diện ổ lăn
+        const tietdien2 = result.ketqua_c
+        if (tietdien2.Dtang11!='-') cothen = true 
+        else cothen = false
+        const ketqua_tietdien2 = this.tinhBang_4_6_TaiTietDien("ổ lăn", 0, 0, tietdien2.Dtieuchuan, cothen, this.getMomentXoan());
+        // tiết diện bánh răng côn lớn
+        const tietdien3 = result.ketqua_Banhrangconlon
+        if (tietdien3.Dtang11!='-') cothen = true 
+        else cothen = false
+        const ketqua_tietdien3 = this.tinhBang_4_6_TaiTietDien(tietdien3.Tietdientai, 91879.78, 226314.5, tietdien3.Dtieuchuan, cothen, this.getMomentXoan());
+        return {
+            "ten_truc": ten_truc,
+            ketqua_tietdien1,
+            ketqua_tietdien2,
+            ketqua_tietdien3
+        };
+    }
+
+    /**
+     * Kiểm nghiệm hệ số an toàn mỏi cho Trục III
+     * Bảng 4.6: Kiểm nghiệm độ bền mỏi
+     */
+    kiemnghiemHesoAnToaTrucIII() {
+        const T = this.#momentXoan;
+        const ten_truc = this.#tenTruc;
+        const result = this.tinhBangDuongKinhTheoMomenTuongDuong()
+        // tiết diện bánh răng trụ lớn
+        const tietdien1 = result.ketqua_Banhrangtrulon
+        let cothen 
+        if (tietdien1.Dtang11!='-') cothen = true 
+        else cothen = false
+        const ketqua_tietdien1 = this.tinhBang_4_6_TaiTietDien(tietdien1.Tietdientai, 81089.03, 368303.87, tietdien1.Dtieuchuan, cothen,this.getMomentXoan())
+        // tiết diện ổ lăn
+        const tietdien2 = result.ketqua_F
+        if (tietdien2.Dtang11!='-') cothen = true 
+        else cothen = false
+        const ketqua_tietdien2 = this.tinhBang_4_6_TaiTietDien("ổ lăn", 0, 433125, tietdien1.Dtieuchuan, cothen, this.getMomentXoan())
+        // tiết diện khớp nối
+        const tietdien3 = result.ketqua_Khopnoi
+        if (tietdien3.Dtang11!='-') cothen = true 
+        else cothen = false
+        const ketqua_tietdien3 = this.tinhBang_4_6_TaiTietDien(tietdien3.Tietdientai, 0, 0, tietdien1.Dtieuchuan, cothen, this.getMomentXoan())
+        return {
+            "ten_truc": ten_truc,
+            ketqua_tietdien1,
+            ketqua_tietdien2,
+            ketqua_tietdien3
+        };
+    }
+
+    /**
+     * Kiểm nghiệm hệ số an toàn mỏi - Router
+     */
+    kiemnghiemHesoAnToa() {
+        switch (this.getTenTruc()) {
+            case "I":
+                return this.kiemnghiemHesoAnToaTrucI();
+            case "II":
+                return this.kiemnghiemHesoAnToaTrucII();
+            case "III":
+                return this.kiemnghiemHesoAnToaTrucIII();
+            default:
+                throw new Error("Loại trục không hợp lệ!");
+        }
+    }
+//==================================================================================================
+    Tinh_g(Mmax,d){
+        return Mmax/ (0.1 * Math.pow(d,3))
+    }
+    Tinh_T(Tmax,d){
+        return Tmax/ (0.2 * Math.pow(d,3))
+    }
+    Tinh_gtd(g,t){
+        const trongcan = Math.pow(g,2) + 3*Math.pow(t,2)
+        return Math.sqrt(trongcan)
+    }
+    Tinh_bangkiemnghiemdobenquatai(result,tentruc){
+        const mangTietDien = [
+            result.result_tietdien1,
+            result.result_tietdien2,
+            result.result_tietdien3
+        ];
+
+        const tietDienMax = mangTietDien.reduce((max, current) => current.Mj > max.Mj ? current : max);
+
+        const Mmax = Number(tietDienMax.Mj);
+        let tenTietDienMax = tietDienMax.Tietdientai;
+        if (tenTietDienMax === "ổ lăn" && this.getTenTruc()==='I') {
+            tenTietDienMax = "A";
+        } else if (tenTietDienMax === "ổ lăn" && this.getTenTruc()==='II') {
+            tenTietDienMax = "C";
+        } else if (tenTietDienMax === "ổ lăn" && this.getTenTruc()==='III') {
+            tenTietDienMax = "F";
+        }
+        const ketqua = this.tinhBangDuongKinhTheoMomenTuongDuong();
+        const mangKetQua = Object.values(ketqua);
+
+        const ketQuaTuongUng = mangKetQua.find(kq => kq &&typeof kq === "object" &&kq.Tietdientai === tenTietDienMax);
+
+        const d = Number(ketQuaTuongUng?.Dtieuchuan);
+        const Tmax = Number(this.getMomentXoan());
+
+        if (!d || isNaN(d)) {
+            throw new Error(`Không tìm được Dtieuchuan cho tiết diện: ${tenTietDienMax}`);
+        }
+
+        const g = this.Tinh_g(Mmax, d);
+        const t = this.Tinh_T(Tmax, d);
+        const gtd = this.Tinh_gtd(g, t);
+
+        return {
+            tentruc,
+            d,
+            Mmax: Mmax.toFixed(2),
+            Tmax: Tmax.toFixed(2),
+            g: g.toFixed(2),
+            t: t.toFixed(2),
+            gtd: gtd.toFixed(2),
+        };
+    }
+    kiemnghiemdobenquatai(){
+        const tentruc = this.getTenTruc()
+        const result = this.Kiemnghiemdobentruc()
+        const ketqua_kiemnghiem = this.Tinh_bangkiemnghiemdobenquatai(result,tentruc)
+        return ketqua_kiemnghiem
+    }
 }
+
+

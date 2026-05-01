@@ -8,112 +8,200 @@ export const VAT_LIEU_THEO_DO_CUNG = [
         nhietLuyen: "Tôi cải thiện",
         kichThuoc: 60,
         doRan: "HB 192 .. 228",
-        gioiHanBenUon: 700,    // MPa
-        gioiHanBenCat: 400      // MPa
+        gioihanben: 700,    // MPa
+        gioihanchay: 400      // MPa
     },
     {
         nhanHieu: "45",
         nhietLuyen: "Thường hóa",
         kichThuoc: 80,
         doRan: "HB 170 .. 217",
-        gioiHanBenUon: 600,
-        gioiHanBenCat: 340
+        gioihanben: 600,
+        gioihanchay: 340
+    },
+    {
+        nhanHieu: "45",
+        nhietLuyen: "Tôi cải thiện",
+        kichThuoc: 100,
+        doRan: "HB 192 .. 240",
+        gioihanben: 750,
+        gioihanchay: 450
+    },
+    {
+        nhanHieu: "45",
+        nhietLuyen: "Tôi cải thiện",
+        kichThuoc: 60,
+        doRan: "HB 241 .. 285",
+        gioihanben: 850,
+        gioihanchay: 580
     },
     {
         nhanHieu: "50",
         nhietLuyen: "Thường hóa",
         kichThuoc: 80,
         doRan: "HB 179 .. 228",
-        gioiHanBenUon: 640,
-        gioiHanBenCat: 350
+        gioihanben: 640,
+        gioihanchay: 350
+    },
+    {
+        nhanHieu: "50",
+        nhietLuyen: "Tôi cải thiện",
+        kichThuoc: 80,
+        doRan: "HB 228 .. 255",
+        gioihanben: 700|800,
+        gioihanchay: 530
     },
     {
         nhanHieu: "40X",
         nhietLuyen: "Tôi cải thiện",
         kichThuoc: 100,
         doRan: "HB 230 .. 260",
-        gioiHanBenUon: 850,
-        gioiHanBenCat: 550
+        gioihanben: 850,
+        gioihanchay: 550
+    },
+    {
+        nhanHieu: "40X",
+        nhietLuyen: "Tôi cải thiện",
+        kichThuoc: 60,
+        doRan: "HB 260 .. 280",
+        gioihanben: 950,
+        gioihanchay: 700
+    },
+    {
+        nhanHieu: "40X",
+        nhietLuyen: "Thấm nito",
+        kichThuoc: 60,
+        doRan: "HB 50 .. 59",
+        gioihanben: 1000,
+        gioihanchay: 800
+    },
+    {
+        nhanHieu: "45X",
+        nhietLuyen: "Tôi cải thiện",
+        kichThuoc: 100,
+        doRan: "HB 230 .. 280",
+        gioihanben: 850,
+        gioihanchay: 650
     },
     {
         nhanHieu: "45X",
         nhietLuyen: "Tôi cải thiện",
         kichThuoc: "100 .. 300",
         doRan: "HB 163 .. 269",
-        gioiHanBenUon: 850,
-        gioiHanBenCat: 650
+        gioihanben: 750,
+        gioihanchay: 500
+    },
+    {
+        nhanHieu: "45X",
+        nhietLuyen: "Tôi cải thiện",
+        kichThuoc: 300|500,
+        doRan: "HB 163 .. 269",
+        gioihanben: 700,
+        gioihanchay: 450
+    },
+    {
+        nhanHieu: "40XH",
+        nhietLuyen: "Tôi cải thiện",
+        kichThuoc: 100,
+        doRan: "HB 230 .. 300",
+        gioihanben: 850,
+        gioihanchay: 600
     },
     {
         nhanHieu: "40XH",
         nhietLuyen: "Tôi cải thiện",
         kichThuoc: "100 .. 300",
-        doRan: "HB 230 .. 280",
-        gioiHanBenUon: 850,
-        gioiHanBenCat: 600
+        doRan: "HB >= 241",
+        gioihanben: 800,
+        gioihanchay: 580
+    },
+    {
+        nhanHieu: "40XH",
+        nhietLuyen: "Tôi",
+        kichThuoc: 40,
+        doRan: "HRC 48 .. 54",
+        gioihanben: 1600,
+        gioihanchay: 1400
     },
     {
         nhanHieu: "35XM",
         nhietLuyen: "Tôi cải thiện",
         kichThuoc: 100,
         doRan: "HB 241",
-        gioiHanBenUon: 900,
-        gioiHanBenCat: 800
+        gioihanben: 900,
+        gioihanchay: 800
+    },
+    {
+        nhanHieu: "35XM",
+        nhietLuyen: "Tôi cải thiện",
+        kichThuoc: 50,
+        doRan: "HB 269",
+        gioihanben: 900,
+        gioihanchay: 800
+    },
+    {
+        nhanHieu: "35XM",
+        nhietLuyen: "Tôi cải thiện",
+        kichThuoc: 40,
+        doRan: "HRC 45 .. 53",
+        gioihanben: 1600,
+        gioihanchay: 1400
     },
     {
         nhanHieu: "20X",
         nhietLuyen: "Thấm cabon",
         kichThuoc: 60,
         doRan: "HRC 46 .. 53",
-        gioiHanBenUon: 650,
-        gioiHanBenCat: 400
+        gioihanben: 650,
+        gioihanchay: 400
     },
     {
         nhanHieu: "12XH3A",
         nhietLuyen: "Thấm cabon",
         kichThuoc: 60,
         doRan: "HRC 56 .. 63",
-        gioiHanBenUon: 900,
-        gioiHanBenCat: 700
+        gioihanben: 900,
+        gioihanchay: 700
     },
     {
         nhanHieu: "25XRT",
         nhietLuyen: "Thấm cabon",
         kichThuoc: '-',
         doRan: "HRC 58 .. 63",
-        gioiHanBenUon: 1150,
-        gioiHanBenCat: 950
+        gioihanben: 1150,
+        gioihanchay: 950
     },
     {
         nhanHieu: "45JI",
         nhietLuyen: "Thường hoá",
         kichThuoc: "-",
         doRan: "-",
-        gioiHanBenUon: 550,
-        gioiHanBenCat: 320
+        gioihanben: 550,
+        gioihanchay: 320
     },
     {
         nhanHieu: "30XHMJI",
         nhietLuyen: "Thường hoá",
         kichThuoc: "-",
         doRan: "-",
-        gioiHanBenUon: 700,
-        gioiHanBenCat: 550
+        gioihanben: 700,
+        gioihanchay: 550
     },
     {
         nhanHieu: "40XJI",
         nhietLuyen: "Thường hoá",
         kichThuoc: "-",
         doRan: "-",
-        gioiHanBenUon: 650,
-        gioiHanBenCat: 500
+        gioihanben: 650,
+        gioihanchay: 500
     },
     {
         nhanHieu: "35XMJI",
         nhietLuyen: "Thường hoá",
         kichThuoc: '-',
         doRan: '-',
-        gioiHanBenUon: 700,
-        gioiHanBenCat: 550
+        gioihanben: 700,
+        gioihanchay: 550
     }
 ];
 
@@ -290,8 +378,59 @@ export const HANG_SO = {
 /**
  * Lấy vật liệu theo nhân hiệu
  */
-export const layVatLieu = (nhanHieu) => {
-    return VAT_LIEU_THEO_DO_CUNG.find(vl => vl.nhanHieu === nhanHieu);
+export const trabangvatLieu = (nhanHieu, nhietluyen) => {
+    return VAT_LIEU_THEO_DO_CUNG.find(vl => vl.nhanHieu === nhanHieu && vl.nhietLuyen === nhietluyen);
+};
+
+const VAT_LIEU_BO_SUNG = [
+    {
+        nhanHieu: "45",
+        nhietLuyen: "Toi cai thien",
+        kichThuoc: 100,
+        doRan: "HB 192 .. 240",
+        gioihanben: 750,
+        gioihanchay: 450
+    }
+];
+
+const kichThuocPhuHop = (kichThuocBang, kichThuocCanTra) => {
+    if (kichThuocBang === "-" || kichThuocBang == null) {
+        return true;
+    }
+
+    if (typeof kichThuocBang === "number") {
+        return kichThuocCanTra <= kichThuocBang;
+    }
+
+    if (typeof kichThuocBang === "string" && kichThuocBang.includes("..")) {
+        const [min, max] = kichThuocBang
+            .split("..")
+            .map((giaTri) => Number(giaTri.trim()));
+
+        return kichThuocCanTra >= min && kichThuocCanTra <= max;
+    }
+
+    return false;
+};
+
+export const traVatLieuTheoDieuKien = ({ nhanHieu, nhietLuyen, kichThuocCanTra }) => {
+    const danhSachVatLieu = [...VAT_LIEU_THEO_DO_CUNG, ...VAT_LIEU_BO_SUNG];
+
+    return danhSachVatLieu.find((vatLieu) => {
+        if (nhanHieu && vatLieu.nhanHieu !== nhanHieu) {
+            return false;
+        }
+
+        if (nhietLuyen && vatLieu.nhietLuyen !== nhietLuyen) {
+            return false;
+        }
+
+        if (typeof kichThuocCanTra === "number") {
+            return kichThuocPhuHop(vatLieu.kichThuoc, kichThuocCanTra);
+        }
+
+        return true;
+    });
 };
 
 /**
