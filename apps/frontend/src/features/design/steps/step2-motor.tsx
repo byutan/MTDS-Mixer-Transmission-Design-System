@@ -78,6 +78,11 @@ export default function Step2Motor() {
 
   // Hàm xử lý khi thay đổi u_d (Tỉ số truyền đai)
   const handleBeltRatioChange = (val: string) => {
+    // Validation: tối đa 1 tỷ, không số âm, chỉ cho phép số/dấu chấm
+    if (val !== '' && !/^\d*\.?\d*$/.test(val)) return;
+    if (parseFloat(val) > 1000000000) return;
+    if (parseFloat(val) < 0) return;
+
     const ud = parseFloat(val) || 0;
     const ut = parseFloat(step2Data.totalRatio) || 41.74;
     
@@ -98,6 +103,11 @@ export default function Step2Motor() {
 
   // Hàm xử lý khi thay đổi u_1 (Cấp nhanh côn)
   const handleU1Change = (val: string) => {
+    // Validation: tối đa 1 tỷ, không số âm, chỉ cho phép số/dấu chấm
+    if (val !== '' && !/^\d*\.?\d*$/.test(val)) return;
+    if (parseFloat(val) > 1000000000) return;
+    if (parseFloat(val) < 0) return;
+
     const u1 = parseFloat(val) || 0;
     const uh = parseFloat(step2Data.gearboxRatio) || 0;
     

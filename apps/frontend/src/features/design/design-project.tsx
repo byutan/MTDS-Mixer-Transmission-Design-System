@@ -10,9 +10,10 @@ const steps = [
   { number: 2, title: 'Động cơ', label: 'Động cơ', path: 'step-2' },
   { number: 3, title: 'Bộ truyền đai', label: 'Bộ truyền đai', path: 'step-3' },
   { number: 4, title: 'Hộp giảm tốc', label: 'Hộp giảm tốc', path: 'step-4' },
-  { number: 5, title: 'Thiết kế trục', label: 'Thiết kế trục', path: 'step-5' },
+  { number: 5, title: 'Trục', label: 'Trục', path: 'step-5' },
   { number: 6, title: 'Ổ lăn', label: 'Ổ lăn', path: 'step-6' },
-]
+  { number: 7, title: 'Vỏ hộp giảm tốc', label: 'Vỏ hộp giảm tốc', path: 'step-7' },
+];
 
 export default function DesignProject() {
   const { user, formData, step2Data, setStep2Data, loadSampleData, saveProject } = useDesign();
@@ -110,7 +111,7 @@ export default function DesignProject() {
         return;
       }
       navigate('step-3');
-    } else if (currentStep < 6) {
+    } else if (currentStep < 7) {
       navigate(steps[currentStep].path);
     }
     window.scrollTo(0, 0);
@@ -137,7 +138,7 @@ export default function DesignProject() {
                   </span>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className="flex justify-center pl-5 py-2">
+                  <div className="w-10 flex justify-center py-1">
                     <div className="w-px h-6 bg-gray-300"></div>
                   </div>
                 )}
@@ -158,7 +159,9 @@ export default function DesignProject() {
                   {currentStep === 2 && 'Tính toán các thông số động học và lựa chọn động cơ phù hợp'}
                   {currentStep === 3 && 'Thiết kế chi tiết bộ truyền ngoài (đai thang) và kiểm nghiệm'}
                   {currentStep === 4 && 'Thiết kế chi tiết các bộ truyền bánh răng trong hộp giảm tốc'}
-                  {currentStep > 4 && 'Thông số cho bước này sẽ sớm được cập nhật.'}
+                  {currentStep === 5 && 'Thiết kế các đoạn trục, khoảng cách gối đỡ và kiểm nghiệm mỏi'}
+                  {currentStep === 6 && 'Lựa chọn loại ổ lăn phù hợp và kiểm nghiệm khả năng tải'}
+                  {currentStep === 7 && 'Thiết kế kết cấu vỏ hộp, gân tăng cứng và hệ thống bu lông'}
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -169,7 +172,7 @@ export default function DesignProject() {
                 )}
                 
                 <Button onClick={handleNext} disabled={isLoading || isSaving} className="bg-blue-600 hover:bg-blue-700 text-white gap-2 px-6 py-2 h-auto text-base font-bold shadow-lg transition-all active:scale-95 disabled:opacity-70">
-                  {isLoading ? 'Đang tính toán...' : (currentStep === 6 ? 'Hoàn thành' : 'Tiếp tục')} 
+                  {isLoading ? 'Đang tính toán...' : (currentStep === 7 ? 'Hoàn thành' : 'Tiếp tục')} 
                   {!isLoading && <ChevronRight className="w-5 h-5" />}
                 </Button>
               </div>

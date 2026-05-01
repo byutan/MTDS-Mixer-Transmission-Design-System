@@ -8,6 +8,24 @@ export default function Step1Init() {
   const { formData, updateFormData } = useDesign();
   
   const handleInputChange = (field: keyof FormData, value: string) => {
+    // 1. Giới hạn độ dài text
+    if (['projectName', 'studentName', 'instructor'].includes(field) && value.length > 100) return;
+    if (field === 'major' && value.length > 50) return;
+
+    // 2. MSSV: tối đa 7 chữ số, chỉ cho phép nhập số
+    if (field === 'studentId') {
+      if (value.length > 7 || (value !== '' && !/^\d+$/.test(value))) return;
+    }
+
+    // 3. Các thông số kỹ thuật: không quá 1 tỉ, không số âm
+    const numericFields = ['power', 'speed', 'lifespan', 'workDaysYear', 'workHoursDay'];
+    if (numericFields.includes(field)) {
+      if (value !== '' && !/^\d*\.?\d*$/.test(value)) return; // Chỉ cho phép số và dấu chấm
+      const num = parseFloat(value);
+      if (num > 1000000000) return;
+      if (num < 0) return; 
+    }
+
     updateFormData(field, value);
   }
   return (
