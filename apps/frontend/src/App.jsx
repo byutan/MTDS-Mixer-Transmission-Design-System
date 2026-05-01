@@ -11,6 +11,7 @@ import Step3Belt from "./features/design/steps/step3-belt"
 import Step4Gearbox from "./features/design/steps/step4-gearbox"
 import Step5Shaft from "./features/design/steps/step5-shaft"
 import Step6Bearings from "./features/design/steps/step6-bearings"
+import Step7GearboxHousing from "./features/design/steps/step7-gearbox-housing"
 import ProjectListPage from "./features/projects/project-list-page"
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
             <Route path="step-4" element={<Step4Gearbox />} />
             <Route path="step-5" element={<Step5Shaft />} />
             <Route path="step-6" element={<Step6Bearings />} />
+            <Route path="step-7" element={<Step7GearboxHousing />} />
             <Route index element={<Navigate to="step-1" replace />} />
           </Route>
           <Route path="/profile" element={<ProfilePage />} />
