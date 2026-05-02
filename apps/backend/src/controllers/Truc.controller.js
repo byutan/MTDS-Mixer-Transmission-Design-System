@@ -121,7 +121,7 @@ export const kiemnghiemHesoAnToa_trucI = (req, res) => {
         if (!duLieuDauVao || typeof duLieuDauVao !== "object" || Array.isArray(duLieuDauVao)) {
             return res.status(400).json({ message: "duLieuDauVao must be an object." });
         }
-        const result = TrucServices.kiemnghiemHesoAnToa_trucI(duLieuDauVao);
+        const result = TrucServices.kiemnghiem_HesoAnToa_trucI(duLieuDauVao);
         return res.status(200).json({
             success: true,
             message: "Computed successfully.",
@@ -141,7 +141,7 @@ export const kiemnghiemHesoAnToa_trucII = (req, res) => {
         if (!duLieuDauVao || typeof duLieuDauVao !== "object" || Array.isArray(duLieuDauVao)) {
             return res.status(400).json({ message: "duLieuDauVao must be an object." });
         }
-        const result = TrucServices.kiemnghiemHesoAnToa_trucII(duLieuDauVao);
+        const result = TrucServices.kiemnghiem_HesoAnToa_trucII(duLieuDauVao);
         return res.status(200).json({
             success: true,
             message: "Computed successfully.",
@@ -161,7 +161,7 @@ export const kiemnghiemHesoAnToa_trucIII = (req, res) => {
         if (!duLieuDauVao || typeof duLieuDauVao !== "object" || Array.isArray(duLieuDauVao)) {
             return res.status(400).json({ message: "duLieuDauVao must be an object." });
         }
-        const result = TrucServices.kiemnghiemHesoAnToa_trucIII(duLieuDauVao);
+        const result = TrucServices.kiemnghiem_HesoAnToa_trucIII(duLieuDauVao);
         return res.status(200).json({
             success: true,
             message: "Computed successfully.",

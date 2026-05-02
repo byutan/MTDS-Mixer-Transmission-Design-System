@@ -65,19 +65,35 @@ export const tinhBangDuongKinh_trucIII = (duLieuDauVao) => {
    const truc = laytruc(duLieuDauVao,"III")
    return truc.tinhBangDuongKinhTheoMomenTuongDuong()
 };
+//=================================================================
 export const tinhBang_4_5_trucI = (duLieuDauVao) => {
     const truc = laytruc(duLieuDauVao,"I")
-    return truc.kiemnghiemdobentruc()
+    return truc.Kiemnghiemdobentruc()
 };
 export const tinhBang_4_5_trucII = (duLieuDauVao) => {
     const truc = laytruc(duLieuDauVao,"II")
-    return truc.kiemnghiemdobentruc()
+    return truc.Kiemnghiemdobentruc()
 };
 export const tinhBang_4_5_trucIII = (duLieuDauVao) => {
     const truc = laytruc(duLieuDauVao,"III")
-    return truc.kiemnghiemdobentruc()
+    return truc.Kiemnghiemdobentruc()
+};
+//=================================================================
+export const kiemnghiem_HesoAnToa_trucI = (duLieuDauVao) => {
+    const truc = laytruc(duLieuDauVao,"I")
+    return truc.kiemnghiemHesoAnToa()
 };
 
+export const kiemnghiem_HesoAnToa_trucII = (duLieuDauVao) => {
+    const truc = laytruc(duLieuDauVao,"II")
+    return truc.kiemnghiemHesoAnToa()
+};
+
+export const kiemnghiem_HesoAnToa_trucIII = (duLieuDauVao) => {
+    const truc = laytruc(duLieuDauVao,"III")
+    return truc.kiemnghiemHesoAnToa()
+};
+//=================================================================
 export const Kiemnghiemdobenquatai_truc_I = (duLieuDauVao) => {
     const truc = laytruc(duLieuDauVao,"I")
     return truc.kiemnghiemdobenquatai()
