@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import demoData from '@/data/demodata.json'
+import demoData from '../../../../../../demodata.json'
 import { useDesign } from '@/features/design/context/DesignContext'
 
 export default function Step2Motor() {
@@ -22,54 +22,70 @@ export default function Step2Motor() {
     };
 
     const updateTechnicalTable = async (currentStep2: any) => {
-    setIsCalculating(true);
-    try {
-        const payload = {
-            duLieuDauVao: {
-                thungTron: {
-                    congSuat: safeParse(formData.power),
-                    soVongQuay: safeParse(formData.speed)
-                },
-                heThongTruyenDong: {
-                    dongCo: {
-                        congSuat: safeParse(currentStep2.motor.match(/\((.*?) kW/)?.[1]),
-                        vanTocQuay: safeParse(currentStep2.motor.match(/, (.*?) v\/ph/)?.[1])
+        // Chỉ gọi API khi đã chọn động cơ và có tỉ số truyền
+        const motorMatch = currentStep2.motor.match(/\((.*?) kW/);
+        if (!motorMatch) {
+            console.warn("Chưa chọn động cơ, bỏ qua cập nhật bảng đặc tính.");
+            return;
+        }
+
+        setIsCalculating(true);
+        try {
+            const payload = {
+                duLieuDauVao: {
+                    thungTron: {
+                        congSuat: safeParse(formData.power),
+                        soVongQuay: safeParse(formData.speed)
                     },
-                    hopGiamToc: {
-                        ...demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc,
-                        tySoTruyenSoBo: safeParse(currentStep2.gearboxRatio)
-                    },
-                    boTruyenDai: { 
-                        ...demoData.duLieuDauVao.heThongTruyenDong.boTruyenDai,
-                        tySoTruyenSoBo: safeParse(currentStep2.beltRatio) 
-                    },
-                    oLan: demoData.duLieuDauVao.heThongTruyenDong.oLan,
-                    noiTrucVongDanHoi: demoData.duLieuDauVao.heThongTruyenDong.noiTrucVongDanHoi,
-                    phanPhoiTySoTruyen: {
-                        tySoTruyenBanhRang: [
-                            { loai: "BanhRangCon", tySoTruyen: safeParse(currentStep2.u1) },
-                            { loai: "BanhRangTru", tySoTruyen: safeParse(currentStep2.u2) }
-                        ]
+                    heThongTruyenDong: {
+                        dongCo: {
+                            congSuat: safeParse(motorMatch[1]),
+                            vanTocQuay: safeParse(currentStep2.motor.match(/, (.*?) v\/ph/)?.[1])
+                        },
+                        hopGiamToc: {
+                            ...demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc,
+                            tySoTruyenSoBo: safeParse(currentStep2.gearboxRatio)
+                        },
+                        boTruyenDai: { 
+                            ...demoData.duLieuDauVao.heThongTruyenDong.boTruyenDai,
+                            tySoTruyenSoBo: safeParse(currentStep2.beltRatio) 
+                        },
+                        oLan: demoData.duLieuDauVao.heThongTruyenDong.oLan,
+                        noiTrucVongDanHoi: demoData.duLieuDauVao.heThongTruyenDong.noiTrucVongDanHoi,
+                        phanPhoiTySoTruyen: {
+                            // Lấy psi_bd2 làm hệ số thiết kế chính hoặc dùng 0.9 làm mặc định
+                            heSoThietKe: demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc.heSoThietKe?.psi_bd2 || 0.9, 
+                            tySoTruyenBanhRang: [
+                                { loai: "BanhRangCon", tySoTruyen: safeParse(currentStep2.u1) },
+                                { loai: "BanhRangTru", tySoTruyen: safeParse(currentStep2.u2) }
+                            ]
+                        }
                     }
                 }
-            }
-        };
+            };
 
-        const res = await fetch('http://localhost:3001/api/he-thong-truyen-dong/tinh-bang-dac-tinh-ky-thuat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (data.success) {
-            setTableData(data.data);
+            console.log("Calling API tinh-bang-dac-tinh-ky-thuat with payload:", payload);
+
+            const res = await fetch('http://localhost:3001/api/he-thong-truyen-dong/tinh-bang-dac-tinh-ky-thuat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            
+            console.log("API Response:", data);
+
+            if (data.success) {
+                setTableData(data.data);
+            } else {
+                console.error("Backend returned error:", data.message);
+            }
+        } catch (error) {
+            console.error("Lỗi mạng khi cập nhật bảng đặc tính:", error);
+        } finally {
+            setIsCalculating(false);
         }
-    } catch (error) {
-        console.error("Lỗi khi cập nhật bảng đặc tính:", error);
-    } finally {
-        setIsCalculating(false);
-    }
-  };
+    };
 
   useEffect(() => {
     updateTechnicalTable(step2Data);
@@ -206,44 +222,44 @@ export default function Step2Motor() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <Label className="text-sm font-bold text-slate-700 block mb-2">u_đ (Bộ truyền đai)</Label>
+                <Label className="text-xs font-semibold text-slate-600 block mb-1.5">u_đ (Bộ truyền đai)</Label>
                 <Input
                   value={step2Data.beltRatio}
                   onChange={(e) => handleBeltRatioChange(e.target.value)}
                   disabled={!hasMotor}
-                  className="border border-slate-200 rounded-md text-sm h-11 font-bold text-blue-600 disabled:opacity-30"
+                  className="border border-slate-200 rounded-md text-sm h-11"
                   placeholder="Nhập u_đ..."
                 />
               </div>
 
               <div>
-                <Label className="text-sm font-bold text-slate-700 block mb-2">u_1 (Cấp nhanh côn)</Label>
+                <Label className="text-xs font-semibold text-slate-600 block mb-1.5">u_1 (Cấp nhanh côn)</Label>
                 <Input
                   value={step2Data.u1}
                   onChange={(e) => handleU1Change(e.target.value)}
                   disabled={!hasMotor}
-                  className="border border-slate-200 rounded-md text-sm h-11 font-bold text-blue-600 disabled:opacity-30"
+                  className="border border-slate-200 rounded-md text-sm h-11"
                   placeholder="Nhập u_1..."
                 />
               </div>
 
               <div>
-                <Label className="text-sm font-bold text-slate-700 block mb-2">u_2 (Cấp chậm trụ)</Label>
+                <Label className="text-xs font-semibold text-slate-600 block mb-1.5">u_2 (Cấp chậm trụ)</Label>
                 <Input
                   value={hasMotor ? step2Data.u2 : '---'}
-                  disabled
-                  className="bg-slate-50 border border-slate-200 rounded-md text-sm h-11 font-bold text-gray-500"
+                  readOnly
+                  className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold"
                   placeholder="Tự động tính..."
                 />
               </div>
             </div>
 
             <div className="pt-4 border-t border-slate-100">
-               <Label className="text-sm font-bold text-slate-700 block mb-2">u_h (Hộp giảm tốc)</Label>
+               <Label className="text-xs font-semibold text-slate-600 block mb-1.5">u_h (Hộp giảm tốc)</Label>
                <Input
                  value={hasMotor ? step2Data.gearboxRatio : '---'}
-                 disabled
-                 className="bg-slate-50 border border-slate-200 rounded-md text-sm text-gray-500 h-11"
+                 readOnly
+                 className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold"
                />
                <p className="text-[10px] text-slate-400 mt-2 font-sans italic">
                  {hasMotor ? `* u_h = u_1 × u_2 = ${step2Data.gearboxRatio}` : '* Cần chọn động cơ để tính u_h'}
@@ -282,7 +298,7 @@ export default function Step2Motor() {
             <div>
               <Label className="text-sm font-bold text-slate-700 block mb-2">Mã hiệu động cơ</Label>
               <Select value={step2Data.motor} onValueChange={handleMotorChange}>
-                <SelectTrigger className="border border-slate-200 rounded-md text-sm px-3 py-2 h-11 flex items-center bg-white shadow-sm font-semibold max-w-md">
+                <SelectTrigger className="border border-slate-200 rounded-md text-sm px-3 py-2 h-11 flex items-center bg-white shadow-sm text-gray-700 max-w-md">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="z-50 bg-white shadow-2xl">

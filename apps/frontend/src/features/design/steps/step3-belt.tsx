@@ -13,23 +13,30 @@ export default function Step3Belt() {
 
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true);
-      try {
-        // Lấy n_dc từ step2Data.motor (Ví dụ: "4A112M2Y6 (7.5 kW, 2922 v/ph)" -> 2922)
-        const motorLabel = step2Data.motor || "";
-        const n_dc_val = parseFloat(motorLabel.match(/,\s*(\d+)\s*v\/ph/)?.[1] || "0");
+      // Chỉ gọi API khi đã có dữ liệu động cơ
+      const motorLabel = step2Data.motor || "";
+      const n_dc_match = motorLabel.match(/,\s*(\d+)\s*v\/ph/);
+      const p_dc_match = motorLabel.match(/\((.*?)\s*kW/);
 
+      if (!n_dc_match || !p_dc_match) {
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      try {
         const payload = {
           duLieuDauVao: {
             thungTron: {
-              congSuat: parseFloat(formData.power),
-              soVongQuay: parseFloat(formData.speed),
-              thoiGianPhucVu: parseFloat(formData.lifespan)
+              congSuat: parseFloat(formData.power) || 0,
+              soVongQuay: parseFloat(formData.speed) || 0,
+              thoiGianPhucVu: parseFloat(formData.lifespan) || 0
             },
             heThongTruyenDong: {
               dongCo: {
-                congSuat: parseFloat(motorLabel.match(/\((.*?)\s*kW/)?.[1] || "0"),
-                vanTocQuay: n_dc_val,
+                congSuat: parseFloat(p_dc_match[1]) || 0,
+                vanTocQuay: parseFloat(n_dc_match[1]) || 0,
                 soCaLamViec: formData.workMode === '2 ca' ? 2 : 3,
                 taiTrong: formData.loadCharacter === 'Tải va đập nhẹ' ? 'nhe' : 'manh'
               },
@@ -109,13 +116,15 @@ export default function Step3Belt() {
 
           <div>
             <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Đường kính bánh bị dẫn (d2)</Label>
-            <Input value={`${results?.duongKinhBanhBiDan || '---'} mm`} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+            <Input value={results?.duongKinhBanhBiDan ? `${results.duongKinhBanhBiDan} mm` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div className="pt-2">
             <Badge className="w-full h-9 bg-green-50 text-green-700 border border-green-200 flex items-center gap-2 justify-start px-3 shadow-none hover:bg-green-50">
               <CheckCircle2 className="w-4 h-4" />
-              <span className="text-[11px] font-bold">Tỉ số truyền thực tế: {(results?.duongKinhBanhBiDan / results?.duongKinhBanhDan).toFixed(2)}</span>
+              <span className="text-[11px] font-bold">
+                Tỉ số truyền thực tế: {results?.duongKinhBanhDan ? (results?.duongKinhBanhBiDan / results?.duongKinhBanhDan).toFixed(2) : '---'}
+              </span>
             </Badge>
           </div>
         </div>
@@ -131,15 +140,12 @@ export default function Step3Belt() {
         <div className="space-y-4">
           <div>
             <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Khoảng cách trục thực tế (a)</Label>
-            <div className="relative">
-              <Input value={results?.khoangCachTruc || '---'} readOnly className="h-10 pr-12 font-bold bg-slate-50" />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-gray-400 font-bold">mm</span>
-            </div>
+            <Input value={results?.khoangCachTruc ? `${results.khoangCachTruc} mm` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div>
             <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Chiều dài đai thiết kế (L)</Label>
-            <Input value={`${(results?.chieuDaiDai * 1000).toFixed(0)} mm`} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+            <Input value={results?.chieuDaiDai ? `${(results.chieuDaiDai * 1000).toFixed(0)} mm` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div>
@@ -164,21 +170,21 @@ export default function Step3Belt() {
         <div className="space-y-4">
           <div>
             <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Số dây đai tính toán</Label>
-            <Input value={`${results?.soDayDai} sợi`} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+            <Input value={results?.soDayDai !== undefined ? `${results?.soDayDai} sợi` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div>
             <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Số dây đai thiết kế (z)</Label>
-            <Input value={results?.soDayDai} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+            <Input value={results?.soDayDai !== undefined ? results?.soDayDai : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div>
             <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Lực tác dụng lên trục (F_r)</Label>
-            <Input value={`${results?.lucTacDungLenTruc} N`} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+            <Input value={results?.lucTacDungLenTruc !== undefined ? `${results?.lucTacDungLenTruc} N` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
           <div>
             <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Ứng suất cho phép</Label>
-            <Input value={`${results?.ungSuatLonNhat} MPa`} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+            <Input value={results?.ungSuatLonNhat !== undefined ? `${results?.ungSuatLonNhat} MPa` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
         </div>
       </div>
