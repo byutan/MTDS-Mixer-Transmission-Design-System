@@ -21,4 +21,5 @@ export class OLan extends BoTruyen {
     getHieuSuat() {
         return this.#hieuSuat
     }
+    
 }
