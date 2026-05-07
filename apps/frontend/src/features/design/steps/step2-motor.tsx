@@ -231,15 +231,15 @@ export default function Step2Motor() {
 
           <div className="space-y-5">
             <div className="flex justify-between items-center pb-4 border-b border-slate-100">
-              <span className="text-gray-600 font-medium font-sans italic">Hiệu suất hệ thống (η_sigma)</span>
+              <span className="text-gray-600 font-medium font-sans">Hiệu suất hệ thống (η_sigma)</span>
               <span className="text-lg font-black text-blue-600 font-sans">{step2Data.systemEfficiency}</span>
             </div>
             <div className="flex justify-between items-center pb-4 border-b border-slate-100">
-              <span className="text-gray-600 font-medium font-sans italic">Công suất yêu cầu (Pk)</span>
+              <span className="text-gray-600 font-medium font-sans">Công suất yêu cầu (Pk)</span>
               <span className="text-lg font-black text-blue-600 font-sans">{step2Data.requiredPower} kW</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-600 font-medium font-sans italic">Vòng quay sơ bộ (nsb)</span>
+              <span className="text-gray-600 font-medium font-sans">Vòng quay sơ bộ (nsb)</span>
               <span className="text-lg font-black text-blue-600 font-sans">
                 {step2Data.preliminarySpeed !== '0' ? step2Data.preliminarySpeed : '---'} v/ph
               </span>
