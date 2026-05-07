@@ -901,10 +901,10 @@ export class Truc {
         const gh_lmrc_lmdt = this.tinh_gh_l_I(d1)
         
         if (lmrc < gh_lmrc_lmdt.gh_lmrc.min || lmrc > gh_lmrc_lmdt.gh_lmrc.max) {
-            throw new Error(`lmrc = ${lmrc} không nằm trong khoảng [${lmrc_gh.gh_l_1.min}, ${lmrc_gh.gh_l_1.max}]`);
+            throw new Error(`lmrc = ${lmrc} không nằm trong khoảng [${gh_lmrc_lmdt.gh_lmrc.min}, ${gh_lmrc_lmdt.gh_lmrc.max}]`);
         }
         if (lmdt < gh_lmrc_lmdt.gh_lmdt.min || lmdt > gh_lmrc_lmdt.gh_lmdt.max) {
-            throw new Error(`lmdt = ${lmdt} không nằm trong khoảng [${lmdt_gh.gh_l_2.min}, ${lmdt_gh.gh_l_2.max}]`);
+            throw new Error(`lmdt = ${lmdt} không nằm trong khoảng [${gh_lmrc_lmdt.gh_lmdt.min}, ${gh_lmrc_lmdt.gh_lmdt.max}]`);
         }
         return {
             tenTruc: this.#tenTruc,
@@ -925,10 +925,10 @@ export class Truc {
         }
         const gh_lmrc_lmrt = this.tinh_gh_l_II(d2)
         if (lmrc < gh_lmrc_lmrt.gh_lmrc.min || lmrc > gh_lmrc_lmrt.gh_lmrc.max) {
-            throw new Error(`lmrc = ${lmrc} không nằm trong khoảng [${lmrc_gh.gh_l_1.min}, ${lmrc_gh.gh_l_1.max}]`);
+            throw new Error(`lmrc = ${lmrc} không nằm trong khoảng [${gh_lmrc_lmrt.gh_lmrc.min}, ${gh_lmrc_lmrt.gh_lmrc.max}]`);
         }
         if (lmrt < gh_lmrc_lmrt.gh_lmrt.min || lmrt > gh_lmrc_lmrt.gh_lmrt.max) {
-            throw new Error(`lmrt = ${lmrt} không nằm trong khoảng [${lmrt_gh.gh_l_2.min}, ${lmrt_gh.gh_l_2.max}]`);
+            throw new Error(`lmrt = ${lmrt} không nằm trong khoảng [${gh_lmrc_lmrt.gh_lmrt.min}, ${gh_lmrc_lmrt.gh_lmrt.max}]`);
         }
         return {
             tenTruc: this.#tenTruc,
@@ -949,10 +949,10 @@ export class Truc {
         }
         const gh_lmrt_lmkn = this.tinh_gh_l_III(d3)
         if (lmrt < gh_lmrt_lmkn.gh_lmrt.min || lmrt > gh_lmrt_lmkn.gh_lmrt.max) {
-            throw new Error(`lmrt = ${lmrt} không nằm trong khoảng [${lmrt_gh.gh_l_1.min}, ${lmrt_gh.gh_l_1.max}]`);
+            throw new Error(`lmrt = ${lmrt} không nằm trong khoảng [${gh_lmrt_lmkn.gh_lmrt.min}, ${gh_lmrt_lmkn.gh_lmrt.max}]`);
         }
         if (lmkn < gh_lmrt_lmkn.gh_lmkn.min || lmkn > gh_lmrt_lmkn.gh_lmkn.max) {
-            throw new Error(`lmkn = ${lmkn} không nằm trong khoảng [${lmkn_gh.gh_l_2.min}, ${lmkn_gh.gh_l_2.max}]`);
+            throw new Error(`lmkn = ${lmkn} không nằm trong khoảng [${gh_lmrt_lmkn.gh_lmkn.min}, ${gh_lmrt_lmkn.gh_lmkn.max}]`);
         }
         return {
             tenTruc: this.#tenTruc,
@@ -978,17 +978,13 @@ export class Truc {
     Tinh_l_11(){
         const infor_truc_I = this.#Thongtintruc.trucI
         const l11 = infor_truc_I.l11
-        const d1 = infor_truc_I.d1
-        const gh_l11 = this.Tinh_gh_l_11()
-        if (l11 < gh_l11.min || l11 > gh_l11.max) {
-            throw new Error(`l11 = ${l11} không nằm trong khoảng [${gh_l11.min}, ${gh_l11.max}]`);
-        }
         return l11
     }
     Tinh_l_12( ){
-        const result = this.Tinh_l_I()
-        const l_mdt = result.lmdt
-        const b0 = this.tim_bo(this.Tinh_l_I().d1)
+        const infor = this.getinfor("I", "d1", "lmrc", "lmdt")
+        const l_mdt = infor.result.l_2
+        const d1 = infor.result.d
+        const b0 = this.tim_bo(d1)
         const k3 = 16
         const hn =17.25
         const l_12= 0.5*(l_mdt+b0)+k3+hn
@@ -996,8 +992,10 @@ export class Truc {
     }
     Tinh_l_13(){
         const l_11 = this.Tinh_l_11()
-        const l_mrc = this.Tinh_l_I().lmrc
-        const b0 = this.tim_bo(this.Tinh_l_I().d1)
+        const infor = this.getinfor("I", "d1", "lmrc", "lmdt")
+        const l_mrc = infor.result.l_1
+        const d1 = infor.result.d
+        const b0 = this.tim_bo(d1)
         const k1=12.6
         const k2=10
         const b13=38
@@ -1163,19 +1161,19 @@ export class Truc {
     }
 //suport front end giới hạn chọn của người dùng
     Tinh_Min_max_lmrc_lmdt_I(){
-        const result = this.Tinh_l_I()
-        const gh = result.gh_lmrc_lmdt
-        return gh
+        const infor = this.getinfor("I", "d1", "lmrc", "lmdt")
+        const d1 = infor.result.d
+        return this.tinh_gh_l_I(d1)
     }
     Tinh_Min_max_lmrc_lmrt_II(){
-        const result = this.Tinh_l_II()
-        const gh = result.gh_lmrc_lmrt
-        return gh
+        const infor = this.getinfor("II", "d2", "lmrc", "lmrt")
+        const d2 = infor.result.d
+        return this.tinh_gh_l_II(d2)
     }
     Tinh_Min_max_lmrt_lmkn_III(){
-        const result = this.Tinh_l_III()
-        const gh = result.gh_lmrt_lmkn
-        return gh
+        const infor = this.getinfor("III", "d3", "lmrt", "lmkn")
+        const d3 = infor.result.d
+        return this.tinh_gh_l_III(d3)
     }
 }   
 

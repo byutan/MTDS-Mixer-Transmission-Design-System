@@ -35,6 +35,12 @@ export interface Step2Data {
   motor: string;
 }
 
+export interface Step5Data {
+  trucI: { d1: string; lmrc: string; lmdt: string; l11: string };
+  trucII: { d2: string; lmrc: string; lmrt: string };
+  trucIII: { d3: string; lmrt: string; lmkn: string };
+}
+
 interface DesignContextType {
   user: any;
   projectId: number | null;
@@ -44,6 +50,8 @@ interface DesignContextType {
   updateFormData: (field: keyof FormData, value: string) => void;
   step2Data: Step2Data;
   setStep2Data: React.Dispatch<React.SetStateAction<Step2Data>>;
+  step5Data: Step5Data;
+  setStep5Data: React.Dispatch<React.SetStateAction<Step5Data>>;
   tableData: any[];
   setTableData: React.Dispatch<React.SetStateAction<any[]>>;
   loadSampleData: () => void;
@@ -100,8 +108,18 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     };
   };
 
+  const getInitialStep5Data = (): Step5Data => {
+    const saved = localStorage.getItem('mtds_project_step5');
+    return saved ? JSON.parse(saved) : {
+      trucI: { d1: '30', lmrc: '42', lmdt: '45', l11: '90' },
+      trucII: { d2: '40', lmrc: '50', lmrt: '60' },
+      trucIII: { d3: '50', lmrt: '65', lmkn: '80' }
+    };
+  };
+
   const [formData, setFormData] = useState<FormData>(getInitialFormData);
   const [step2Data, setStep2Data] = useState<Step2Data>({ ...getInitialStep2Data(), motorEfficiency: '---' });
+  const [step5Data, setStep5Data] = useState<Step5Data>(getInitialStep5Data);
   const [tableData, setTableData] = useState<any[]>(() => {
     const saved = localStorage.getItem('mtds_project_table');
     return saved ? JSON.parse(saved) : [];
@@ -114,6 +132,10 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('mtds_project_step2', JSON.stringify(step2Data));
   }, [step2Data]);
+
+  useEffect(() => {
+    localStorage.setItem('mtds_project_step5', JSON.stringify(step5Data));
+  }, [step5Data]);
 
   useEffect(() => {
     localStorage.setItem('mtds_project_table', JSON.stringify(tableData));
@@ -236,6 +258,7 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     setProjectId(null);
     setFormData(getInitialFormData());
     setStep2Data(getInitialStep2Data());
+    setStep5Data(getInitialStep5Data());
     setTableData([]);
     
     if (shouldReload) {
@@ -251,6 +274,7 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     <DesignContext.Provider value={{
       user, projectId, setProjectId, formData, setFormData, updateFormData, 
       step2Data, setStep2Data, 
+      step5Data, setStep5Data,
       tableData, setTableData,
       loadSampleData, clearProjectData, saveProject
     }}>

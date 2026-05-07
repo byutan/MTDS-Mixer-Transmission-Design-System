@@ -46,7 +46,7 @@ export const tinhToanOLanTrucII = async (duLieuDauVao) => {
     const d_D = duLieuDauVao?.heThongTruyenDong?.truc?.Thongtintruc?.trucII?.D;
     
     const bangDacTinh = tinhBangDacTinhKyThuat(duLieuDauVao);
-    const n_truc2 = bangDacTinh.find(t => t.truc === "I")?.soVongQuay;
+    const n_truc2 = bangDacTinh.find(t => t.truc === "II")?.soVongQuay;
 
     const phanLuc = tinh_he_Truc_II(duLieuDauVao);
 

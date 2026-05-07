@@ -147,16 +147,7 @@ export default function Step4Gearbox() {
             <div className="space-y-5">
               <div>
                 <Label className="text-sm font-semibold text-slate-600 block mb-2">Vật liệu</Label>
-                <Select defaultValue={activeTab === 'bevel' ? "Thép C40XH" : "Thép 45"}>
-                  <SelectTrigger className="w-full h-11 bg-white border-slate-200 text-gray-700">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    <SelectItem value="Thép C40XH">Thép C40XH</SelectItem>
-                    <SelectItem value="Thép 45">Thép 45</SelectItem>
-                    <SelectItem value="Thép 40Cr">Thép 40Cr</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Input value="Thép 45" readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
 
               <div>

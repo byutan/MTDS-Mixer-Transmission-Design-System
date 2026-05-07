@@ -8,84 +8,122 @@ import { useDesign } from '@/features/design/context/DesignContext'
 export default function Step2Motor() {
   const { step2Data, setStep2Data, formData, tableData, setTableData } = useDesign();
   const [isCalculating, setIsCalculating] = useState(false);
-  
+  const [recommendedMotors, setRecommendedMotors] = useState<any[]>([]);
+
+  // Hàm gọi backend để lấy gợi ý động cơ
+  const fetchMotorRecommendations = async (p_ct: string, n_sb: string) => {
+    if (safeParse(p_ct) <= 0 || safeParse(n_sb) <= 0) return;
+    
+    try {
+      const res = await fetch('http://localhost:3001/api/thung-tron/chon-dong-co', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          p_ct: safeParse(p_ct), 
+          n_sb: safeParse(n_sb) 
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRecommendedMotors(data.data);
+        
+        // Nếu chưa chọn động cơ hoặc động cơ hiện tại không nằm trong danh sách gợi ý mới,
+        // có thể tự động chọn cái đầu tiên (tùy chọn)
+        /*
+        if (data.data.length > 0 && (!step2Data.motor || step2Data.motor === '---')) {
+          const first = data.data[0];
+          handleMotorChange(`${first.motor_code} (${first.power_kw} kW, ${first.speed_rpm} v/ph)`);
+        }
+        */
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy gợi ý động cơ:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMotorRecommendations(step2Data.requiredPower, step2Data.preliminarySpeed);
+  }, [step2Data.requiredPower, step2Data.preliminarySpeed]);
+
+  // Hàm gọi backend để cập nhật bảng đặc tính kỹ thuật
+
   // Tính toán sai số tỉ số truyền
   const u_real = (parseFloat(step2Data.beltRatio) * parseFloat(step2Data.u1) * parseFloat(step2Data.u2)).toFixed(3);
   const delta_u = Math.abs((parseFloat(step2Data.totalRatio) - parseFloat(u_real)) / parseFloat(step2Data.totalRatio) * 100);
   const isErrorOk = delta_u <= 5;
 
   // Hàm gọi backend để cập nhật bảng đặc tính kỹ thuật
-    const safeParse = (val: any) => {
-        if (typeof val === 'string' && (val === '---' || val === '')) return 0;
-        const parsed = parseFloat(val);
-        return isNaN(parsed) ? 0 : parsed;
-    };
+  const safeParse = (val: any) => {
+    if (typeof val === 'string' && (val === '---' || val === '')) return 0;
+    const parsed = parseFloat(val);
+    return isNaN(parsed) ? 0 : parsed;
+  };
 
-    const updateTechnicalTable = async (currentStep2: any) => {
-        // Chỉ gọi API khi đã chọn động cơ và có tỉ số truyền
-        const motorMatch = currentStep2.motor.match(/\((.*?) kW/);
-        if (!motorMatch) {
-            console.warn("Chưa chọn động cơ, bỏ qua cập nhật bảng đặc tính.");
-            return;
-        }
+  const updateTechnicalTable = async (currentStep2: any) => {
+    // Chỉ gọi API khi đã chọn động cơ và có tỉ số truyền
+    const motorMatch = currentStep2.motor.match(/\((.*?) kW/);
+    if (!motorMatch) {
+      console.warn("Chưa chọn động cơ, bỏ qua cập nhật bảng đặc tính.");
+      return;
+    }
 
-        setIsCalculating(true);
-        try {
-            const payload = {
-                duLieuDauVao: {
-                    thungTron: {
-                        congSuat: safeParse(formData.power),
-                        soVongQuay: safeParse(formData.speed)
-                    },
-                    heThongTruyenDong: {
-                        dongCo: {
-                            congSuat: safeParse(motorMatch[1]),
-                            vanTocQuay: safeParse(currentStep2.motor.match(/, (.*?) v\/ph/)?.[1])
-                        },
-                        hopGiamToc: {
-                            ...demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc,
-                            tySoTruyenSoBo: safeParse(currentStep2.gearboxRatio)
-                        },
-                        boTruyenDai: { 
-                            ...demoData.duLieuDauVao.heThongTruyenDong.boTruyenDai,
-                            tySoTruyenSoBo: safeParse(currentStep2.beltRatio) 
-                        },
-                        oLan: demoData.duLieuDauVao.heThongTruyenDong.oLan,
-                        noiTrucVongDanHoi: demoData.duLieuDauVao.heThongTruyenDong.noiTrucVongDanHoi,
-                        phanPhoiTySoTruyen: {
-                            // Lấy psi_bd2 làm hệ số thiết kế chính hoặc dùng 0.9 làm mặc định
-                            heSoThietKe: demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc.heSoThietKe?.psi_bd2 || 0.9, 
-                            tySoTruyenBanhRang: [
-                                { loai: "BanhRangCon", tySoTruyen: safeParse(currentStep2.u1) },
-                                { loai: "BanhRangTru", tySoTruyen: safeParse(currentStep2.u2) }
-                            ]
-                        }
-                    }
-                }
-            };
-
-            console.log("Calling API tinh-bang-dac-tinh-ky-thuat with payload:", payload);
-
-            const res = await fetch('http://localhost:3001/api/he-thong-truyen-dong/tinh-bang-dac-tinh-ky-thuat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const data = await res.json();
-            
-            console.log("API Response:", data);
-
-            if (data.success) {
-                setTableData(data.data);
-            } else {
-                console.error("Backend returned error:", data.message);
+    setIsCalculating(true);
+    try {
+      const payload = {
+        duLieuDauVao: {
+          thungTron: {
+            congSuat: safeParse(formData.power),
+            soVongQuay: safeParse(formData.speed)
+          },
+          heThongTruyenDong: {
+            dongCo: {
+              congSuat: safeParse(motorMatch[1]),
+              vanTocQuay: safeParse(currentStep2.motor.match(/, (.*?) v\/ph/)?.[1])
+            },
+            hopGiamToc: {
+              ...demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc,
+              tySoTruyenSoBo: safeParse(currentStep2.gearboxRatio)
+            },
+            boTruyenDai: {
+              ...demoData.duLieuDauVao.heThongTruyenDong.boTruyenDai,
+              tySoTruyenSoBo: safeParse(currentStep2.beltRatio)
+            },
+            oLan: demoData.duLieuDauVao.heThongTruyenDong.oLan,
+            noiTrucVongDanHoi: demoData.duLieuDauVao.heThongTruyenDong.noiTrucVongDanHoi,
+            phanPhoiTySoTruyen: {
+              // Lấy psi_bd2 làm hệ số thiết kế chính hoặc dùng 0.9 làm mặc định
+              heSoThietKe: demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc.heSoThietKe?.psi_bd2 || 0.9,
+              tySoTruyenBanhRang: [
+                { loai: "BanhRangCon", tySoTruyen: safeParse(currentStep2.u1) },
+                { loai: "BanhRangTru", tySoTruyen: safeParse(currentStep2.u2) }
+              ]
             }
-        } catch (error) {
-            console.error("Lỗi mạng khi cập nhật bảng đặc tính:", error);
-        } finally {
-            setIsCalculating(false);
+          }
         }
-    };
+      };
+
+      console.log("Calling API tinh-bang-dac-tinh-ky-thuat with payload:", payload);
+
+      const res = await fetch('http://localhost:3001/api/he-thong-truyen-dong/tinh-bang-dac-tinh-ky-thuat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+
+      console.log("API Response:", data);
+
+      if (data.success) {
+        setTableData(data.data);
+      } else {
+        console.error("Backend returned error:", data.message);
+      }
+    } catch (error) {
+      console.error("Lỗi mạng khi cập nhật bảng đặc tính:", error);
+    } finally {
+      setIsCalculating(false);
+    }
+  };
 
   useEffect(() => {
     updateTechnicalTable(step2Data);
@@ -101,10 +139,10 @@ export default function Step2Motor() {
 
     const ud = parseFloat(val) || 0;
     const ut = parseFloat(step2Data.totalRatio) || 41.74;
-    
+
     // Tính u_h = u_t / u_d
     const uh = ud > 0 ? (ut / ud).toFixed(2) : '0';
-    
+
     // Tính lại u_2 dựa trên u_h mới và u_1 hiện tại
     const u1 = parseFloat(step2Data.u1) || 1;
     const u2 = u1 > 0 ? (parseFloat(uh) / u1).toFixed(2) : '0';
@@ -126,7 +164,7 @@ export default function Step2Motor() {
 
     const u1 = parseFloat(val) || 0;
     const uh = parseFloat(step2Data.gearboxRatio) || 0;
-    
+
     // Tính u_2 = u_h / u_1
     const u2 = u1 > 0 ? (uh / u1).toFixed(2) : '0';
 
@@ -153,27 +191,28 @@ export default function Step2Motor() {
     const u_1 = parseFloat(step2Data.u1) || 1;
     const u_2_new = u_1 > 0 ? (parseFloat(u_h_new) / u_1).toFixed(2) : "0";
 
-    // 4. Lấy thông số kỹ thuật đặc trưng của mã động cơ (Giả lập tra cứu Catalogue)
-    // Trong thực tế, đây nên là một API gọi xuống Database động cơ
-    let motorStats = { eff: '---', cos: '---', tMax: '---', tKd: '---' };
-    if (val.includes('7.5 kW')) {
-        motorStats = { eff: '0.87', cos: '0.88', tMax: '2.2', tKd: '2.0' };
-    } else if (val.includes('11 kW')) {
-        motorStats = { eff: '0.88', cos: '0.89', tMax: '2.2', tKd: '2.0' };
-    } else if (val.includes('15 kW')) {
-        motorStats = { eff: '0.885', cos: '0.89', tMax: '2.3', tKd: '2.1' };
-    }
+    // 4. Lấy thông số kỹ thuật đặc trưng của mã động cơ từ danh sách gợi ý
+    const selectedMotorData = recommendedMotors.find(m => 
+      `${m.motor_code} (${m.power_kw} kW, ${m.speed_rpm} v/ph)` === val
+    );
+
+    let motorStats = { 
+      eff: selectedMotorData?.efficiency_eta?.toString() || '---', 
+      cos: selectedMotorData?.cos_phi?.toString() || '---', 
+      tMax: selectedMotorData?.t_max_tdn?.toString() || '---', 
+      tKd: selectedMotorData?.t_k_tdn?.toString() || '---' 
+    };
 
     setStep2Data({
-        ...step2Data,
-        motor: val,
-        totalRatio: u_total_new,
-        gearboxRatio: u_h_new,
-        u2: u_2_new,
-        motorEfficiency: motorStats.eff,
-        cosPhi: motorStats.cos,
-        tMaxTdm: motorStats.tMax,
-        tKdTdm: motorStats.tKd
+      ...step2Data,
+      motor: val,
+      totalRatio: u_total_new,
+      gearboxRatio: u_h_new,
+      u2: u_2_new,
+      motorEfficiency: motorStats.eff,
+      cosPhi: motorStats.cos,
+      tMaxTdm: motorStats.tMax,
+      tKdTdm: motorStats.tKd
     });
   };
 
@@ -189,7 +228,7 @@ export default function Step2Motor() {
           <div className="flex items-center gap-3 mb-6">
             <h3 className="text-xl font-bold text-gray-900 font-sans">1. Kết quả tính toán</h3>
           </div>
-          
+
           <div className="space-y-5">
             <div className="flex justify-between items-center pb-4 border-b border-slate-100">
               <span className="text-gray-600 font-medium font-sans italic">Hiệu suất hệ thống (η_sigma)</span>
@@ -211,7 +250,7 @@ export default function Step2Motor() {
         {/* Card 2: Tỉ số truyền */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8">
           <h3 className="text-xl font-bold text-gray-900 mb-6 font-sans">3. Phân phối tỉ số truyền</h3>
-          
+
           <div className="space-y-6">
             <div className="p-4 bg-slate-50 rounded-lg border border-slate-100">
               <Label className="text-xs font-black text-slate-500 uppercase tracking-widest block mb-2">Tỉ số truyền tổng (u_t)</Label>
@@ -255,20 +294,19 @@ export default function Step2Motor() {
             </div>
 
             <div className="pt-4 border-t border-slate-100">
-               <Label className="text-xs font-semibold text-slate-600 block mb-1.5">u_h (Hộp giảm tốc)</Label>
-               <Input
-                 value={hasMotor ? step2Data.gearboxRatio : '---'}
-                 readOnly
-                 className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold"
-               />
-               <p className="text-[10px] text-slate-400 mt-2 font-sans italic">
-                 {hasMotor ? `* u_h = u_1 × u_2 = ${step2Data.gearboxRatio}` : '* Cần chọn động cơ để tính u_h'}
-               </p>
+              <Label className="text-xs font-semibold text-slate-600 block mb-1.5">u_h (Hộp giảm tốc)</Label>
+              <Input
+                value={hasMotor ? step2Data.gearboxRatio : '---'}
+                readOnly
+                className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold"
+              />
+              <p className="text-[10px] text-slate-400 mt-2 font-sans italic">
+                {hasMotor ? `* u_h = u_1 × u_2 = ${step2Data.gearboxRatio}` : '* Cần chọn động cơ để tính u_h'}
+              </p>
             </div>
 
-            <div className={`mt-6 p-4 rounded-xl border-2 border-dashed transition-all ${
-              isErrorOk ? 'bg-green-50/50 border-green-100' : 'bg-red-50/50 border-red-100'
-            }`}>
+            <div className={`mt-6 p-4 rounded-xl border-2 border-dashed transition-all ${isErrorOk ? 'bg-green-50/50 border-green-100' : 'bg-red-50/50 border-red-100'
+              }`}>
               <div className="flex justify-between items-center">
                 <span className="text-xs font-bold text-slate-600">Sai số tỉ số truyền (Δu)</span>
                 <span className={`text-sm font-black ${hasMotor ? (isErrorOk ? 'text-green-600' : 'text-red-600') : 'text-slate-300'}`}>
@@ -276,7 +314,7 @@ export default function Step2Motor() {
                 </span>
               </div>
               <p className={`text-[10px] mt-1 italic ${hasMotor ? (isErrorOk ? 'text-green-500' : 'text-red-500') : 'text-slate-400'}`}>
-                {hasMotor 
+                {hasMotor
                   ? (isErrorOk ? '✓ Thỏa mãn điều kiện sai số < 5%' : '⚠ Vượt quá sai số cho phép (> 5%)')
                   : '* Chỉ tính sau khi chọn động cơ'
                 }
@@ -293,7 +331,7 @@ export default function Step2Motor() {
         {/* Card 3: Lựa chọn động cơ */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8">
           <h3 className="text-xl font-bold text-gray-900 mb-6 font-sans">2. Lựa chọn động cơ</h3>
-          
+
           <div className="space-y-8">
             <div>
               <Label className="text-sm font-bold text-slate-700 block mb-2">Mã hiệu động cơ</Label>
@@ -302,9 +340,20 @@ export default function Step2Motor() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="z-50 bg-white shadow-2xl">
-                  <SelectItem value="4A112M2Y6 (7.5 kW, 2922 v/ph)">4A112M2Y6 (7.5 kW, 2922 v/ph)</SelectItem>
-                  <SelectItem value="4A132M2Y6 (11 kW, 2920 v/ph)">4A132M2Y6 (11 kW, 2920 v/ph)</SelectItem>
-                  <SelectItem value="4A160M2Y6 (15 kW, 2930 v/ph)">4A160M2Y6 (15 kW, 2930 v/ph)</SelectItem>
+                  {recommendedMotors.length > 0 ? (
+                    recommendedMotors.map((m) => {
+                      const value = `${m.motor_code} (${m.power_kw} kW, ${m.speed_rpm} v/ph)`;
+                      return (
+                        <SelectItem key={m.motor_code} value={value}>
+                          {value}
+                        </SelectItem>
+                      );
+                    })
+                  ) : (
+                    <div className="p-4 text-xs text-slate-400 italic">
+                      Không tìm thấy động cơ phù hợp. Hãy điều chỉnh tỉ số truyền hoặc công suất yêu cầu.
+                    </div>
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -312,20 +361,20 @@ export default function Step2Motor() {
             {/* Thông số kỹ thuật động cơ */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-slate-50 rounded-xl border border-slate-100">
               <div className="space-y-1">
-                 <span className="text-[10px] text-slate-500 uppercase font-black block tracking-widest">cos φ</span>
-                 <span className="text-xl font-black text-slate-900">{step2Data.cosPhi}</span>
+                <span className="text-[10px] text-slate-500 uppercase font-black block tracking-widest">cos φ</span>
+                <span className="text-xl font-black text-slate-900">{step2Data.cosPhi}</span>
               </div>
               <div className="space-y-1">
-                 <span className="text-[10px] text-slate-500 uppercase font-black block tracking-widest">Hiệu suất (η)</span>
-                 <span className="text-xl font-black text-slate-900">{step2Data.motorEfficiency}</span>
+                <span className="text-[10px] text-slate-500 uppercase font-black block tracking-widest">Hiệu suất (η)</span>
+                <span className="text-xl font-black text-slate-900">{step2Data.motorEfficiency}</span>
               </div>
               <div className="space-y-1">
-                 <span className="text-[10px] text-slate-500 uppercase font-black block tracking-widest">T_max/T_dm</span>
-                 <span className="text-xl font-black text-slate-900">{step2Data.tMaxTdm}</span>
+                <span className="text-[10px] text-slate-500 uppercase font-black block tracking-widest">T_max/T_dm</span>
+                <span className="text-xl font-black text-slate-900">{step2Data.tMaxTdm}</span>
               </div>
               <div className="space-y-1">
-                 <span className="text-[10px] text-slate-500 uppercase font-black block tracking-widest">T_kd/T_dm</span>
-                 <span className="text-xl font-black text-slate-900">{step2Data.tKdTdm}</span>
+                <span className="text-[10px] text-slate-500 uppercase font-black block tracking-widest">T_kd/T_dm</span>
+                <span className="text-xl font-black text-slate-900">{step2Data.tKdTdm}</span>
               </div>
             </div>
           </div>
@@ -334,7 +383,7 @@ export default function Step2Motor() {
         {/* Card 4: Bảng đặc tính truyền động */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 overflow-hidden">
           <h3 className="text-xl font-bold text-gray-900 mb-6 font-sans tracking-tight">4. Bảng đặc tính truyền động</h3>
-          
+
           <div className="overflow-x-auto -mx-8 px-8">
             <table className="w-full text-sm border-collapse bg-white">
               <thead>
@@ -349,44 +398,44 @@ export default function Step2Motor() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {tableData.length > 0 ? (
-                    <>
-                        <tr className="hover:bg-slate-50/50 transition-colors">
-                            <td className="py-4 px-4 text-slate-700 font-bold bg-slate-50/30">Pk (kW)</td>
-                            {tableData.map((col, idx) => (
-                                <td key={idx} className={`text-center py-4 px-4 ${idx === 0 ? 'text-slate-900 font-medium' : 'text-slate-600'}`}>
-                                    {col.congSuat}
-                                </td>
-                            ))}
-                        </tr>
-                        <tr className="hover:bg-slate-50/50 transition-colors">
-                            <td className="py-4 px-4 text-slate-700 font-bold bg-slate-50/30">n (v/ph)</td>
-                            {tableData.map((col, idx) => (
-                                <td key={idx} className={`text-center py-4 px-4 ${idx === 0 ? 'text-slate-900 font-medium' : 'text-slate-600'}`}>
-                                    {col.soVongQuay}
-                                </td>
-                            ))}
-                        </tr>
-                        <tr className="hover:bg-slate-50/50 transition-colors">
-                            <td className="py-4 px-4 text-slate-700 font-bold bg-slate-50/30">M (N.mm)</td>
-                            {tableData.map((col, idx) => (
-                                <td key={idx} className="text-center py-4 px-4 text-slate-600 text-xs italic">
-                                    {(col.momentXoan / 1000).toFixed(1)}k
-                                </td>
-                            ))}
-                        </tr>
-                        <tr className="bg-blue-50/30 font-bold">
-                            <td className="py-4 px-4 text-blue-900 font-black bg-blue-100/50 uppercase text-[10px]">u</td>
-                            {tableData.map((col, idx) => (
-                                <td key={idx} className={`text-center py-4 px-4 ${idx === 0 ? 'text-slate-400' : 'text-blue-700 font-black'}`}>
-                                    {col.tySoTruyen === "-" ? "-" : col.tySoTruyen}
-                                </td>
-                            ))}
-                        </tr>
-                    </>
-                ) : (
-                    <tr>
-                        <td colSpan={6} className="py-8 text-center text-slate-400 italic">Đang tải dữ liệu tính toán...</td>
+                  <>
+                    <tr className="hover:bg-slate-50/50 transition-colors">
+                      <td className="py-4 px-4 text-slate-700 font-bold bg-slate-50/30">Pk (kW)</td>
+                      {tableData.map((col, idx) => (
+                        <td key={idx} className={`text-center py-4 px-4 ${idx === 0 ? 'text-slate-900 font-medium' : 'text-slate-600'}`}>
+                          {col.congSuat}
+                        </td>
+                      ))}
                     </tr>
+                    <tr className="hover:bg-slate-50/50 transition-colors">
+                      <td className="py-4 px-4 text-slate-700 font-bold bg-slate-50/30">n (v/ph)</td>
+                      {tableData.map((col, idx) => (
+                        <td key={idx} className={`text-center py-4 px-4 ${idx === 0 ? 'text-slate-900 font-medium' : 'text-slate-600'}`}>
+                          {col.soVongQuay}
+                        </td>
+                      ))}
+                    </tr>
+                    <tr className="hover:bg-slate-50/50 transition-colors">
+                      <td className="py-4 px-4 text-slate-700 font-bold bg-slate-50/30">M (N.mm)</td>
+                      {tableData.map((col, idx) => (
+                        <td key={idx} className="text-center py-4 px-4 text-slate-600 text-xs italic">
+                          {(col.momentXoan / 1000).toFixed(1)}k
+                        </td>
+                      ))}
+                    </tr>
+                    <tr className="bg-blue-50/30 font-bold">
+                      <td className="py-4 px-4 text-blue-900 font-black bg-blue-100/50 uppercase text-[10px]">u</td>
+                      {tableData.map((col, idx) => (
+                        <td key={idx} className={`text-center py-4 px-4 ${idx === 0 ? 'text-slate-400' : 'text-blue-700 font-black'}`}>
+                          {col.tySoTruyen === "-" ? "-" : col.tySoTruyen}
+                        </td>
+                      ))}
+                    </tr>
+                  </>
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="py-8 text-center text-slate-400 italic">Đang tải dữ liệu tính toán...</td>
+                  </tr>
                 )}
               </tbody>
             </table>
