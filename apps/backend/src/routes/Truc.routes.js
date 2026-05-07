@@ -22,4 +22,24 @@ router.post('/kiemnghiem-heso-antoan-truc-III', truccontroller.kiemnghiemHesoAnT
 router.post('/kiemnghiem-doben-quatai-truc-I', truccontroller.Kiemnghiemdobenquatai_trucI)
 router.post('/kiemnghiem-doben-quatai-truc-II', truccontroller.Kiemnghiemdobenquatai_trucII)
 router.post('/kiemnghiem-doben-quatai-truc-III', truccontroller.Kiemnghiemdobenquatai_trucIII)
+
+//=====================================================================
+// TÍNH TOÁN D1, LMRC, LMDT VỚI LỰA CHỌN CỦA USER
+//=====================================================================
+router.get('/tinh-dieu-kien-d1-truc-I', truccontroller.tinhDieuKienD1_trucI)
+router.get('/tinh-dieu-kien-d2-truc-II', truccontroller.tinhDieuKienD1_trucII)
+router.get('/tinh-dieu-kien-d3-truc-III', truccontroller.tinhDieuKienD1_trucIII)
+
+// TÍNH HỆ SỐ TRỤC
+router.post('/tinh-he-truc-I', truccontroller.tinh_hetruc_trucI)
+router.post('/tinh-he-truc-II', truccontroller.tinh_hetruc_trucII)
+router.post('/tinh-he-truc-III', truccontroller.tinh_hetruc_trucIII)
+// suport front end
+// Trục I
+router.get('/show-gh-truc-I', truccontroller.gioi_han_lmrc_lmdt_truc_I)
+router.get('/show-gh-l11-truc-I', truccontroller.gioi_han_l11_I)
+// Trục II
+router.get('/show-gh-truc-II', truccontroller.gioi_han_lmrc_lmrt_II)
+// Trục III
+router.get('/show-gh-truc-III', truccontroller.gioi_han_lmrt_lmkn_III)
 export default router;

@@ -12,7 +12,7 @@ export class Truc {
     #momentXoan
     #nhanhieuthep
     #nhietluyen
-    #dKinhTieuChuan
+    #Thongtintruc
     /**
      * @param {{ 
      * tenTruc: string, 
@@ -22,10 +22,10 @@ export class Truc {
      * momentXoan: number 
      * nhanhieuthep: string,
      * nhietluyen: string,
-     * dKinhTieuChuan: object
+     * Thongtintruc: object
      * }} params
      */
-    constructor({ tenTruc, congSuat, tySoTruyen, soVongQuay, momentXoan, nhanhieuthep, nhietluyen, dKinhTieuChuan}) {
+    constructor({ tenTruc, congSuat, tySoTruyen, soVongQuay, momentXoan, nhanhieuthep, nhietluyen, Thongtintruc}) {
         this.#tenTruc = tenTruc;
         this.#congSuat = congSuat;
         this.#tySoTruyen = tySoTruyen; 
@@ -33,7 +33,7 @@ export class Truc {
         this.#momentXoan = momentXoan; 
         this.#nhanhieuthep = nhanhieuthep;
         this.#nhietluyen = nhietluyen;
-        this.#dKinhTieuChuan = dKinhTieuChuan || {};
+        this.#Thongtintruc = Thongtintruc || {};
     }
     getTenTruc() {
         return this.#tenTruc
@@ -57,7 +57,7 @@ export class Truc {
         return this.#nhietluyen
     }
     getDKinhTieuChuan(){
-        return this.#dKinhTieuChuan
+        return this.#Thongtintruc
     }
     /**
      * Lấy đường kính tiêu chuẩn cho một tiết diện cụ thể của một trục
@@ -67,140 +67,13 @@ export class Truc {
      */
     getDiameterForSection(tenTruc, tenTietDien) {
         const trucKey = `truc${tenTruc}`;
-        const sectionDiameters = this.#dKinhTieuChuan[trucKey];
+        const sectionDiameters = this.#Thongtintruc[trucKey];
         if (!sectionDiameters || sectionDiameters[tenTietDien] === undefined) {
             throw new Error(`Không tìm thấy đường kính tiêu chuẩn cho trục ${tenTruc}, tiết diện ${tenTietDien}`);
         }
         return sectionDiameters[tenTietDien];
     }
-    //----------------------------------------------Tính sơ bộ đường kính trục--------------------------------------
-    /**momenxoan trên trục(N.mm)
-     * t là ứng suất xoắn cho phép (Mpa=N/mm2)
-    */
-    Tinh_D_sobo(t){
-        const momenxoan = this.#momentXoan
-        const d1= Math.cbrt(momenxoan/(0.2*t))
-        return d1
-    }
-    // hàm chọn d tiêu chuẩn và bo chiều rộng ổ (mm) dựa theo giáo trình Trịnh Chất - Lê Văn Uyển tập 1 trang 188 bảng 10.2 
-    Chon_D1(d) {
-        const danhSach_d = [20, 25, 30, 35, 40 ,45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100 ]
-        const danhSach_bo = [15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 47]
-        const dtc=  danhSach_d.find( dTieuChuan => dTieuChuan >= d) || d
-        const bo = danhSach_bo[danhSach_d.indexOf(dtc)]
-        return {
-            "dTieuchuan": dtc,
-            "boTieuChuan": bo
-        }
-    }
-     //----------------------------------------------Tính chiều dài các đoạn trục--------------------------------------
-    /** 
-     * l_mrc là chiều dài mayo của bánh răng côn(mm)
-     * d1 là đường kính trục nhỏ nhất(mm)
-     */
-    Tinh_l_mrc(d){
-        const l_mrc = (1.2/1.4) * d
-        return l_mrc
-    }
-    
-    /**
-     * l_mdt là chiều dài mayo bánh đai(mm)
-     * d1 là đường kính trục nhỏ nhất(mm)
-     */
-    Tinh_l_mdt(d1){
-        const l_mdt = (1.2/1.5) * d1
-        return l_mdt
-    }
-   
-    /**
-     * l_11 là chiều dài đoạn trục 1_1 (mm)
-     * d1 là đường kính trục nhỏ nhất(mm)
-     */
-    Tinh_l_11(d1){
-        const l_11=(2.5/3)*d1
-        return l_11
-    }
-   
-     /**
-     * l_12 là chiều dài đoạn trục 1_2 (mm)
-     * l_mdt là chiều dài mayo bánh đai(mm)
-     * b0 là chiều rộng ổ (mm)
-     * k3,hn là kích thước kết cấu(mm)
-     * với k3= 15 mm, hn=17(mm) (default) theo bảng 4.2 trang 60
-     */
-    Tinh_l_12(l_mdt,b0,k3=15,hn=17){
-        const l_12= 0.5*(l_mdt+b0)+k3+hn
-        return l_12
-    }
-    
-        /**
-     * l_13 là chiều dài đoạn trục 1_3 (mm)
-     * l_11 là chiều dài đoạn trục 1_1 (mm)
-     * k1,k2 là kích thước kết cấu(mm)
-     * l_mrc là chiều dài mayo của bánh răng côn(mm)
-     * b0 là chiều rộng ổ (mm)
-     * b13 là chiều rộng bánh răng(mm)
-     * alpha là góc côn (độ)
-     * với k1= 12.6 mm, k2=10 mm (default) theo bảng 4.2 trang 60
-     * b13=38 mm
-     * alpha=17.62 độ
-     */
-    Tinh_l_13(l_11, k1=12.6, k2=10, l_mrc, b0, b13=38, alpha=17.62){
-        const l_13= l_11+k1+k2+l_mrc+0.5*(b0-b13*Math.cos(alpha))
-        return l_13
-    }
-   
-    //--------------------------------Phương trình cân bằng lực----------------------------------
-    /**
-     * Cân bằng momen quanh trục x
-     * Fa1 là lục dọc trục (N)
-     * Fr1 là lực hướng tâm (N)
-     * Fr là lực đai (N)
-     * By là phản lực gối B theo phương y (N)
-     * dm1 là đường kính trung bình (mm)
-     * công thức trang 61 4.4
-     */
-    Tinh_By(Fa1,Fr1,Fr,dm1,l_11,l_12,l_13){
-        const part1 = Fa1*(dm1/2)
-        const part2 = Fr1*l_12
-        const part3 = Fr*l_13
-        const By = (-part1 + part2 + part3 )/l_11
-        return By
-    }
-
-    /**
-     * Cân bằng momen quanh trục y
-     * Ft1 là lục vòng (N)
-     * Bx là phản lực gối B theo phương x (N)
-     * công thức trang 61 4.5
-     */
-    Tinh_Bx(Ft1,l_11,l_12){
-        const Bx = (Ft1*l_12)/l_11
-        return Bx
-    }
-    /**
-     * Cân bằng lực
-     * Ax, Ay, Az là phản lực gối A (N)
-     * Bx là phản lực gối B theo phương x (N)
-     * By là phản lực gối B theo phương y (N)
-     * Fa1 là lực dọc trục (N)
-     * Fr1 là lực hướng tâm (N)
-     * Fr là lực đai (N)
-     * Ft1 là lục vòng (N)
-     * công thức trang 62 4.6, 4.7, 4.8
-     */
-    Tinh_Ax(Bx,Ft1){
-        const Ax= Bx + Ft1
-        return Ax
-    }
-    Tinh_Ay(By,Fr1,Fr){
-        const Ay = By + Fr1 - Fr
-        return Ay
-    }
-    Tinh_Az(Fa1){
-         const Az = Fa1
-         return Az
-    }
+ 
     //--------------------------------Momen tương đương----------------------------------
     /**
      * Mtd là Momen tương đương
@@ -889,6 +762,422 @@ export class Truc {
         const ketqua_kiemnghiem = this.Tinh_bangkiemnghiemdobenquatai(result,tentruc)
         return ketqua_kiemnghiem
     }
-}
+   //----------------------------------------------Tính sơ bộ đường kính trục--------------------------------------
+    /**momenxoan trên trục(N.mm)
+     * t là ứng suất xoắn cho phép (Mpa=N/mm2)
+    */
+    Tinh_DK_d1(t){
+        const momenxoan = this.getMomentXoan()
+        const d1= Math.cbrt(momenxoan/(0.2*t))
+        return d1
+    }
+    tim_bo(d) {
+        const danhSach_d = [20, 25, 30, 35, 40 ,45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100 ]
+        const danhSach_bo = [15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 47]
+        const dtc=  danhSach_d.find( dTieuChuan => dTieuChuan === d)
+        const b0 = danhSach_bo[danhSach_d.indexOf(dtc)]
+        return b0
+    }
+    //================================== TÍNH TOÁN D1, LMRC, LMDT VỚI LỰA CHỌN CỦA USER ==================================
+    //----------------------------------------------Tính chiều dài các đoạn trục--------------------------------------
+    Tinh_gh_l_1_chung(d){
+        const min = 1.2 * d
+        const max = 1.4 * d
+        return {
+            min: min,
+            max: max
+        }
+    }
+    Tinh_gh_l_2_chung(d){
+        const min = 1.2 * d
+        const max = 1.5 * d
+        return {
+            min: min,
+            max: max
+        }
+    }
+    Tinh_gh_l_mkn_III(d){
+        const l_mkn_min = 1.2 * d
+        const l_mkn_max = 2.5 * d
+        return {
+            min: l_mkn_min,
+            max: l_mkn_max
+        }
+    }
+    
+    getinfor(tenTruc, duongkinh, l1, l2) {
+        const trucKey = `truc${tenTruc}`;
+        const infor = this.#Thongtintruc[trucKey]
+        if(!infor) {
+            throw new Error(`Không tìm thấy thông tin cho trục ${tenTruc}`)
+        }
+        const d = infor[duongkinh]
+        const l_1 = infor[l1]
+        const l_2 = infor[l2]
+        const result = {d, l_1, l_2}
+        return {
+           result
+        }
+    }
+    //--------------------------------Phương trình cân bằng lực----------------------------------
+    
+    tinhDieuKienD1() {
+        const danhSach_d = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100];
+        let triSoUngSuat
+        if(this.getTenTruc() == "I"||this.getTenTruc() == "II") {
+            triSoUngSuat = 20
+        }
+        else{
+            triSoUngSuat = 25
+        }
+        // Tính d1 sơ bộ
+        const d1_sobo = this.Tinh_DK_d1(triSoUngSuat);
+        
+        // Lọc các giá trị d1 tiêu chuẩn >= d1_sobo
+        const d1_danhSach = danhSach_d.filter(d => d >= d1_sobo);
+        
+        if (d1_danhSach.length === 0) {
+            throw new Error(`Không tìm thấy giá trị d1 tiêu chuẩn phù hợp. d1 sơ bộ = ${d1_sobo} mm`);
+        }
+        
+        return {
+            tenTruc: this.#tenTruc,
+            d1_sobo: d1_sobo,
+            d1_danhSach: d1_danhSach
+        };
+    }
+    tinh_gh_l_I(d1_selected) {
+        const danhSach_d = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100];
+        
+        if (!danhSach_d.includes(d1_selected)) {
+            throw new Error(`d1 = ${d1_selected} không phải là giá trị tiêu chuẩn. Danh sách: ${danhSach_d.join(", ")}`);
+        }
+
+        const gh_l_1 =this.Tinh_gh_l_1_chung(d1_selected);
+        const gh_l_2 = this.Tinh_gh_l_2_chung(d1_selected);
+        return {
+            "gh_lmrc": gh_l_1,
+            "gh_lmdt": gh_l_2,
+        };
+    }
+    tinh_gh_l_II(d1_selected) {
+        const danhSach_d = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100];
+        
+        if (!danhSach_d.includes(d1_selected)) {
+            throw new Error(`d1 = ${d1_selected} không phải là giá trị tiêu chuẩn. Danh sách: ${danhSach_d.join(", ")}`);
+        }
+
+        const gh_l_1 =this.Tinh_gh_l_1_chung(d1_selected);
+        const gh_l_2 = this.Tinh_gh_l_2_chung(d1_selected);
+        return {
+            "gh_lmrc": gh_l_1,
+            "gh_lmrt": gh_l_2,
+        };
+    }
+    tinh_gh_l_III(d1_selected) {
+        const danhSach_d = [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100];
+        
+        if (!danhSach_d.includes(d1_selected)) {
+            throw new Error(`d1 = ${d1_selected} không phải là giá trị tiêu chuẩn. Danh sách: ${danhSach_d.join(", ")}`);
+        }
+        const lmrt =this.Tinh_gh_l_1_chung(d1_selected);
+        const lmkn = this.Tinh_gh_l_mkn_III(d1_selected);
+        
+        return {
+            "gh_lmrt": lmrt,
+            "gh_lmkn": lmkn,
+        };
+    }
+    Tinh_l_I(){
+        const infor = this.getinfor("I", "d1", "lmrc", "lmdt")
+        const d1 = infor.result.d
+        const lmrc = infor.result.l_1
+        const lmdt = infor.result.l_2
+        const danhSach_d = this.tinhDieuKienD1()
+        if (!danhSach_d.d1_danhSach.includes(d1)) {
+            throw new Error(`d1 = ${d1} không phải là giá trị tiêu chuẩn. Danh sách: ${danhSach_d.d1_danhSach.join(", ")}`);
+        }
+
+        const gh_lmrc_lmdt = this.tinh_gh_l_I(d1)
+        
+        if (lmrc < gh_lmrc_lmdt.gh_lmrc.min || lmrc > gh_lmrc_lmdt.gh_lmrc.max) {
+            throw new Error(`lmrc = ${lmrc} không nằm trong khoảng [${lmrc_gh.gh_l_1.min}, ${lmrc_gh.gh_l_1.max}]`);
+        }
+        if (lmdt < gh_lmrc_lmdt.gh_lmdt.min || lmdt > gh_lmrc_lmdt.gh_lmdt.max) {
+            throw new Error(`lmdt = ${lmdt} không nằm trong khoảng [${lmdt_gh.gh_l_2.min}, ${lmdt_gh.gh_l_2.max}]`);
+        }
+        return {
+            tenTruc: this.#tenTruc,
+            d1: d1,
+            gh_lmrc_lmdt: gh_lmrc_lmdt,
+            lmrc: lmrc,
+            lmdt: lmdt
+        };
+    }
+    Tinh_l_II(){
+        const infor = this.getinfor("II", "d2", "lmrc", "lmrt")
+        const d2 = infor.result.d
+        const lmrc = infor.result.l_1
+        const lmrt = infor.result.l_2
+        const danhSach_d = this.tinhDieuKienD1().d1_danhSach;
+        if (!danhSach_d.includes(d2)) {
+            throw new Error(`d2 = ${d2} không phải là giá trị tiêu chuẩn. Danh sách: ${danhSach_d.join(", ")}`);
+        }
+        const gh_lmrc_lmrt = this.tinh_gh_l_II(d2)
+        if (lmrc < gh_lmrc_lmrt.gh_lmrc.min || lmrc > gh_lmrc_lmrt.gh_lmrc.max) {
+            throw new Error(`lmrc = ${lmrc} không nằm trong khoảng [${lmrc_gh.gh_l_1.min}, ${lmrc_gh.gh_l_1.max}]`);
+        }
+        if (lmrt < gh_lmrc_lmrt.gh_lmrt.min || lmrt > gh_lmrc_lmrt.gh_lmrt.max) {
+            throw new Error(`lmrt = ${lmrt} không nằm trong khoảng [${lmrt_gh.gh_l_2.min}, ${lmrt_gh.gh_l_2.max}]`);
+        }
+        return {
+            tenTruc: this.#tenTruc,
+            d2: d2,
+            gh_lmrc_lmrt:  gh_lmrc_lmrt,
+            lmrc: lmrc,
+            lmrt: lmrt
+        };
+    }
+    Tinh_l_III(){
+        const infor = this.getinfor("III", "d3", "lmrt", "lmkn")
+        const d3 = infor.result.d
+        const lmrt = infor.result.l_1
+        const lmkn = infor.result.l_2
+        const danhSach_d = this.tinhDieuKienD1().d1_danhSach;
+        if (!danhSach_d.includes(d3)) {
+            throw new Error(`d3 = ${d3} không phải là giá trị tiêu chuẩn. Danh sách: ${danhSach_d.join(", ")}`);
+        }
+        const gh_lmrt_lmkn = this.tinh_gh_l_III(d3)
+        if (lmrt < gh_lmrt_lmkn.gh_lmrt.min || lmrt > gh_lmrt_lmkn.gh_lmrt.max) {
+            throw new Error(`lmrt = ${lmrt} không nằm trong khoảng [${lmrt_gh.gh_l_1.min}, ${lmrt_gh.gh_l_1.max}]`);
+        }
+        if (lmkn < gh_lmrt_lmkn.gh_lmkn.min || lmkn > gh_lmrt_lmkn.gh_lmkn.max) {
+            throw new Error(`lmkn = ${lmkn} không nằm trong khoảng [${lmkn_gh.gh_l_2.min}, ${lmkn_gh.gh_l_2.max}]`);
+        }
+        return {
+            tenTruc: this.#tenTruc,
+            d3: d3,
+            gh_lmrt_lmkn: gh_lmrt_lmkn,
+            lmrt: lmrt,
+            lmkn: lmkn
+        };
+    }
+
+//========================================================================================================
+    Tinh_gh_l_11(){
+        const infor_truc_I = this.#Thongtintruc.trucI
+        const d1 = infor_truc_I.d1
+        const min = 2.5 * d1
+        const max = 3 * d1
+        return {
+            min: min,
+            max: max
+        };
+    }
+//========================================================================================================
+    Tinh_l_11(){
+        const infor_truc_I = this.#Thongtintruc.trucI
+        const l11 = infor_truc_I.l11
+        const d1 = infor_truc_I.d1
+        const gh_l11 = this.Tinh_gh_l_11()
+        if (l11 < gh_l11.min || l11 > gh_l11.max) {
+            throw new Error(`l11 = ${l11} không nằm trong khoảng [${gh_l11.min}, ${gh_l11.max}]`);
+        }
+        return l11
+    }
+    Tinh_l_12( ){
+        const result = this.Tinh_l_I()
+        const l_mdt = result.lmdt
+        const b0 = this.tim_bo(this.Tinh_l_I().d1)
+        const k3 = 16
+        const hn =17.25
+        const l_12= 0.5*(l_mdt+b0)+k3+hn
+        return l_12
+    }
+    Tinh_l_13(){
+        const l_11 = this.Tinh_l_11()
+        const l_mrc = this.Tinh_l_I().lmrc
+        const b0 = this.tim_bo(this.Tinh_l_I().d1)
+        const k1=12.6
+        const k2=10
+        const b13=38
+        const alpha = 17.62;
+        const alphaRad = alpha * Math.PI / 180;
+        const l_13= l_11+k1+k2+l_mrc+0.5*(b0-b13*Math.cos(alphaRad))
+        return l_13
+    }
+    Tinh_By(Fa1,Fr1,Fr,dm1,l_11,l_12,l_13){
+        const part1 = Fa1*(dm1/2)
+        const part2 = Fr1*l_12
+        const part3 = Fr*l_13
+        const By = (-part1 + part2 + part3 )/l_11
+        return By
+    }
+    Tinh_Bx(Ft1,l_11,l_12){
+        const Bx = (Ft1*l_12)/l_11
+        return Bx
+    }
+    Tinh_Ax(Bx,Ft1){
+        const Ax= Bx + Ft1
+        return Ax
+    }
+    Tinh_Ay(By,Fr1,Fr){
+        const Ay = By + Fr1 - Fr
+        return Ay
+    }
+    Tinh_Az(Fa1){
+         const Az = Fa1
+         return Az
+    }
+    Tinh_hetruc_I(Fa1, Fr1, Fr, Ft1,dm1){
+        const l_11 = this.Tinh_l_11()
+        const l_12 = this.Tinh_l_12()
+        const l_13 = this.Tinh_l_13()
+        const By = this.Tinh_By(Fa1,Fr1,Fr,dm1,l_11,l_12,l_13)
+        const Bx = this.Tinh_Bx(Ft1,l_11,l_12)
+        const Ax = this.Tinh_Ax(Bx,Ft1)
+        const Ay = this.Tinh_Ay(By,Fr1,Fr)
+        const Az = this.Tinh_Az(Fa1)
+        return {
+            By: Number(By.toFixed(2)),
+            Bx: Number(Bx.toFixed(2)),
+            Ax: Number(Ax.toFixed(2)),
+            Ay: Number(Ay.toFixed(2)),
+            Az: Number(Az.toFixed(2))
+        }
+    }
+//======================================================================================================
+    Tinh_l_22(){
+        const k1 = 12.5
+        const k2 = 10
+        const result = this.Tinh_l_II()
+        const lmrc = result.lmrc
+        const lmrt = result.lmrt
+        const b0 = this.tim_bo(this.Tinh_l_II().d2)
+        const l_22 = 0.5*(lmrt + b0) + k1 + k2
+        return l_22
+    }
+    Tinh_l_23(){
+        const l_22 = this.Tinh_l_22()
+        const brc = 38
+        const alpha = 72.38
+        const alphaRad = alpha * Math.PI / 180;
+        const result = this.Tinh_l_II()
+        const lmrt = result.lmrt
+        const k1 = 12.5
+        const l_23 = l_22 + 0.5*(lmrt + brc * Math.cos(alphaRad)) + k1
+        return l_23
+    }
+    Tinh_l_21(){
+        const result = this.Tinh_l_II()
+        const lmrt = result.lmrt
+        const lmrc = result.lmrc
+        const b0 = this.tim_bo(this.Tinh_l_II().d2)
+        const k1 = 12.5
+        const k2 = 10
+        const l_21 = lmrt + lmrc + b0 + 3*k1 + 2*k2
+        return l_21
+    }
+    Tinh_Dy(Fr3, l_22, Fr2, l_23, Fa2, dm2, l_21){
+        const tu = Fr3*l_22 - Fr2*l_23 - (Fa2*dm2)/2
+        const mau = l_21
+        const Dy = tu/mau
+        return Dy
+    }
+    Tinh_Dx(Ft3, l_22, Ft2, l_23, l_21 ){
+        const tu = Ft3*l_22 + Ft2*l_23
+        const mau = l_21
+        const Dx = tu/mau
+        return Dx
+    }
+    Tinh_Dz(Fa2){
+        const Dz = Fa2
+        return Dz
+    }
+    Tinh_Cx(Ft3, Ft2 , Dx){
+        const Cx = Ft3 + Ft2 - Dx
+        return Cx
+    }
+    Tinh_Cy(Fr3, Fr2, Dy){
+        const Cy = Fr3 - Fr2 - Dy
+        return Cy
+    }
+    Tinh_hetruc_II(Fr3, Fr2, Fa2, dm2, Ft3, Ft2){
+        const l_22 = this.Tinh_l_22()
+        const l_23 = this.Tinh_l_23()
+        const l_21 = this.Tinh_l_21()
+        const Dx = this.Tinh_Dx(Ft3, l_22, Ft2, l_23, l_21)
+        const Dy = this.Tinh_Dy(Fr3, l_22, Fr2, l_23, Fa2, dm2, l_21)
+        const Dz = this.Tinh_Dz(Fa2)
+        const Cx = this.Tinh_Cx(Ft3,Ft2, Dx)
+        const Cy = this.Tinh_Cy(Fr3, Fr2, Dy)
+        return {
+            Dx: Number(Dx.toFixed(2)),
+            Dy: Number(Dy.toFixed(2)),
+            Dz: Number(Dz.toFixed(2)),
+            Cx: Number(Cx.toFixed(2)),
+            Cy: Number(Cy.toFixed(2))
+        }
+    }
+//=============================================================================================================
+    Tinh_l_33(l_21){
+        const b0 = this.tim_bo(this.Tinh_l_III().d3)
+        const k3 = 15
+        const hn = 17
+        const lmkn = this.Tinh_l_III().lmkn
+        const l_33 = l_21 + b0/2 + k3 + hn + lmkn
+        return l_33
+    }
+    Tinh_Fy(Fr5, l_32, l_31){
+        const Fy = (Fr5 * l_32)/ l_31
+        return Fy
+    }
+    Tinh_Fx(F6, l_33, Ft5, l_32, l_31){
+        const tu = F6 * l_33 - Ft5 * l_32
+        const Fx = tu / l_31
+        return Fx
+    }
+    Tinh_Ex(Ft5, F6, Fx){
+        const Ex = Ft5 + Fx - F6
+        return Ex
+    }
+    Tinh_Ey(Fr5, Fy){
+        const Ey = Fr5 - Fy
+        return Ey
+    }
+    Tinh_hetruc_III(Fr5, Ft5, l_22, l_21){
+        const F6 = 0.25 * ( (2* this.getMomentXoan()) /130)
+        const l_31 = l_21
+        const l_32 = l_22
+        const l_33 = this.Tinh_l_33(l_21)
+        const Fy = this.Tinh_Fy(Fr5, l_32, l_31)
+        const Fx = this.Tinh_Fx(F6, l_33, Ft5, l_32, l_31)
+        const Ex = this.Tinh_Ex(Ft5, F6, Fx)
+        const Ey = this.Tinh_Ey(Fr5, Fy)
+        return {
+            Fx: Number(Fx.toFixed(2)),
+            Fy: Number(Fy.toFixed(2)),
+            Ex: Number(Ex.toFixed(2)),
+            Ey: Number(Ey.toFixed(2))
+        }
+    }
+//suport front end giới hạn chọn của người dùng
+    Tinh_Min_max_lmrc_lmdt_I(){
+        const result = this.Tinh_l_I()
+        const gh = result.gh_lmrc_lmdt
+        return gh
+    }
+    Tinh_Min_max_lmrc_lmrt_II(){
+        const result = this.Tinh_l_II()
+        const gh = result.gh_lmrc_lmrt
+        return gh
+    }
+    Tinh_Min_max_lmrt_lmkn_III(){
+        const result = this.Tinh_l_III()
+        const gh = result.gh_lmrt_lmkn
+        return gh
+    }
+}   
+
 
 
