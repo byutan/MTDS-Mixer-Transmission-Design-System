@@ -14,6 +14,7 @@ export class OLan extends BoTruyen {
         this.#hieuSuat = hieuSuat;
     }
 
+    // Hàm kiểm tra hiệu suất (Đã khôi phục)
     static kiemTraHieuSuat(hieuSuat) {
         return (hieuSuat >= OLan.HIEU_SUAT_MIN && hieuSuat <= OLan.HIEU_SUAT_MAX);
     }
@@ -37,12 +38,14 @@ export class OLan extends BoTruyen {
         };
 
         if (!bangTra[d]) {
-            throw new Error(`Tapered roller bearing parameters not found for d = ${d}mm.`);
+            throw new Error(`Không tìm thấy thông số ổ đũa côn cho d = ${d}mm.`);
         }
         return bangTra[d];
     }
 
     static xacDinhHeSoXY(Fa, Fr, alpha_deg, V = 1) {
+        if (Fr === 0) return { e: 0, X: 1, Y: 0, ratio: 0 };
+
         const alpha_rad = alpha_deg * (Math.PI / 180);
         const e = 1.5 * Math.tan(alpha_rad);
         
@@ -60,24 +63,49 @@ export class OLan extends BoTruyen {
 
     tinhToanThietKeOLan({ duong_kinh_ngong_truc, Fr, Fa, so_vong_quay, thoi_gian_phuc_vu_Lh, he_so_tai_trong_dong_kd = 1 }) {
         const thong_so_o = OLan.traBangThongSoODuaCon(duong_kinh_ngong_truc);
-        const Fr_kN = Fr / 1000;
-        const Fa_kN = Fa / 1000;
-
-        const he_so = OLan.xacDinhHeSoXY(Fa_kN, Fr_kN, thong_so_o.alpha_deg, 1);
-        const Q = this.tinhTaiTrongDongQuyUoc({ Fr: Fr_kN, Fa: Fa_kN, X: he_so.X, Y: he_so.Y, V: 1, kt: 1, kd: he_so_tai_trong_dong_kd });
+        
+        // Tính toán với đơn vị Newton (N) để khớp đồ án
+        const he_so = OLan.xacDinhHeSoXY(Fa, Fr, thong_so_o.alpha_deg, 1);
+        const Q_N = this.tinhTaiTrongDongQuyUoc({ Fr: Fr, Fa: Fa, X: he_so.X, Y: he_so.Y, V: 1, kt: 1, kd: he_so_tai_trong_dong_kd });
 
         const L = (thoi_gian_phuc_vu_Lh * 60 * so_vong_quay) / 1000000;
-        const m = 10 / 3; // Bậc đường cong mỏi của ổ đũa
-        const Cd = Q * Math.pow(L, 1/m);
+        const m = 10 / 3; 
+        const Cd_N = Q_N * Math.pow(L, 1/m);
+        const Cd_kN = Cd_N / 1000;
 
         return {
-            bang_chon_o: { loai_o: "Ổ đũa côn", ...thong_so_o },
-            chi_tiet_tinh_toan: {
-                ti_so_Fa_VFr: he_so.ratio, he_so_e: he_so.e, he_so_X: he_so.X, he_so_Y: he_so.Y,
-                tuoi_tho_trieu_vong_quay_L: parseFloat(L.toFixed(3)), tai_trong_dong_quy_uoc_Q_kN: Q,
-                kha_nang_tai_dong_tinh_toan_Cd_kN: parseFloat(Cd.toFixed(3))
+            bang_chon_o: {
+                loai_o: "Ổ đũa côn",
+                ky_hieu: thong_so_o.ky_hieu,
+                d: thong_so_o.d,
+                D: thong_so_o.D,
+                D1: thong_so_o.D1,
+                d1: thong_so_o.d1,
+                B: thong_so_o.B,
+                C1: thong_so_o.C1,
+                T: thong_so_o.T,
+                r1: thong_so_o.r1,
+                r: thong_so_o.r,
+                alpha_deg: thong_so_o.alpha_deg,
+                C_kN: thong_so_o.C_kN,
+                C0_kN: thong_so_o.C0_kN
             },
-            ket_qua_kiem_nghiem: { Cd_kN: parseFloat(Cd.toFixed(3)), C_bang_tra_kN: thong_so_o.C_kN, ket_luan: Cd <= thong_so_o.C_kN ? "Passed (Cd <= C)" : "Failed (Cd > C)" }
+            // chi_tiet_tinh_toan: {
+            //     Fr_N: Number(Fr.toFixed(3)),
+            //     Fa_N: Number(Fa.toFixed(3)),
+            //     ti_so_Fa_VFr: he_so.ratio,
+            //     he_so_e: he_so.e,
+            //     he_so_X: he_so.X,
+            //     he_so_Y: he_so.Y,
+            //     tai_trong_dong_quy_uoc_Q_N: Q_N,
+            //     tuoi_tho_trieu_vong_quay_L: parseFloat(L.toFixed(3)),
+            //     kha_nang_tai_dong_tinh_toan_Cd_kN: parseFloat(Cd_kN.toFixed(3))
+            // },
+            ket_qua_kiem_nghiem: { 
+                Cd_kN: parseFloat(Cd_kN.toFixed(3)), 
+                C_bang_tra_kN: thong_so_o.C_kN, 
+                ket_luan: Cd_kN <= thong_so_o.C_kN ? "Passed" : "Failed" 
+            }
         };
     }
 
@@ -90,35 +118,51 @@ export class OLan extends BoTruyen {
         };
 
         if (!bangTra[d]) {
-            throw new Error(`Ball bearing parameters not found for d = ${d}mm.`);
+            throw new Error(`Không tìm thấy thông số ổ bi cho d = ${d}mm.`);
         }
         return bangTra[d];
     }
 
     tinhToanThietKeOBiDoMotDay({ duong_kinh_ngong_truc, Fr, Fa, so_vong_quay, thoi_gian_phuc_vu_Lh, he_so_tai_trong_dong_kd = 1 }) {
         const thong_so_o = OLan.traBangThongSoOBiDoMotDay(duong_kinh_ngong_truc);
-        const Fr_kN = Fr / 1000;
-        const Fa_kN = Fa / 1000;
-
-        // Theo tài liệu: Fa = 0 -> X = 1, Y = 0
+        
         const X = 1;
         const Y = 0;
-
-        const Q = this.tinhTaiTrongDongQuyUoc({ Fr: Fr_kN, Fa: Fa_kN, X: X, Y: Y, V: 1, kt: 1, kd: he_so_tai_trong_dong_kd });
+        const Q_N = this.tinhTaiTrongDongQuyUoc({ Fr: Fr, Fa: Fa, X: X, Y: Y, V: 1, kt: 1, kd: he_so_tai_trong_dong_kd });
 
         const L = (thoi_gian_phuc_vu_Lh * 60 * so_vong_quay) / 1000000;
-        const m = 3; // Bậc đường cong mỏi của ổ bi là 3
-        const Cd = Q * Math.pow(L, 1/m);
+        const m = 3; 
+        const Cd_N = Q_N * Math.pow(L, 1/m);
+        const Cd_kN = Cd_N / 1000;
 
         return {
-            bang_chon_o: { loai_o: "Ổ bi đỡ một dãy", ...thong_so_o },
-            chi_tiet_tinh_toan: {
-                he_so_X: X, he_so_Y: Y,
-                tuoi_tho_trieu_vong_quay_L: parseFloat(L.toFixed(3)), tai_trong_dong_quy_uoc_Q_kN: Q,
-                kha_nang_tai_dong_tinh_toan_Cd_kN: parseFloat(Cd.toFixed(3))
+            bang_chon_o: {
+                loai_o: "Ổ bi đỡ một dãy",
+                ky_hieu: thong_so_o.ky_hieu,
+                d: thong_so_o.d,
+                D: thong_so_o.D,
+                B: thong_so_o.B,
+                r: thong_so_o.r,
+                duong_kinh_bi: thong_so_o.d_bi,
+                C_kN: thong_so_o.C_kN,
+                C0_kN: thong_so_o.C0_kN
             },
-            ket_qua_kiem_nghiem: { Cd_kN: parseFloat(Cd.toFixed(3)), C_bang_tra_kN: thong_so_o.C_kN, ket_luan: Cd <= thong_so_o.C_kN ? "Passed (Cd <= C)" : "Failed (Cd > C)" }
+            // chi_tiet_tinh_toan: {
+            //     Fr_N: Number(Fr.toFixed(3)),
+            //     Fa_N: Number(Fa.toFixed(3)),
+            //     ti_so_Fa_VFr: Fr > 0 ? parseFloat((Fa / Fr).toFixed(3)) : 0,
+            //     he_so_e: 0,
+            //     he_so_X: X, 
+            //     he_so_Y: Y,
+            //     tai_trong_dong_quy_uoc_Q_N: Q_N,
+            //     tuoi_tho_trieu_vong_quay_L: parseFloat(L.toFixed(3)),
+            //     kha_nang_tai_dong_tinh_toan_Cd_kN: parseFloat(Cd_kN.toFixed(3))
+            // },
+            ket_qua_kiem_nghiem: { 
+                Cd_kN: parseFloat(Cd_kN.toFixed(3)), 
+                C_bang_tra_kN: thong_so_o.C_kN, 
+                ket_luan: Cd_kN <= thong_so_o.C_kN ? "Passed" : "Failed" 
+            }
         };
     }
-    
 }

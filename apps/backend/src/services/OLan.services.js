@@ -1,31 +1,40 @@
 import { OLan } from "../models/OLan.js";
 import { tinhBangDacTinhKyThuat } from "./HeThongTruyenDong.services.js";
+import { tinh_he_Truc_I, tinh_he_Truc_II, tinh_he_Truc_III } from "./Truc.services.js";
 
 // ==========================================
 // TRỤC I
 // ==========================================
 export const tinhToanOLanTrucI = async (duLieuDauVao) => {
     const Lh = duLieuDauVao?.thungTron?.thoiGianPhucVu;
-    if (!Lh) throw new Error("Missing service life (Lh) in mixer data.");
+    const d_A = duLieuDauVao?.heThongTruyenDong?.truc?.Thongtintruc?.trucI?.A;
+    const d_B = duLieuDauVao?.heThongTruyenDong?.truc?.Thongtintruc?.trucI?.B;
+    
+    const bangDacTinh = tinhBangDacTinhKyThuat(duLieuDauVao);
+    const n_truc1 = bangDacTinh.find(t => t.truc === "I")?.soVongQuay;
 
-    const d_A = duLieuDauVao?.heThongTruyenDong?.truc?.dKinhTieuChuan?.trucI?.A;
-    const d_B = duLieuDauVao?.heThongTruyenDong?.truc?.dKinhTieuChuan?.trucI?.B;
-    if (!d_A || !d_B) throw new Error("Missing journal bearing diameter for position A or B.");
+    const phanLuc = tinh_he_Truc_I(duLieuDauVao);
 
-    // Lấy vận tốc động cơ từ JSON (n_dc = 2922)
-    const n_truc1 = duLieuDauVao?.heThongTruyenDong?.dongCo?.vanTocQuay;
-    if (!n_truc1) throw new Error("Missing motor speed (vanTocQuay) in JSON data.");
+    // Tính hợp lực hướng tâm và dọc trục tại Service
+    const FrA = Math.sqrt(Math.pow(phanLuc.Ax, 2) + Math.pow(phanLuc.Ay, 2));
+    const FrB = Math.sqrt(Math.pow(phanLuc.Bx, 2) + Math.pow(phanLuc.By, 2));
+    const FaA = Math.abs(phanLuc.Az);
+    const FaB = Math.abs(phanLuc.Bz || 0);
 
-    const Fr_A = 4631.930; const Fa_A = 266.013;  
-    const Fr_B = 2748.03;  const Fa_B = 0;        
-
-    const heSo_kd = 1; 
     const oLanModel = new OLan();
 
-    const ketQuaViTriA = oLanModel.tinhToanThietKeOLan({ duong_kinh_ngong_truc: d_A, Fr: Fr_A, Fa: Fa_A, so_vong_quay: n_truc1, thoi_gian_phuc_vu_Lh: Lh, he_so_tai_trong_dong_kd: heSo_kd });
-    const ketQuaViTriB = oLanModel.tinhToanThietKeOLan({ duong_kinh_ngong_truc: d_B, Fr: Fr_B, Fa: Fa_B, so_vong_quay: n_truc1, thoi_gian_phuc_vu_Lh: Lh, he_so_tai_trong_dong_kd: heSo_kd });
-
-    return { truc: "I", thong_so_chung: { so_vong_quay_n: n_truc1, thoi_gian_phuc_vu_Lh: Lh }, vi_tri_A: ketQuaViTriA, vi_tri_B: ketQuaViTriB };
+    return {
+        truc: "I",
+        // phan_luc: phanLuc,
+        vi_tri_A: oLanModel.tinhToanThietKeOLan({ 
+            duong_kinh_ngong_truc: d_A, Fr: FrA, Fa: FaA, 
+            so_vong_quay: n_truc1, thoi_gian_phuc_vu_Lh: Lh 
+        }),
+        vi_tri_B: oLanModel.tinhToanThietKeOLan({ 
+            duong_kinh_ngong_truc: d_B, Fr: FrB, Fa: FaB, 
+            so_vong_quay: n_truc1, thoi_gian_phuc_vu_Lh: Lh 
+        })
+    };
 };
 
 // ==========================================
@@ -33,28 +42,33 @@ export const tinhToanOLanTrucI = async (duLieuDauVao) => {
 // ==========================================
 export const tinhToanOLanTrucII = async (duLieuDauVao) => {
     const Lh = duLieuDauVao?.thungTron?.thoiGianPhucVu;
-    if (!Lh) throw new Error("Missing service life (Lh) in mixer data.");
-
-    const d_C = duLieuDauVao?.heThongTruyenDong?.truc?.dKinhTieuChuan?.trucII?.C;
-    const d_D = duLieuDauVao?.heThongTruyenDong?.truc?.dKinhTieuChuan?.trucII?.D;
-    if (!d_C || !d_D) throw new Error("Missing journal bearing diameter for position C or D.");
-
-    // Lấy soVongQuay của Trục I (n1 = 812)
+    const d_C = duLieuDauVao?.heThongTruyenDong?.truc?.Thongtintruc?.trucII?.C;
+    const d_D = duLieuDauVao?.heThongTruyenDong?.truc?.Thongtintruc?.trucII?.D;
+    
     const bangDacTinh = tinhBangDacTinhKyThuat(duLieuDauVao);
-    const trucI = bangDacTinh.find(item => item.truc === 'I');
-    if (!trucI) throw new Error("Cannot find data for Shaft I from kinematic table!");
-    const n_truc2 = trucI.soVongQuay;
+    const n_truc2 = bangDacTinh.find(t => t.truc === "I")?.soVongQuay;
 
-    const Fr_C = 5046.88; const Fa_C = 0; 
-    const Fr_D = 2882.99; const Fa_D = 837.565;    
+    const phanLuc = tinh_he_Truc_II(duLieuDauVao);
 
-    const heSo_kd = 1; 
+    const FrC = Math.sqrt(Math.pow(phanLuc.Cx, 2) + Math.pow(phanLuc.Cy, 2));
+    const FrD = Math.sqrt(Math.pow(phanLuc.Dx, 2) + Math.pow(phanLuc.Dy, 2));
+    const FaC = Math.abs(phanLuc.Cz );
+    const FaD = Math.abs(phanLuc.Dz );
+
     const oLanModel = new OLan();
 
-    const ketQuaViTriC = oLanModel.tinhToanThietKeOLan({ duong_kinh_ngong_truc: d_C, Fr: Fr_C, Fa: Fa_C, so_vong_quay: n_truc2, thoi_gian_phuc_vu_Lh: Lh, he_so_tai_trong_dong_kd: heSo_kd });
-    const ketQuaViTriD = oLanModel.tinhToanThietKeOLan({ duong_kinh_ngong_truc: d_D, Fr: Fr_D, Fa: Fa_D, so_vong_quay: n_truc2, thoi_gian_phuc_vu_Lh: Lh, he_so_tai_trong_dong_kd: heSo_kd });
-
-    return { truc: "II", thong_so_chung: { so_vong_quay_n: n_truc2, thoi_gian_phuc_vu_Lh: Lh }, vi_tri_C: ketQuaViTriC, vi_tri_D: ketQuaViTriD };
+    return {
+        truc: "II",
+        // phan_luc: phanLuc,
+        vi_tri_C: oLanModel.tinhToanThietKeOLan({ 
+            duong_kinh_ngong_truc: d_C, Fr: FrC, Fa: FaC, 
+            so_vong_quay: n_truc2, thoi_gian_phuc_vu_Lh: Lh 
+        }),
+        vi_tri_D: oLanModel.tinhToanThietKeOLan({ 
+            duong_kinh_ngong_truc: d_D, Fr: FrD, Fa: FaD, 
+            so_vong_quay: n_truc2, thoi_gian_phuc_vu_Lh: Lh 
+        })
+    };
 };
 
 // ==========================================
@@ -62,27 +76,31 @@ export const tinhToanOLanTrucII = async (duLieuDauVao) => {
 // ==========================================
 export const tinhToanOLanTrucIII = async (duLieuDauVao) => {
     const Lh = duLieuDauVao?.thungTron?.thoiGianPhucVu;
-    if (!Lh) throw new Error("Missing service life (Lh) in mixer data.");
-
+    const d_E = duLieuDauVao?.heThongTruyenDong?.truc?.Thongtintruc?.trucIII?.E;
+    const d_F = duLieuDauVao?.heThongTruyenDong?.truc?.Thongtintruc?.trucIII?.F;
     
-    const d_E = duLieuDauVao?.heThongTruyenDong?.truc?.dKinhTieuChuan?.trucIII?.E 
-    const d_F = duLieuDauVao?.heThongTruyenDong?.truc?.dKinhTieuChuan?.trucIII?.F 
-
-    // Lấy soVongQuay của Trục II (n2 = 258)
     const bangDacTinh = tinhBangDacTinhKyThuat(duLieuDauVao);
-    const trucII = bangDacTinh.find(item => item.truc === 'II');
-    if (!trucII) throw new Error("Cannot find data for Shaft II from kinematic table!");
-    const n_truc3 = trucII.soVongQuay;
+    const n_truc3 = bangDacTinh.find(t => t.truc === "III")?.soVongQuay;
 
-    const Fr_E = 5892.56; const Fa_E = 0; 
-    const Fr_F = 3718.09; const Fa_F = 0;    
+    const phanLuc = tinh_he_Truc_III(duLieuDauVao);
 
-    const heSo_kd = 1; 
+    const FrE = Math.sqrt(Math.pow(phanLuc.Ex, 2) + Math.pow(phanLuc.Ey, 2));
+    const FrF = Math.sqrt(Math.pow(phanLuc.Fx, 2) + Math.pow(phanLuc.Fy, 2));
+    const FaE = Math.abs(phanLuc.Ez || 0);
+    const FaF = Math.abs(phanLuc.Fz || 0);
+
     const oLanModel = new OLan();
 
-    // Lưu ý: Dùng hàm tính Ổ BI ĐỠ (không phải ổ đũa côn)
-    const ketQuaViTriE = oLanModel.tinhToanThietKeOBiDoMotDay({ duong_kinh_ngong_truc: d_E, Fr: Fr_E, Fa: Fa_E, so_vong_quay: n_truc3, thoi_gian_phuc_vu_Lh: Lh, he_so_tai_trong_dong_kd: heSo_kd });
-    const ketQuaViTriF = oLanModel.tinhToanThietKeOBiDoMotDay({ duong_kinh_ngong_truc: d_F, Fr: Fr_F, Fa: Fa_F, so_vong_quay: n_truc3, thoi_gian_phuc_vu_Lh: Lh, he_so_tai_trong_dong_kd: heSo_kd });
-
-    return { truc: "III", thong_so_chung: { so_vong_quay_n: n_truc3, thoi_gian_phuc_vu_Lh: Lh }, vi_tri_E: ketQuaViTriE, vi_tri_F: ketQuaViTriF };
+    return {
+        truc: "III",
+        // phan_luc: phanLuc,
+        vi_tri_E: oLanModel.tinhToanThietKeOBiDoMotDay({ 
+            duong_kinh_ngong_truc: d_E, Fr: FrE, Fa: FaE, 
+            so_vong_quay: n_truc3, thoi_gian_phuc_vu_Lh: Lh 
+        }),
+        vi_tri_F: oLanModel.tinhToanThietKeOBiDoMotDay({ 
+            duong_kinh_ngong_truc: d_F, Fr: FrF, Fa: FaF, 
+            so_vong_quay: n_truc3, thoi_gian_phuc_vu_Lh: Lh 
+        })
+    };
 };
