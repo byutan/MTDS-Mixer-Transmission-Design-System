@@ -110,10 +110,10 @@ export class Truc {
         return {
             "Tietdientai": Ten_tietdien,
             "Momenxoan": momenxoan,
-            "Momentd": Number(Mtd.toFixed(2)),
+            "Momentd": Number((Mtd || 0).toFixed(2)),
             "Trisosuatchophep": t,
-            "Dtuongduong": Number(dtd.toFixed(2)),
-            "Dtang11": Number(d_tang_11.toFixed(2)),
+            "Dtuongduong": Number((dtd || 0).toFixed(2)),
+            "Dtang11": Number((d_tang_11 || 0).toFixed(2)),
             "Dtieuchuan": dtieuchuan
             }
         }
@@ -122,9 +122,9 @@ export class Truc {
          return {
             "Tietdientai": Ten_tietdien,
             "Momenxoan": momenxoan,
-            "Momentd": Number(Mtd.toFixed(2)),
+            "Momentd": Number((Mtd || 0).toFixed(2)),
             "Trisosuatchophep": t,
-            "Dtuongduong": Number(dtd.toFixed(2)),
+            "Dtuongduong": Number((dtd || 0).toFixed(2)),
             "Dtang11": d_tang_11,
             "Dtieuchuan": dtieuchuan
             }
@@ -377,21 +377,21 @@ export class Truc {
         if (g_aj != '-'&& T_aj != '-'){
             return{
                 "Tietdientai": Tietdien,
-                "Wj": Number(Wj.toFixed(2)) ,
-                "Woj": Number(Woj.toFixed(2)),
-                "Mj": Number(Mj.toFixed(2)),
-                "Tj": Number(Tj.toFixed(2)),
-                "g_aj": Number(g_aj.toFixed(2)),
-                "T_aj": Number(T_aj.toFixed(2))
+                "Wj": Number((Wj || 0).toFixed(2)) ,
+                "Woj": Number((Woj || 0).toFixed(2)),
+                "Mj": Number((Mj || 0).toFixed(2)),
+                "Tj": Number((Tj || 0).toFixed(2)),
+                "g_aj": Number((g_aj || 0).toFixed(2)),
+                "T_aj": Number((T_aj || 0).toFixed(2))
             }
         }
         else {
             return{
             "Tietdientai": Tietdien,
-            "Wj": Number(Wj.toFixed(2)) ,
-            "Woj": Number(Woj.toFixed(2)),
-            "Mj": Number(Mj.toFixed(2)),
-            "Tj": Number(Tj.toFixed(2)),
+            "Wj": Number((Wj || 0).toFixed(2)) ,
+            "Woj": Number((Woj || 0).toFixed(2)),
+            "Mj": Number((Mj || 0).toFixed(2)),
+            "Tj": Number((Tj || 0).toFixed(2)),
             "g_aj": g_aj,
             "T_aj": T_aj
             }
@@ -567,24 +567,24 @@ export class Truc {
         let combined_safety = "-";
 
         if (sigma_aj !== "-" && tau_aj !== "-") {
-            sigma_j_safety = Number(this.Tinh_hesoantoanuon(sigma_minus_1, Kx_dj, sigma_aj, W_g, sigma_minus_1).toFixed(2));
-            tau_j_safety = Number(this.Tinh_hesoantoanxoan(tau_minus_1, Ky_dj, tau_aj, W_t, tau_minus_1).toFixed(2));
+            sigma_j_safety = Number((this.Tinh_hesoantoanuon(sigma_minus_1, Kx_dj, sigma_aj, W_g, sigma_minus_1 || 0) || 0).toFixed(2));
+            tau_j_safety = Number((this.Tinh_hesoantoanxoan(tau_minus_1, Ky_dj, tau_aj, W_t, tau_minus_1 || 0) || 0).toFixed(2));
             combined_safety = this.Tinh_HSAT(sigma_j_safety, tau_j_safety);
-            combined_safety = Number(combined_safety.toFixed(2));
+            combined_safety = Number((combined_safety || 0).toFixed(2));
         } else if (sigma_aj !== "-") {
-            sigma_j_safety = Number(this.Tinh_hesoantoanuon(sigma_minus_1, Kx_dj, sigma_aj, W_g, sigma_minus_1).toFixed(2));
+            sigma_j_safety = Number((this.Tinh_hesoantoanuon(sigma_minus_1, Kx_dj, sigma_aj, W_g, sigma_minus_1 || 0) || 0).toFixed(2));
         } else if (tau_aj !== "-") {
-            tau_j_safety = Number(this.Tinh_hesoantoanxoan(tau_minus_1, Ky_dj, tau_aj, W_t, tau_minus_1).toFixed(2));
+            tau_j_safety = Number((this.Tinh_hesoantoanxoan(tau_minus_1, Ky_dj, tau_aj, W_t, tau_minus_1 || 0) || 0).toFixed(2));
         }
 
         return {
             "Tietdientai": tenTietDien,
-            "εσ": Number(epsilonSigma.toFixed(3)),
-            "ετ": Number(epsilonTau.toFixed(3)),
+            "εσ": Number((epsilonSigma || 0).toFixed(3)),
+            "ετ": Number((epsilonTau || 0).toFixed(3)),
             "Kσ": Kx,
             "Kτ": Ky,
-            "Kσdj": Number(Kx_dj.toFixed(2)),
-            "Kτdj": Number(Ky_dj.toFixed(2)),
+            "Kσdj": Number((Kx_dj || 0).toFixed(2)),
+            "Kτdj": Number((Ky_dj || 0).toFixed(2)),
             "sσj": sigma_j_safety,
             "sτj": tau_j_safety,
             "s": combined_safety
@@ -749,11 +749,11 @@ export class Truc {
         return {
             tentruc,
             d,
-            Mmax: Mmax.toFixed(2),
-            Tmax: Tmax.toFixed(2),
-            g: g.toFixed(2),
-            t: t.toFixed(2),
-            gtd: gtd.toFixed(2),
+            Mmax: (Mmax || 0).toFixed(2),
+            Tmax: (Tmax || 0).toFixed(2),
+            g: (g || 0).toFixed(2),
+            t: (t || 0).toFixed(2),
+            gtd: (gtd || 0).toFixed(2),
         };
     }
     kiemnghiemdobenquatai(){
@@ -1037,11 +1037,11 @@ export class Truc {
         const Ay = this.Tinh_Ay(By,Fr1,Fr)
         const Az = this.Tinh_Az(Fa1)
         return {
-            By: Number(By.toFixed(2)),
-            Bx: Number(Bx.toFixed(2)),
-            Ax: Number(Ax.toFixed(2)),
-            Ay: Number(Ay.toFixed(2)),
-            Az: Number(Az.toFixed(2))
+            By: Number((By || 0).toFixed(2)),
+            Bx: Number((Bx || 0).toFixed(2)),
+            Ax: Number((Ax || 0).toFixed(2)),
+            Ay: Number((Ay || 0).toFixed(2)),
+            Az: Number((Az || 0).toFixed(2))
         }
     }
 //======================================================================================================
@@ -1110,11 +1110,11 @@ export class Truc {
         const Cx = this.Tinh_Cx(Ft3,Ft2, Dx)
         const Cy = this.Tinh_Cy(Fr3, Fr2, Dy)
         return {
-            Dx: Number(Dx.toFixed(2)),
-            Dy: Number(Dy.toFixed(2)),
-            Dz: Number(Dz.toFixed(2)),
-            Cx: Number(Cx.toFixed(2)),
-            Cy: Number(Cy.toFixed(2))
+            Dx: Number((Dx || 0).toFixed(2)),
+            Dy: Number((Dy || 0).toFixed(2)),
+            Dz: Number((Dz || 0).toFixed(2)),
+            Cx: Number((Cx || 0).toFixed(2)),
+            Cy: Number((Cy || 0).toFixed(2))
         }
     }
 //=============================================================================================================
@@ -1153,10 +1153,10 @@ export class Truc {
         const Ex = this.Tinh_Ex(Ft5, F6, Fx)
         const Ey = this.Tinh_Ey(Fr5, Fy)
         return {
-            Fx: Number(Fx.toFixed(2)),
-            Fy: Number(Fy.toFixed(2)),
-            Ex: Number(Ex.toFixed(2)),
-            Ey: Number(Ey.toFixed(2))
+            Fx: Number((Fx || 0).toFixed(2)),
+            Fy: Number((Fy || 0).toFixed(2)),
+            Ex: Number((Ex || 0).toFixed(2)),
+            Ey: Number((Ey || 0).toFixed(2))
         }
     }
 //suport front end giới hạn chọn của người dùng

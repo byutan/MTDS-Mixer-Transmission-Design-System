@@ -31,7 +31,8 @@ export default function Step6Bearings() {
         duLieuDauVao: {
           thungTron: {
             congSuat: safeParse(formData.power),
-            soVongQuay: safeParse(formData.speed)
+            soVongQuay: safeParse(formData.speed),
+            thoiGianPhucVu: safeParse(formData.lifespan)
           },
           heThongTruyenDong: {
             dongCo: { congSuat: motorPower, vanTocQuay: motorSpeed },
@@ -50,24 +51,36 @@ export default function Step6Bearings() {
               ]
             },
             truc: {
-              nhanhieuthep: "Thép 45",
+              nhanhieuthep: "45",
               nhietluyen: "Tôi cải thiện",
               Thongtintruc: {
                 trucI: { 
                   d1: safeParse(step5Data.trucI.d1), 
                   lmrc: safeParse(step5Data.trucI.lmrc), 
                   lmdt: safeParse(step5Data.trucI.lmdt),
-                  l11: safeParse(step5Data.trucI.l11)
+                  l11: safeParse(step5Data.trucI.l11),
+                  "Bánh đai thang lớn": safeParse(step5Data.trucI.d1),
+                  "A": safeParse(step5Data.trucI.d1) + 5,
+                  "B": safeParse(step5Data.trucI.d1) + 5,
+                  "Bánh răng côn nhỏ": safeParse(step5Data.trucI.d1) + 10
                 },
                 trucII: { 
                   d2: safeParse(step5Data.trucII.d2), 
                   lmrc: safeParse(step5Data.trucII.lmrc), 
-                  lmrt: safeParse(step5Data.trucII.lmrt) 
+                  lmrt: safeParse(step5Data.trucII.lmrt),
+                  "C": safeParse(step5Data.trucII.d2),
+                  "Bánh răng trụ nhỏ": safeParse(step5Data.trucII.d2) + 5,
+                  "Bánh răng côn lớn": safeParse(step5Data.trucII.d2) + 10,
+                  "D": safeParse(step5Data.trucII.d2)
                 },
                 trucIII: { 
                   d3: safeParse(step5Data.trucIII.d3), 
                   lmrt: safeParse(step5Data.trucIII.lmrt), 
-                  lmkn: safeParse(step5Data.trucIII.lmkn) 
+                  lmkn: safeParse(step5Data.trucIII.lmkn),
+                  "E": safeParse(step5Data.trucIII.d3),
+                  "Bánh răng trụ lớn": safeParse(step5Data.trucIII.d3) + 5,
+                  "F": safeParse(step5Data.trucIII.d3) + 5,
+                  "Khớp nối": safeParse(step5Data.trucIII.d3)
                 }
               }
             }
@@ -129,114 +142,132 @@ export default function Step6Bearings() {
           <AlertCircle className="w-12 h-12 text-amber-500" />
           <div className="space-y-1">
              <h3 className="font-bold text-amber-900">Thiết kế trục chưa phù hợp</h3>
-             <p className="text-sm text-amber-700 max-w-md">Lực tác động quá lớn hoặc đường kính trục không có trong thư viện ổ lăn tiêu chuẩn. Vui lòng quay lại Bước 5 để điều chỉnh.</p>
+             <p className="text-sm text-amber-700 max-w-md">{error}</p>
           </div>
           <button onClick={fetchBearingData} className="flex items-center gap-2 px-6 py-2 bg-white border border-amber-200 rounded-lg text-amber-700 text-sm font-bold hover:bg-amber-100 transition-all">
             <RefreshCw className="w-4 h-4" /> Thử lại
           </button>
         </Card>
-      ) : bearingData ? (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Column 1: Bearing Selection */}
-          <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden bg-white">
-            <CardContent className="pt-8 space-y-7 px-7">
-              <div className="pl-1 border-l-4 border-blue-600 pl-4">
-                <h3 className="text-lg font-bold text-slate-900 leading-tight tracking-tight">Thông số chọn ổ</h3>
-                <p className="text-xs text-slate-500 mt-1 uppercase font-bold tracking-widest">Kích thước cơ bản</p>
-              </div>
-              
-              <div className="space-y-5">
-                <div className="space-y-2">
-                  <Label className="text-[12px] font-bold text-slate-500 ml-1 uppercase tracking-tighter">Ký hiệu ổ lăn</Label>
-                  <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl text-blue-700 font-black text-lg text-center shadow-inner">
-                    {bearingData.Kyhieuolan || "N/A"}
-                  </div>
+      ) : bearingData ? (() => {
+        // Pick the main position to display based on the active tab
+        const mainPosKey = activeTab === "1" ? "vi_tri_A" : activeTab === "2" ? "vi_tri_C" : "vi_tri_E";
+        const altPosKey = activeTab === "1" ? "vi_tri_B" : activeTab === "2" ? "vi_tri_D" : "vi_tri_F";
+        
+        const mainPos = bearingData[mainPosKey];
+        const altPos = bearingData[altPosKey];
+        
+        if (!mainPos) return <div className="py-20 text-center text-slate-400 italic">Dữ liệu ổ lăn không đầy đủ...</div>;
+
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Column 1: Bearing Selection */}
+            <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden bg-white">
+              <CardContent className="pt-8 space-y-7 px-7">
+                <div className="pl-1 border-l-4 border-blue-600 pl-4">
+                  <h3 className="text-lg font-bold text-slate-900 leading-tight tracking-tight">Thông số chọn ổ ({mainPosKey.replace('vi_tri_', '')})</h3>
+                  <p className="text-xs text-slate-500 mt-1 uppercase font-bold tracking-widest">Kích thước cơ bản</p>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                   <div className="space-y-2">
-                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Đường kính d</Label>
-                    <Input readOnly value={`${bearingData.d} mm`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <Label className="text-[12px] font-bold text-slate-500 ml-1 uppercase tracking-tighter">Ký hiệu ổ lăn</Label>
+                    <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl text-blue-700 font-black text-lg text-center shadow-inner">
+                      {mainPos.bang_chon_o?.ky_hieu || "N/A"}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                     <div className="space-y-2">
+                      <Label className="text-[11px] font-semibold text-slate-400 ml-1">Đường kính d</Label>
+                      <Input readOnly value={`${mainPos.bang_chon_o?.d || 0} mm`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[11px] font-semibold text-slate-400 ml-1">Đường kính D</Label>
+                      <Input readOnly value={`${mainPos.bang_chon_o?.D || 0} mm`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Đường kính D</Label>
-                    <Input readOnly value={`${bearingData.D} mm`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[11px] font-semibold text-slate-400 ml-1">Khả năng tải động (C)</Label>
-                  <Input readOnly value={`${bearingData.C} kN`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[11px] font-semibold text-slate-400 ml-1">Khả năng tải tĩnh (C0)</Label>
-                  <Input readOnly value={`${bearingData.Co} kN`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Column 2: Loads & Life */}
-          <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden bg-white">
-            <CardContent className="pt-8 space-y-7 px-7">
-              <div className="pl-1 border-l-4 border-slate-300 pl-4">
-                <h3 className="text-lg font-bold text-slate-900 leading-tight tracking-tight">Tải trọng & Tuổi thọ</h3>
-                <p className="text-xs text-slate-500 mt-1 uppercase font-bold tracking-widest">Phản lực và thời gian</p>
-              </div>
-
-              <div className="space-y-5">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Fr (Gối A)</Label>
-                    <Input readOnly value={`${Number(bearingData.FrA).toLocaleString()} N`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Khả năng tải động (C)</Label>
+                    <Input readOnly value={`${mainPos.bang_chon_o?.C_kN || 0} kN`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Fr (Gối B)</Label>
-                    <Input readOnly value={`${Number(bearingData.FrB).toLocaleString()} N`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Khả năng tải tĩnh (C0)</Label>
+                    <Input readOnly value={`${mainPos.bang_chon_o?.C0_kN || 0} kN`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-[11px] font-semibold text-slate-400 ml-1">Tuổi thọ yêu cầu (Lh)</Label>
-                  <Input readOnly value={`${Number(bearingData.Lh).toLocaleString()} giờ`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[11px] font-semibold text-slate-400 ml-1">Tuổi thọ triệu vòng (L)</Label>
-                  <Input readOnly value={`${bearingData.L.toFixed(2)} triệu vòng`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Column 3: Verification */}
-          <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden bg-white">
-            <CardContent className="pt-8 space-y-7 px-7">
-              <div className="pl-1 border-l-4 border-emerald-500 pl-4">
-                <h3 className="text-lg font-bold text-slate-900 leading-tight tracking-tight">Kiểm nghiệm khả năng tải</h3>
-                <p className="text-xs text-slate-500 mt-1 uppercase font-bold tracking-widest">Tải động tính toán Cd</p>
-              </div>
-
-              <div className="space-y-5">
-                <div className="space-y-2">
-                  <Label className="text-[11px] font-semibold text-slate-400 ml-1">Tải trọng tương đương (Q)</Label>
-                  <Input readOnly value={`${bearingData.Q.toFixed(2)} N`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+            {/* Column 2: Loads & Life */}
+            <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden bg-white">
+              <CardContent className="pt-8 space-y-7 px-7">
+                <div className="pl-1 border-l-4 border-slate-300 pl-4">
+                  <h3 className="text-lg font-bold text-slate-900 leading-tight tracking-tight">Tải trọng & Tuổi thọ</h3>
+                  <p className="text-xs text-slate-500 mt-1 uppercase font-bold tracking-widest">Phản lực và thời gian</p>
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-[11px] font-semibold text-slate-400 ml-1">Tải động tính toán (Cd)</Label>
-                  <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
-                     <div className="text-emerald-700 font-black text-xl text-center">{bearingData.Cd.toFixed(2)} kN</div>
-                     <div className="text-[10px] text-emerald-600 text-center font-bold mt-1 uppercase tracking-widest">Cd Phải &lt; C cơ bản ({bearingData.C} kN)</div>
+
+                <div className="space-y-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-[11px] font-semibold text-slate-400 ml-1">Fr ({mainPosKey.replace('vi_tri_', '')})</Label>
+                      <Input readOnly value={`${(mainPos.chi_tiet_tinh_toan?.Fr_N || 0).toLocaleString()} N`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[11px] font-semibold text-slate-400 ml-1">Fr ({altPosKey.replace('vi_tri_', '')})</Label>
+                      <Input readOnly value={`${(altPos?.chi_tiet_tinh_toan?.Fr_N || 0).toLocaleString()} N`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Tuổi thọ yêu cầu (Lh)</Label>
+                    <Input readOnly value={`${(safeParse(formData.lifespan) || 0).toLocaleString()} giờ`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Tuổi thọ triệu vòng (L)</Label>
+                    <Input readOnly value={`${(mainPos.chi_tiet_tinh_toan?.tuoi_tho_trieu_vong_quay_L || 0).toFixed(2)} triệu vòng`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
                   </div>
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              <div className="pt-4">
-                 <div className="bg-emerald-600 text-white p-5 rounded-2xl flex items-center justify-center gap-3 text-sm font-black shadow-lg shadow-emerald-100 animate-pulse">
-                    <CheckCircle2 className="w-6 h-6" />
-                    ĐẠT ĐIỀU KIỆN BỀN
-                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      ) : (
+            {/* Column 3: Verification */}
+            <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden bg-white">
+              <CardContent className="pt-8 space-y-7 px-7">
+                <div className="pl-1 border-l-4 border-emerald-500 pl-4">
+                  <h3 className="text-lg font-bold text-slate-900 leading-tight tracking-tight">Kiểm nghiệm khả năng tải</h3>
+                  <p className="text-xs text-slate-500 mt-1 uppercase font-bold tracking-widest">Tải động tính toán Cd</p>
+                </div>
+
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Tải trọng tương đương (Q)</Label>
+                    <Input readOnly value={`${(mainPos.chi_tiet_tinh_toan?.tai_trong_dong_quy_uoc_Q_N || 0).toLocaleString()} N`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Tải động tính toán (Cd)</Label>
+                    <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
+                       <div className="text-emerald-700 font-black text-xl text-center">{(mainPos.ket_qua_kiem_nghiem?.Cd_kN || 0).toFixed(2)} kN</div>
+                       <div className="text-[10px] text-emerald-600 text-center font-bold mt-1 uppercase tracking-widest">Cd Phải &lt; C cơ bản ({mainPos.bang_chon_o?.C_kN || 0} kN)</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-4">
+                   {mainPos.ket_qua_kiem_nghiem?.ket_luan === "Passed" ? (
+                     <div className="bg-emerald-600 text-white p-5 rounded-2xl flex items-center justify-center gap-3 text-sm font-black shadow-lg shadow-emerald-100">
+                        <CheckCircle2 className="w-6 h-6" />
+                        ĐẠT ĐIỀU KIỆN BỀN
+                     </div>
+                   ) : (
+                     <div className="bg-red-600 text-white p-5 rounded-2xl flex items-center justify-center gap-3 text-sm font-black shadow-lg shadow-red-100">
+                        <AlertCircle className="w-6 h-6" />
+                        KHÔNG ĐẠT ĐIỀU KIỆN
+                     </div>
+                   )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      })() : (
         <div className="py-20 text-center text-slate-400 italic">Chọn trục để xem thông tin tính toán ổ lăn...</div>
       )}
     </div>

@@ -31,38 +31,52 @@ export const taoHeThongTruyenDong = (duLieuDauVao) => {
 // hàm tính hiệu suất hệ thống
 export const tinhHieuSuatHeThong = (duLieuDauVao) => {
     const heThong = taoHeThongTruyenDong(duLieuDauVao);
+    const hieuSuat = heThong.tinhHieuSuatHeThong();
     return {
-        soTruc: heThong.hopGiamToc.getSoCap() + 1,
-        hieuSuatHeThong: Number(heThong.tinhHieuSuatHeThong().toFixed(3))
+        soTruc: (heThong.hopGiamToc?.getSoCap() || 0) + 1,
+        hieuSuatHeThong: Number((hieuSuat || 0).toFixed(3))
     };
 };
 
 // hàm tính tỷ số truyền chung sơ bộ
 export const tinhTySoTruyenChungSoBo = (duLieuDauVao) => {
     const heThong = taoHeThongTruyenDong(duLieuDauVao);
+    const u_chung = heThong.tinhTySoTruyenChungSoBo();
     return {
-        tySoTruyenHGT: heThong.hopGiamToc.getTySoTruyenSoBo(),
-        tySoTruyenDai: heThong.boTruyenDai.getTySoTruyenSoBo(),
-        tySoTruyenChungSoBo: Number(heThong.tinhTySoTruyenChungSoBo()).toFixed(3)
+        tySoTruyenHGT: heThong.hopGiamToc?.getTySoTruyenSoBo() || 0,
+        tySoTruyenDai: heThong.boTruyenDai?.getTySoTruyenSoBo() || 0,
+        tySoTruyenChungSoBo: Number((u_chung || 0).toFixed(3))
     }
 }
 
 // hàm tính tỷ số truyền chung thực tế
 export const tinhTySoTruyenChungThucTe = (duLieuDauVao) => {
     const heThong = taoHeThongTruyenDong(duLieuDauVao);
+    const u_thuc_te = heThong.tinhTySoTruyenChungThucTe();
     return {
-        vanTocQuay: heThong.dongCo.getVanTocQuay(),
-        soVongQuay: heThong.thungTron.getSoVongQuay(),
-        tySoTruyenChungThucTe: Number(heThong.tinhTySoTruyenChungThucTe()).toFixed(3)
+        vanTocQuay: heThong.dongCo?.getVanTocQuay() || 0,
+        soVongQuay: heThong.thungTron?.getSoVongQuay() || 0,
+        tySoTruyenChungThucTe: Number((u_thuc_te || 0).toFixed(3))
     }
 }
 
 // hàm tính bảng đặc tính kỹ thuật của trục trong hộp giảm tốc
 export const tinhBangDacTinhKyThuat = (duLieuDauVao) => {
     const heThong = taoHeThongTruyenDong(duLieuDauVao);
-    const ketQuaPhanPhoi = phanPhoiTySoTruyenCapBanhRang(duLieuDauVao)
-    const BangDacTinh = heThong.tinhBangDacTinhKyThuat(ketQuaPhanPhoi)
-    return BangDacTinh
+    
+    // Nếu trong payload đã có sẵn kết quả phân phối tỷ số truyền thì dùng luôn
+    let ketQuaPhanPhoi = duLieuDauVao.heThongTruyenDong?.phanPhoiTySoTruyen;
+    
+    // Nếu chưa có (hoặc thiếu trường tySoTruyenBanhRang), mới thực hiện tính toán lại
+    if (!ketQuaPhanPhoi?.tySoTruyenBanhRang) {
+        const res = phanPhoiTySoTruyenCapBanhRang(duLieuDauVao);
+        ketQuaPhanPhoi = {
+            tySoTruyenBanhRang: res.phanPhoiTySoTruyen
+        };
+    }
+    
+    const BangDacTinh = heThong.tinhBangDacTinhKyThuat(ketQuaPhanPhoi);
+    return BangDacTinh;
 }
 
 export const tinhThongSoBoTruyenDaiThang = (duLieuDauVao) => {

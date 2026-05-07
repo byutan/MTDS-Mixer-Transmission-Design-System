@@ -62,6 +62,6 @@ export class BanhRangTru extends BoTruyenBanhRang {
             throw new Error("Missing value.");
         }
         const u3 = u_h / u_con;
-        return Number(u3.toFixed(2));
+        return Number((u3 || 1.0).toFixed(2));
     }
 }

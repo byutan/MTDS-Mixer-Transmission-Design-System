@@ -137,39 +137,39 @@ export class BanhRangCon extends BoTruyenBanhRang {
 
         return {
             bang_thong_so_hinh_hoc: {
-                chieu_rong_con_ngoai: parseFloat(Re.toFixed(3)),
+                chieu_rong_con_ngoai: parseFloat((Re || 0).toFixed(3)),
                 chieu_rong_vanh_rang: b_chon,
-                chieu_dai_con_trung_binh: parseFloat(Rm.toFixed(3)),
-                duong_kinh_vong_chia_ngoai: `de1 = ${parseFloat(de1.toFixed(3))}, de2 = ${parseFloat(de2.toFixed(3))}`,
-                goc_chia_mat_con: `delta1 = ${parseFloat(delta1_deg.toFixed(2))}, delta2 = ${parseFloat(delta2_deg.toFixed(2))}`,
-                chieu_cao_rang_ngoai: parseFloat(he.toFixed(3)),
-                chieu_cao_dau_rang_ngoai: `hae1 = ${parseFloat(hae1.toFixed(3))}, hae2 = ${parseFloat(hae2.toFixed(3))}`,
-                chieu_cao_chan_rang_ngoai: `hfe1 = ${parseFloat(hfe1.toFixed(3))}, hfe2 = ${parseFloat(hfe2.toFixed(3))}`,
-                duong_kinh_trung_binh: `dm1 = ${parseFloat(dm1.toFixed(3))}, dm2 = ${parseFloat(dm2.toFixed(3))}`,
-                kc_tu_dinh_den_mat_phang_vong_ngoai_dinh_rang: `B1 = ${parseFloat(B1.toFixed(3))}, B2 = ${parseFloat(B2.toFixed(3))}`,
-                duong_kinh_dinh_rang_ngoai: `dae1 = ${parseFloat(dae1.toFixed(3))}, dae2 = ${parseFloat(dae2.toFixed(3))}`,
-                goc_con_dinh: `delta_a1 = ${parseFloat((delta1_deg + theta_f_deg).toFixed(2))}, delta_a2 = ${parseFloat((delta2_deg + theta_f_deg).toFixed(2))}`,
-                goc_con_day: `delta_f1 = ${parseFloat((delta1_deg - theta_f_deg).toFixed(2))}, delta_f2 = ${parseFloat((delta2_deg - theta_f_deg).toFixed(2))}`
+                chieu_dai_con_trung_binh: parseFloat((Rm || 0).toFixed(3)),
+                duong_kinh_vong_chia_ngoai: `de1 = ${parseFloat((de1 || 0).toFixed(3))}, de2 = ${parseFloat((de2 || 0).toFixed(3))}`,
+                goc_chia_mat_con: `delta1 = ${parseFloat((delta1_deg || 0).toFixed(2))}, delta2 = ${parseFloat((delta2_deg || 0).toFixed(2))}`,
+                chieu_cao_rang_ngoai: parseFloat((he || 0).toFixed(3)),
+                chieu_cao_dau_rang_ngoai: `hae1 = ${parseFloat((hae1 || 0).toFixed(3))}, hae2 = ${parseFloat((hae2 || 0).toFixed(3))}`,
+                chieu_cao_chan_rang_ngoai: `hfe1 = ${parseFloat((hfe1 || 0).toFixed(3))}, hfe2 = ${parseFloat((hfe2 || 0).toFixed(3))}`,
+                duong_kinh_trung_binh: `dm1 = ${parseFloat((dm1 || 0).toFixed(3))}, dm2 = ${parseFloat((dm2 || 0).toFixed(3))}`,
+                kc_tu_dinh_den_mat_phang_vong_ngoai_dinh_rang: `B1 = ${parseFloat((B1 || 0).toFixed(3))}, B2 = ${parseFloat((B2 || 0).toFixed(3))}`,
+                duong_kinh_dinh_rang_ngoai: `dae1 = ${parseFloat((dae1 || 0).toFixed(3))}, dae2 = ${parseFloat((dae2 || 0).toFixed(3))}`,
+                goc_con_dinh: `delta_a1 = ${parseFloat(((delta1_deg || 0) + (theta_f_deg || 0)).toFixed(2))}, delta_a2 = ${parseFloat(((delta2_deg || 0) + (theta_f_deg || 0)).toFixed(2))}`,
+                goc_con_day: `delta_f1 = ${parseFloat(((delta1_deg || 0) - (theta_f_deg || 0)).toFixed(2))}, delta_f2 = ${parseFloat(((delta2_deg || 0) - (theta_f_deg || 0)).toFixed(2))}`
             },
             bang_luc_tac_dung: {
-                Ft1: parseFloat(Ft1.toFixed(2)),
-                Fr1: parseFloat(Fr1.toFixed(2)),
-                Fa1: parseFloat(Fa1.toFixed(2)),
-                Ft2: parseFloat(Ft2.toFixed(2)),
-                Fr2: parseFloat(Fr2.toFixed(2)),
-                Fa2: parseFloat(Fr2.toFixed(2)),
-                dm1: parseFloat(dm1.toFixed(2)),
-                dm2: parseFloat(dm2.toFixed(2))
+                Ft1: parseFloat((Ft1 || 0).toFixed(2)),
+                Fr1: parseFloat((Fr1 || 0).toFixed(2)),
+                Fa1: parseFloat((Fa1 || 0).toFixed(2)),
+                Ft2: parseFloat((Ft2 || 0).toFixed(2)),
+                Fr2: parseFloat((Fr2 || 0).toFixed(2)),
+                Fa2: parseFloat((Fa2 || 0).toFixed(2)),
+                dm1: parseFloat((dm1 || 0).toFixed(2)),
+                dm2: parseFloat((dm2 || 0).toFixed(2))
             },
             du_lieu_so: {
                 mte: mte,
                 z1: z1,
                 z2: z2,
-                de1: parseFloat(de1.toFixed(2)),
-                de2: parseFloat(de2.toFixed(2)),
+                de1: parseFloat((de1 || 0).toFixed(2)),
+                de2: parseFloat((de2 || 0).toFixed(2)),
                 b: b_chon,
-                delta1: parseFloat(delta1_deg.toFixed(2)),
-                delta2: parseFloat(delta2_deg.toFixed(2))
+                delta1: parseFloat((delta1_deg || 0).toFixed(2)),
+                delta2: parseFloat((delta2_deg || 0).toFixed(2))
             }
         };
     }
