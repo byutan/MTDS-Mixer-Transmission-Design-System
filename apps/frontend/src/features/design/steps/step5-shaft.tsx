@@ -28,7 +28,8 @@ export default function Step5Shaft() {
   } | null>(null);
 
   const safeParse = (val: any) => {
-    if (typeof val === 'string' && (val === '---' || val === '')) return 0;
+    if (val === null || val === undefined) return 0;
+    if (typeof val === 'string' && (val.trim() === '---' || val.trim() === '')) return 0;
     const parsed = parseFloat(val);
     return isNaN(parsed) ? 0 : parsed;
   };
@@ -205,98 +206,9 @@ export default function Step5Shaft() {
     fetchShaftResults();
   }, [activeTab, d1_v, d2_v, d3_v, fetchDesignConstraints, fetchShaftResults]);
 
-  useEffect(() => {
-    if (designSuggestions?.limits) {
-      const limits = designSuggestions.limits;
-      setStep5Data(prev => {
-        const trucKey = activeTab === "I" ? "trucI" : activeTab === "II" ? "trucII" : "trucIII";
-        const currentData = prev[trucKey];
-        const newDataForTab: any = { ...currentData };
-        let changed = false;
-
-        if (activeTab === "I") {
-          if (designSuggestions.d_list.length > 0 && (safeParse(currentData.d1) === 0 || !designSuggestions.d_list.includes(safeParse(currentData.d1)))) {
-            const suggestedD = designSuggestions.d_list[0].toString();
-            if (currentData.d1 !== suggestedD) {
-              newDataForTab.d1 = suggestedD;
-              changed = true;
-            }
-          }
-          if (limits.gh_lmrc && safeParse(currentData.lmrc) === 0) {
-            const suggested = limits.gh_lmrc.min.toString();
-            if (currentData.lmrc !== suggested) {
-              newDataForTab.lmrc = suggested;
-              changed = true;
-            }
-          }
-          if (limits.gh_lmdt && safeParse(currentData.lmdt) === 0) {
-            const suggested = limits.gh_lmdt.min.toString();
-            if (currentData.lmdt !== suggested) {
-              newDataForTab.lmdt = suggested;
-              changed = true;
-            }
-          }
-          if (designSuggestions.l11_limit && safeParse((currentData as any).l11) === 0) {
-            const suggested = designSuggestions.l11_limit.min.toString();
-            if ((currentData as any).l11 !== suggested) {
-              newDataForTab.l11 = suggested;
-              changed = true;
-            }
-          }
-        } else if (activeTab === "II") {
-          if (designSuggestions.d_list.length > 0 && (safeParse((currentData as any).d2) === 0 || !designSuggestions.d_list.includes(safeParse((currentData as any).d2)))) {
-            const suggestedD = designSuggestions.d_list[0].toString();
-            if ((currentData as any).d2 !== suggestedD) {
-              newDataForTab.d2 = suggestedD;
-              changed = true;
-            }
-          }
-          if (limits.gh_lmrc && safeParse(currentData.lmrc) === 0) {
-            const suggested = limits.gh_lmrc.min.toString();
-            if (currentData.lmrc !== suggested) {
-              newDataForTab.lmrc = suggested;
-              changed = true;
-            }
-          }
-          if (limits.gh_lmrt && safeParse((currentData as any).lmrt) === 0) {
-            const suggested = limits.gh_lmrt.min.toString();
-            if ((currentData as any).lmrt !== suggested) {
-              newDataForTab.lmrt = suggested;
-              changed = true;
-            }
-          }
-        } else {
-          if (designSuggestions.d_list.length > 0 && (safeParse((currentData as any).d3) === 0 || !designSuggestions.d_list.includes(safeParse((currentData as any).d3)))) {
-            const suggestedD = designSuggestions.d_list[0].toString();
-            if ((currentData as any).d3 !== suggestedD) {
-              newDataForTab.d3 = suggestedD;
-              changed = true;
-            }
-          }
-          if (limits.gh_lmrt && safeParse((currentData as any).lmrt) === 0) {
-            const suggested = limits.gh_lmrt.min.toString();
-            if ((currentData as any).lmrt !== suggested) {
-              newDataForTab.lmrt = suggested;
-              changed = true;
-            }
-          }
-          if (limits.gh_lmkn && safeParse((currentData as any).lmkn) === 0) {
-            const suggested = limits.gh_lmkn.min.toString();
-            if ((currentData as any).lmkn !== suggested) {
-              newDataForTab.lmkn = suggested;
-              changed = true;
-            }
-          }
-        }
-
-        if (!changed) return prev;
-        return {
-          ...prev,
-          [trucKey]: newDataForTab
-        };
-      });
-    }
-  }, [designSuggestions, activeTab, setStep5Data]);
+  // Đã gỡ bỏ cơ chế tự động sửa lỗi (Auto-fill) để tránh gây khó chịu khi nhập liệu
+  // Chỉ giữ lại cảnh báo bằng màu sắc (Red) trong phần render
+  // useEffect(() => { ... }) đã được xóa
 
   const handleInputChange = (field: string, value: string) => {
     // 1. Chỉ cho phép nhập số
@@ -312,7 +224,8 @@ export default function Step5Shaft() {
     else if (field === "lmkn") limit = designSuggestions?.limits?.gh_lmkn;
     else if (field === "l11") limit = designSuggestions?.l11_limit;
 
-    if (limit && numValue > limit.max) return;
+    // Đã gỡ bỏ chặn nhập quá Max - Chỉ hiển thị cảnh báo đỏ ở giao diện
+    // if (limit && numValue > limit.max) return;
 
     const trucKey = activeTab === "I" ? "trucI" : activeTab === "II" ? "trucII" : "trucIII";
     setStep5Data({
@@ -334,10 +247,12 @@ export default function Step5Shaft() {
     else if (field === "lmkn") limit = designSuggestions?.limits?.gh_lmkn;
     else if (field === "l11") limit = designSuggestions?.l11_limit;
 
-    // Nếu nhỏ hơn Min, tự động đưa về Min
+    // Đã gỡ bỏ tự động sửa về Min khi Blur - Cho phép người dùng nhập tự do
+    /*
     if (limit && numValue < limit.min) {
       handleInputChange(field, limit.min.toString());
     }
+    */
   };
 
   const getSections = () => {
@@ -411,22 +326,22 @@ export default function Step5Shaft() {
           <div className="space-y-3">
             <Label className="text-sm font-semibold text-slate-600 block">{labels.l1}</Label>
             <Input 
-              value={activeTab === "I" ? data.lmrc : (data as any).lmrt} 
-              onChange={(e) => handleInputChange(activeTab === "I" ? "lmrc" : "lmrt", e.target.value)}
-              onBlur={(e) => handleBlur(activeTab === "I" ? "lmrc" : "lmrt", e.target.value)}
+              value={activeTab === "III" ? (data as any).lmrt : data.lmrc} 
+              onChange={(e) => handleInputChange(activeTab === "III" ? "lmrt" : "lmrc", e.target.value)}
+              onBlur={(e) => handleBlur(activeTab === "III" ? "lmrt" : "lmrc", e.target.value)}
               className={`h-11 font-bold text-gray-700 ${
-                activeTab === "I" 
-                  ? (designSuggestions?.limits?.gh_lmrc && (safeParse(data.lmrc) < designSuggestions.limits.gh_lmrc.min || safeParse(data.lmrc) > designSuggestions.limits.gh_lmrc.max) ? "bg-red-50 border-red-500 ring-2 ring-red-100 text-red-600" : "bg-slate-50 border-slate-200")
-                  : (designSuggestions?.limits?.gh_lmrt && (safeParse((data as any).lmrt) < designSuggestions.limits.gh_lmrt.min || safeParse((data as any).lmrt) > designSuggestions.limits.gh_lmrt.max) ? "bg-red-50 border-red-500 ring-2 ring-red-100 text-red-600" : "bg-slate-50 border-slate-200")
+                activeTab === "III" 
+                  ? (designSuggestions?.limits?.gh_lmrt && (safeParse((data as any).lmrt) < designSuggestions.limits.gh_lmrt.min || safeParse((data as any).lmrt) > designSuggestions.limits.gh_lmrt.max) ? "bg-red-50 border-red-500 ring-2 ring-red-100 text-red-600" : "bg-slate-50 border-slate-200")
+                  : (designSuggestions?.limits?.gh_lmrc && (safeParse(data.lmrc) < designSuggestions.limits.gh_lmrc.min || safeParse(data.lmrc) > designSuggestions.limits.gh_lmrc.max) ? "bg-red-50 border-red-500 ring-2 ring-red-100 text-red-600" : "bg-slate-50 border-slate-200")
               }`}
             />
-            {activeTab === "I" ? (
-              <p className={`text-[10px] italic font-medium ${safeParse(data.lmrc) < (designSuggestions?.limits?.gh_lmrc?.min || 0) || safeParse(data.lmrc) > (designSuggestions?.limits?.gh_lmrc?.max || 999) ? "text-red-500 font-bold" : "text-slate-400"}`}>
-                Gợi ý: [{designSuggestions?.limits?.gh_lmrc?.min?.toFixed(1) || "---"} - {designSuggestions?.limits?.gh_lmrc?.max?.toFixed(1) || "---"}]
-              </p>
-            ) : (
+            {activeTab === "III" ? (
               <p className={`text-[10px] italic font-medium ${safeParse((data as any).lmrt) < (designSuggestions?.limits?.gh_lmrt?.min || 0) || safeParse((data as any).lmrt) > (designSuggestions?.limits?.gh_lmrt?.max || 999) ? "text-red-500 font-bold" : "text-slate-400"}`}>
                 Gợi ý: [{designSuggestions?.limits?.gh_lmrt?.min?.toFixed(1) || "---"} - {designSuggestions?.limits?.gh_lmrt?.max?.toFixed(1) || "---"}]
+              </p>
+            ) : (
+              <p className={`text-[10px] italic font-medium ${safeParse(data.lmrc) < (designSuggestions?.limits?.gh_lmrc?.min || 0) || safeParse(data.lmrc) > (designSuggestions?.limits?.gh_lmrc?.max || 999) ? "text-red-500 font-bold" : "text-slate-400"}`}>
+                Gợi ý: [{designSuggestions?.limits?.gh_lmrc?.min?.toFixed(1) || "---"} - {designSuggestions?.limits?.gh_lmrc?.max?.toFixed(1) || "---"}]
               </p>
             )}
           </div>
@@ -524,7 +439,7 @@ export default function Step5Shaft() {
                     {shaftResults?.reactions ? Object.entries(shaftResults.reactions).map(([key, val]) => (
                       <div key={key} className="flex justify-between items-center p-4 bg-slate-50 rounded-xl border border-slate-100">
                         <span className="text-xs font-bold text-slate-500">{key}</span>
-                        <span className="text-sm font-black text-blue-600">{(val as number).toLocaleString()} N</span>
+                        <span className="text-sm font-black text-blue-600">{(Number(val) || 0).toLocaleString()} N</span>
                       </div>
                     )) : (
                       <div className="col-span-2 text-center py-12 text-slate-400 italic text-xs bg-slate-50/50 rounded-xl border border-dashed border-slate-200">

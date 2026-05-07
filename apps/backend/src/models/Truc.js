@@ -811,9 +811,9 @@ export class Truc {
         if(!infor) {
             throw new Error(`Không tìm thấy thông tin cho trục ${tenTruc}`)
         }
-        const d = infor[duongkinh]
-        const l_1 = infor[l1]
-        const l_2 = infor[l2]
+        const d = Number(infor[duongkinh] || 0)
+        const l_1 = Number(infor[l1] || 0)
+        const l_2 = Number(infor[l2] || 0)
         const result = {d, l_1, l_2}
         return {
            result
