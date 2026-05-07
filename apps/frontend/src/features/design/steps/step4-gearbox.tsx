@@ -39,6 +39,7 @@ export default function Step4Gearbox() {
                 vanTocQuay: parseFloat(step2Data.motor.match(/, (.*?) v\/ph/)?.[1] || "2922")
               },
               phanPhoiTySoTruyen: {
+                heSoThietKe: demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc.heSoThietKe?.psi_bd2 || 0.9,
                 tySoTruyenBanhRang: [
                     { loai: "BanhRangCon", tySoTruyen: parseFloat(step2Data.u1) },
                     { loai: "BanhRangTru", tySoTruyen: parseFloat(step2Data.u2) }
@@ -94,9 +95,9 @@ export default function Step4Gearbox() {
         if (path === 'b') return dls?.b ? `${dls.b} mm` : "---";
         if (path === 'delta1') return dls?.delta1 ? `${dls.delta1}°` : "---";
         if (path === 'delta2') return dls?.delta2 ? `${dls.delta2}°` : "---";
-        if (path === 'ft') return res.bang_luc_tac_dung?.Ft1;
-        if (path === 'fr') return res.bang_luc_tac_dung?.Fr1;
-        if (path === 'fa') return res.bang_luc_tac_dung?.Fa1;
+        if (path === 'ft') return res.bang_luc_tac_dung?.Ft1 ? `${res.bang_luc_tac_dung.Ft1} N` : "---";
+        if (path === 'fr') return res.bang_luc_tac_dung?.Fr1 ? `${res.bang_luc_tac_dung.Fr1} N` : "---";
+        if (path === 'fa') return res.bang_luc_tac_dung?.Fa1 ? `${res.bang_luc_tac_dung.Fa1} N` : "---";
     } else {
         if (path === 'm') return res.thongSoKichThuoc?.moDun_m;
         if (path === 'z1') return res.thongSoBanhRang?.soRang_z1;
@@ -105,9 +106,9 @@ export default function Step4Gearbox() {
         if (path === 'd1') return res.thongSoBanhRang?.duongKinhChia_d1 ? `${res.thongSoBanhRang.duongKinhChia_d1} mm` : "---";
         if (path === 'd2') return res.thongSoBanhRang?.duongKinhChia_d2 ? `${res.thongSoBanhRang.duongKinhChia_d2} mm` : "---";
         if (path === 'b') return res.thongSoKichThuoc?.chieuRongVanhRang_bw ? `${res.thongSoKichThuoc.chieuRongVanhRang_bw} mm` : "---";
-        if (path === 'ft') return res.bangLucTacDung?.Ft1;
-        if (path === 'fr') return res.bangLucTacDung?.Fr1;
-        if (path === 'fa') return res.bangLucTacDung?.Fa1;
+        if (path === 'ft') return res.bangLucTacDung?.Ft1 ? `${res.bangLucTacDung.Ft1} N` : "---";
+        if (path === 'fr') return res.bangLucTacDung?.Fr1 ? `${res.bangLucTacDung.Fr1} N` : "---";
+        if (path === 'fa') return res.bangLucTacDung?.Fa1 ? `${res.bangLucTacDung.Fa1} N` : "---";
     }
     return "---";
   };
@@ -147,7 +148,7 @@ export default function Step4Gearbox() {
               <div>
                 <Label className="text-sm font-semibold text-slate-600 block mb-2">Vật liệu</Label>
                 <Select defaultValue={activeTab === 'bevel' ? "Thép C40XH" : "Thép 45"}>
-                  <SelectTrigger className="w-full h-11 bg-white border-slate-200">
+                  <SelectTrigger className="w-full h-11 bg-white border-slate-200 text-gray-700">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white">
@@ -162,7 +163,7 @@ export default function Step4Gearbox() {
                 <Label className="text-sm font-semibold text-slate-600 block mb-2">
                   {activeTab === 'bevel' ? 'Module vòng chia ngoài (m_te)' : 'Module (m)'}
                 </Label>
-                <Input value={getVal(activeTab as any, 'm')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-blue-600" />
+                <Input value={getVal(activeTab as any, 'm')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
 
               <div>
@@ -170,7 +171,7 @@ export default function Step4Gearbox() {
                    Module {activeTab === 'bevel' ? 'vòng chia ngoài' : ''} tiêu chuẩn
                 </Label>
                 <Select defaultValue={activeTab === 'bevel' ? "3" : "2"}>
-                  <SelectTrigger className="w-full h-11 bg-white border-slate-200">
+                  <SelectTrigger className="w-full h-11 bg-white border-slate-200 text-gray-700">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white">
@@ -184,17 +185,17 @@ export default function Step4Gearbox() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-sm font-semibold text-slate-600 block mb-2">Số răng z1</Label>
-                  <Input value={getVal(activeTab as any, 'z1')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-blue-600" />
+                  <Input value={getVal(activeTab as any, 'z1')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
                 </div>
                 <div>
                   <Label className="text-sm font-semibold text-slate-600 block mb-2">Số răng z2</Label>
-                  <Input value={getVal(activeTab as any, 'z2')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-blue-600" />
+                  <Input value={getVal(activeTab as any, 'z2')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
                 </div>
               </div>
 
               <div>
                 <Label className="text-sm font-semibold text-slate-600 block mb-2">Tỉ số truyền (u)</Label>
-                <Input value={getVal(activeTab as any, 'u')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold" />
+                <Input value={getVal(activeTab as any, 'u')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
             </div>
           </div>
@@ -212,26 +213,26 @@ export default function Step4Gearbox() {
             <div className="space-y-4">
               <div>
                 <Label className="text-sm font-semibold text-slate-600 block mb-2">Đường kính chia bánh nhỏ ({activeTab === 'bevel' ? 'de1' : 'd1'})</Label>
-                <Input value={getVal(activeTab as any, 'd1')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold" />
+                <Input value={getVal(activeTab as any, 'd1')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
               <div>
                 <Label className="text-sm font-semibold text-slate-600 block mb-2">Đường kính chia bánh lớn ({activeTab === 'bevel' ? 'de2' : 'd2'})</Label>
-                <Input value={getVal(activeTab as any, 'd2')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold" />
+                <Input value={getVal(activeTab as any, 'd2')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
               <div>
                 <Label className="text-sm font-semibold text-slate-600 block mb-2">Bề rộng vành răng (b)</Label>
-                <Input value={getVal(activeTab as any, 'b')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold" />
+                <Input value={getVal(activeTab as any, 'b')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
               
               {activeTab === 'bevel' && (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label className="text-sm font-semibold text-slate-600 block mb-2">Góc côn bánh nhỏ (δ1)</Label>
-                    <Input value={getVal('bevel', 'delta1')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold" />
+                    <Input value={getVal('bevel', 'delta1')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
                   </div>
                   <div>
                     <Label className="text-sm font-semibold text-slate-600 block mb-2">Góc côn bánh lớn (δ2)</Label>
-                    <Input value={getVal('bevel', 'delta2')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold" />
+                    <Input value={getVal('bevel', 'delta2')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
                   </div>
                 </div>
               )}
@@ -248,15 +249,15 @@ export default function Step4Gearbox() {
             <div className="space-y-4">
               <div>
                 <Label className="text-sm font-semibold text-slate-600 block mb-2">Lực vòng Ft</Label>
-                <Input value={getVal(activeTab as any, 'ft')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-blue-600" />
+                <Input value={getVal(activeTab as any, 'ft')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
               <div>
                 <Label className="text-sm font-semibold text-slate-600 block mb-2">Lực hướng tâm Fr</Label>
-                <Input value={getVal(activeTab as any, 'fr')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-blue-600" />
+                <Input value={getVal(activeTab as any, 'fr')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
               <div>
                 <Label className="text-sm font-semibold text-slate-600 block mb-2">Lực dọc trục Fa</Label>
-                <Input value={getVal(activeTab as any, 'fa')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-blue-600" />
+                <Input value={getVal(activeTab as any, 'fa')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
             </div>
           </div>

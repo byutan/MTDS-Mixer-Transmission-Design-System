@@ -147,18 +147,26 @@ export class HeThongTruyenDong {
     }
     // ham công suất cho phép
     static tinhCongSuatChoPhep(v) {
-        let a_map = new Map();
-        a_map.set(20, 3.44)
-        a_map.set(20, 3.75)
-        if (v - 1 === 0) {
-            throw new Error(`${v} is out of bound`)
-        }
-        let lower_bound = Math.round(v - 1);
-        let upper_bound = (v + 1) | 0;
-        const lower_mapping_value = a_map.get(lower_bound)
-        const upper_mapping_value = a_map.get(upper_bound)
-        const result = (lower_mapping_value + ((v - lower_bound) / (upper_bound - lower_bound)) * (upper_mapping_value - lower_mapping_value))
-        return 3.08 // harcode, thay bằng result
+        const table = [
+            [5, 1.5],
+            [10, 2.5],
+            [15, 3.2],
+            [20, 3.75],
+            [25, 4.2]
+        ]
+
+        const pair = table.find((_, i) => {
+            const next = table[i + 1]
+            return next && v >= table[i][0] && v <= next[0]
+        })
+
+        if (!pair) return null
+
+        const i = table.indexOf(pair)
+        const [x1, y1] = table[i]
+        const [x2, y2] = table[i + 1]
+
+        return y1 + ((v - x1) / (x2 - x1)) * (y2 - y1)
     }
     // Hàm tính đường kính d2
     static tinhDuongKinhBanhBiDan(d1, u_soBo, heSoTaiTruot) {
@@ -205,8 +213,7 @@ export class HeThongTruyenDong {
 
     static tinhKhoangCachTrucThucTe(d1, d2, L) {
         const psi = L - Math.PI * (d1 + d2) / 2
-        // const delta = (d2-d1)/2 //công thức đúng
-        const delta = (d2 + d1) / 2 // harcode, công thức cho đúng theo tài liệu
+        const delta = (d2-d1)/2 
         return Number(((psi + Math.sqrt(Math.pow(psi, 2) - 8 * Math.pow(delta, 2))) / 4).toFixed(3))
     }
 
@@ -214,21 +221,26 @@ export class HeThongTruyenDong {
         return Number((180 - (57 * (d2 - d1)) / a).toFixed(3))
     }
 
-    static tinhHeSoGocOmDai(a_gocOmDai) {
-        let cA_map = new Map();
-        cA_map.set(180, 1)
-        cA_map.set(170, 0.98)
-        cA_map.set(160, 0.95)
-        cA_map.set(150, 0.92)
-        cA_map.set(140, 0.89)
-        cA_map.set(130, 0.86)
-        cA_map.set(120, 0.82)
-        cA_map.set(110, 0.78)
-        cA_map.set(100, 0.73)
-        cA_map.set(90, 0.68)
-        cA_map.set(80, 0.62)
-        cA_map.set(70, 0.56)
-        return cA_map.get(Math.round(a_gocOmDai))
+    static tinhHeSoGocOmDai(a) {
+        const map = [
+            [70, 0.56], [80, 0.62], [90, 0.68],
+            [100, 0.73], [110, 0.78], [120, 0.82],
+            [130, 0.86], [140, 0.89], [150, 0.92],
+            [160, 0.95], [170, 0.98], [180, 1]
+        ]
+
+        const pair = map.find((_, i) => {
+            const next = map[i + 1]
+            return next && a >= map[i][0] && a <= next[0]
+        })
+
+        if (!pair) return null
+
+        const i = map.indexOf(pair)
+        const [x1, y1] = map[i]
+        const [x2, y2] = map[i + 1]
+
+        return y1 + ((a - x1) / (x2 - x1)) * (y2 - y1)
     }
 
     static tinhHeSoChieuDaiDai(l, lo) {
@@ -261,7 +273,7 @@ export class HeThongTruyenDong {
     static tinhHeSoTySoTruyen(u) {
         let cU_map = new Map();
         cU_map.set(1, 1)
-        cU_map.set(1, 2, 1.07)
+        cU_map.set(1.2, 1.07)
         cU_map.set(1.6, 1.11)
         cU_map.set(1.8, 1.12)
         cU_map.set(2.2, 1.13)
@@ -309,7 +321,7 @@ export class HeThongTruyenDong {
     static tinhHeSoTruotDai(Fo, Ft, a) {
         const rad = a * Math.PI / 180
         const res = (1 / rad) * Math.log((2 * Fo + Ft) / (2 * Fo - Ft))
-        return 0.25 // harcode, thay bằng res
+        return res 
     }
     tinhThongSoBoTruyenDaiThang() {
         const pDongCo = this.dongCo.getCongSuat()
@@ -354,7 +366,7 @@ export class HeThongTruyenDong {
         const Fo = HeThongTruyenDong.tinhLucCangBanDauTrenMotDai(pDongCo, kd, v1, cA, z, Fv)
         // lực căng trên toàn bộ đai
         const Fo_tong = z * Fo
-        // lực tác dụng lên trục
+        // lực tác dụng lên trụcha
         const Fr = HeThongTruyenDong.tinhLucTacDungLenTruc(Fo, z, a_gocOmDai)
         const Ft = HeThongTruyenDong.tinhLucVong(pDongCo, v1)
         const fa1 = HeThongTruyenDong.tinhHeSoTruotDai(Fo_tong, Ft, a_gocOmDai)
@@ -407,14 +419,12 @@ export class HeThongTruyenDong {
         const n1 = trucII.soVongQuay;
         const n2 = trucIII.soVongQuay;
         const u_tru = trucIII.tySoTruyen;
-        let thoiGianPhucVu = this.thungTron.getThoiGianPhucVu();
-        thoiGianPhucVu = 43200
+        const thoiGianPhucVu = this.thungTron.getThoiGianPhucVu();
 
         // 1. Xử lý hệ số chiều rộng vành răng (Theo công thức 3.97)
         // psi_bd = 0.53 * psi_ba * (u + 1) => psi_ba = psi_bd / (0.53 * (u + 1))
         const psi_bd2 = heSoThietKe.psi_bd2;
-        let psi_ba = Number((psi_bd2 / (0.53 * (u_tru + 1))).toFixed(2));
-        psi_ba = 0.25 // harcode, mốt sửa sau
+        const psi_ba = Number((psi_bd2 / (0.53 * (u_tru + 1))).toFixed(2));
 
         // 2. Thông số vật liệu (Không fix cứng, mô phỏng data từ Bảng 6.1)
         const vatLieu = {
@@ -475,7 +485,6 @@ export class HeThongTruyenDong {
         const alpha_rad = alpha * Math.PI / 180; // Chuyển đổi sang radian để dùng Math.cos
         const d_b1 = Number((d1 * Math.cos(alpha_rad)).toFixed(2));
         const d_b2 = Number((d2 * Math.cos(alpha_rad)).toFixed(2));
-
         return {
             ungSuatTiepXucChoPhep: Number(sigma_H_cp.toFixed(2)),
             thongSoKichThuoc: {

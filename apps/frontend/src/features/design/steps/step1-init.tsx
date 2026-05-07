@@ -1,11 +1,12 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Calendar } from 'lucide-react'
+import { Calendar, FileJson } from 'lucide-react'
 import { useDesign, FormData } from '@/features/design/context/DesignContext'
 
 export default function Step1Init() {
-  const { formData, updateFormData } = useDesign();
+  const { formData, updateFormData, loadSampleData } = useDesign();
   
   const handleInputChange = (field: keyof FormData, value: string) => {
     // 1. Giới hạn độ dài text
@@ -32,8 +33,20 @@ export default function Step1Init() {
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Card 1: Thông tin */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <h3 className="text-3xl font-semibold text-gray-900 mb-2 font-sans">Thông tin</h3>
-        <p className="text-sm text-gray-600 mb-8 font-sans">Thông tin đồ án</p>
+        <div className="flex justify-between items-start mb-8">
+          <div>
+            <h3 className="text-3xl font-semibold text-gray-900 mb-2 font-sans">Thông tin</h3>
+            <p className="text-sm text-gray-600 font-sans">Thông tin đồ án</p>
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={loadSampleData}
+            className="flex items-center gap-2 border-blue-200 text-blue-600 hover:bg-blue-50 font-bold transition-all active:scale-95"
+          >
+            <FileJson className="w-4 h-4" />
+            Sử dụng dữ liệu mẫu
+          </Button>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>

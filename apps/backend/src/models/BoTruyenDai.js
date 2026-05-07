@@ -94,6 +94,15 @@ export class BoTruyenDai extends BoTruyen {
             this.#d1 = BoTruyenDai.DUONG_KINH_SO_BO_DEFAULT
             this.#lo = 1700
         }
+        else if (tietDienDai === 'B') {
+            this.#bp = 14
+            this.#bo = 17
+            this.#h = 11
+            this.#yo = 4.2
+            this.#A = 138
+            this.#d1 = 125 
+            this.#lo = 2000
+        }
     }
     getDuongKinhSoBo() {
         return this.#d1
@@ -103,23 +112,22 @@ export class BoTruyenDai extends BoTruyen {
         return this.#lo
     }
     getThongSoT(tietDienDai) {
-        if (tietDienDai === 'A') {
-            return 15
-        }
+        if (tietDienDai === 'A') return 15
+        if (tietDienDai === 'B') return 19
     }
+    
     getThongSoE(tietDienDai) {
-        if (tietDienDai === 'A') {
-            return 10
-        }
+        if (tietDienDai === 'A') return 10
+        if (tietDienDai === 'B') return 12.5
     }
+    
     getThongSoH0(tietDienDai) {
-        if (tietDienDai === 'A') {
-            return 3.3
-        }
+        if (tietDienDai === 'A') return 3.3
+        if (tietDienDai === 'B') return 4.2
     }
+    
     getKhoiLuong1MChieuDaiDai(tietDienDai) {
-        if (tietDienDai === 'A') {
-            return 0.105
-        }
+        if (tietDienDai === 'A') return 0.105
+        if (tietDienDai === 'B') return 0.18
     }
 }

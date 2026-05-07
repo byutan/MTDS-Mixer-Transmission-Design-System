@@ -60,19 +60,19 @@ export default function Step6Bearings() {
             <div className="space-y-5">
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Ký hiệu ổ lăn</Label>
-                <Input readOnly value={data.selection.type} className="bg-slate-50/50 border-slate-200 h-10 text-slate-700 font-bold" />
+                <Input readOnly value={data.selection.type} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Đường kính ngoài (D)</Label>
-                <Input readOnly value={data.selection.D} className="bg-slate-50/50 border-slate-200 h-10 text-slate-700" />
+                <Input readOnly value={data.selection.D} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Khả năng tải động (C)</Label>
-                <Input readOnly value={data.selection.C} className="bg-slate-50/50 border-slate-200 h-10 text-slate-700 font-medium" />
+                <Input readOnly value={data.selection.C} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Khả năng tải tĩnh (C0)</Label>
-                <Input readOnly value={data.selection.C0} className="bg-slate-50/50 border-slate-200 h-10 text-slate-700" />
+                <Input readOnly value={data.selection.C0} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
             </div>
           </CardContent>
@@ -89,19 +89,19 @@ export default function Step6Bearings() {
             <div className="space-y-5">
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Lực hướng tâm FrA</Label>
-                <Input readOnly value={data.loads.fr_a} className="bg-slate-50/50 border-slate-200 h-10 text-slate-700" />
+                <Input readOnly value={data.loads.fr_a} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Lực hướng tâm FrB</Label>
-                <Input readOnly value={data.loads.fr_b} className="bg-slate-50/50 border-slate-200 h-10 text-slate-700" />
+                <Input readOnly value={data.loads.fr_b} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Tuổi thọ yêu cầu (Lh)</Label>
-                <Input readOnly value={data.loads.life_h} className="bg-slate-50/50 border-slate-200 h-10 text-slate-700" />
+                <Input readOnly value={data.loads.life_h} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Tuổi thọ (triệu vòng L)</Label>
-                <Input readOnly value={data.loads.life_mil} className="bg-slate-50/50 border-slate-200 h-10 text-slate-700" />
+                <Input readOnly value={data.loads.life_mil} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
             </div>
           </CardContent>
@@ -118,15 +118,15 @@ export default function Step6Bearings() {
             <div className="space-y-5">
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Tải trọng quy ước (Q1)</Label>
-                <Input readOnly value={data.verification.q1} className="bg-slate-50/50 border-slate-200 h-10 text-slate-700 font-medium" />
+                <Input readOnly value={data.verification.q1} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Tải động tính toán (Cd_A)</Label>
-                <Input readOnly value={data.verification.cd_a} className="bg-slate-50/50 border-slate-200 h-10 text-blue-600 font-bold" />
+                <Input readOnly value={data.verification.cd_a} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Tải động tính toán (Cd_B)</Label>
-                <Input readOnly value={data.verification.cd_b} className="bg-slate-50/50 border-slate-200 h-10 text-blue-600 font-bold" />
+                <Input readOnly value={data.verification.cd_b} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
             </div>
 

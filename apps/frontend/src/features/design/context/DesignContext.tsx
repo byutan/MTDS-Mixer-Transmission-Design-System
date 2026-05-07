@@ -212,12 +212,18 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       ...formData,
       projectName: 'Hệ thống dẫn động thùng trộn',
       major: 'Cơ Kỹ Thuật',
-      studentId: user?.student_id || '',
-      studentName: user?.fullname || '',
+      studentId: user?.student_id || '2013257',
+      studentName: user?.fullname || 'Nguyễn Văn Học',
       instructor: 'TS. Nguyễn Duy Khương',
       power: demoData.duLieuDauVao.thungTron.congSuat.toString(),
       speed: demoData.duLieuDauVao.thungTron.soVongQuay.toString(),
       lifespan: demoData.duLieuDauVao.thungTron.thoiGianPhucVu.toString(),
+      workDaysYear: '300',
+      workHoursDay: '8',
+      type: 'Quay 1 chiều',
+      loadCharacter: 'Tải va đập nhẹ',
+      workMode: '2 ca',
+      loadMode: 'Thay đổi theo bậc'
     });
   };
 

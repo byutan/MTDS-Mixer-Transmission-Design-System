@@ -37,19 +37,19 @@ export default function Step7GearboxHousing() {
             <div className="grid grid-cols-2 gap-5">
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Chiều dày thân (δ)</Label>
-                <Input readOnly value={data.thickness.delta} className="bg-slate-50/50 border-slate-200 text-slate-700" />
+                <Input readOnly value={data.thickness.delta} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Chiều dày nắp (δ1)</Label>
-                <Input readOnly value={data.thickness.delta1} className="bg-slate-50/50 border-slate-200 text-slate-700" />
+                <Input readOnly value={data.thickness.delta1} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Dày gân tăng cứng (e)</Label>
-                <Input readOnly value={data.thickness.e} className="bg-slate-50/50 border-slate-200 text-slate-700" />
+                <Input readOnly value={data.thickness.e} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Chiều cao gân (h)</Label>
-                <Input readOnly value={data.thickness.h} className="bg-slate-50/50 border-slate-200 text-slate-700" />
+                <Input readOnly value={data.thickness.h} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
             </div>
 
@@ -73,23 +73,23 @@ export default function Step7GearboxHousing() {
             <div className="grid grid-cols-2 gap-x-5 gap-y-4">
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Bulông nền (d1)</Label>
-                <Input readOnly value={data.bolts.d1} className="bg-slate-50/50 border-slate-200 text-slate-700 font-bold" />
+                <Input readOnly value={data.bolts.d1} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Bulông cạnh ổ (d2)</Label>
-                <Input readOnly value={data.bolts.d2} className="bg-slate-50/50 border-slate-200 text-slate-700" />
+                <Input readOnly value={data.bolts.d2} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Vít ghép mặt bích (d3)</Label>
-                <Input readOnly value={data.bolts.d3} className="bg-slate-50/50 border-slate-200 text-slate-700" />
+                <Input readOnly value={data.bolts.d3} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Vít nắp ổ (d4)</Label>
-                <Input readOnly value={data.bolts.d4} className="bg-slate-50/50 border-slate-200 text-slate-700" />
+                <Input readOnly value={data.bolts.d4} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="col-span-2 space-y-2">
                 <Label className="text-[12px] font-semibold text-slate-600 ml-1">Vít nắp cửa thăm (d5)</Label>
-                <Input readOnly value={data.bolts.d5} className="bg-slate-50/50 border-slate-200 text-slate-700" />
+                <Input readOnly value={data.bolts.d5} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
             </div>
           </CardContent>
@@ -105,15 +105,15 @@ export default function Step7GearboxHousing() {
 
             <div className="space-y-4">
               {data.bearingSeats.map((seat, index) => (
-                <div key={index} className="grid grid-cols-3 gap-3 items-end p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+                <div key={index} className="grid grid-cols-3 gap-3 items-end p-3 bg-slate-50 rounded-xl border border-slate-200">
                   <div className="text-[13px] font-bold text-slate-700 pb-2">{seat.label}</div>
                   <div className="space-y-1">
                     <Label className="text-[10px] text-slate-400 uppercase font-bold">D2</Label>
-                    <div className="text-sm font-bold text-slate-600">{seat.d2}</div>
+                    <div className="text-sm font-bold text-gray-700">{seat.d2}</div>
                   </div>
                   <div className="space-y-1">
                     <Label className="text-[10px] text-slate-400 uppercase font-bold">D3</Label>
-                    <div className="text-sm font-bold text-slate-600">{seat.d3}</div>
+                    <div className="text-sm font-bold text-gray-700">{seat.d3}</div>
                   </div>
                 </div>
               ))}
@@ -131,7 +131,7 @@ export default function Step7GearboxHousing() {
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-5">
               <div className="space-y-4">
-                 <Label className="text-[11px] font-black text-blue-600 uppercase tracking-wider">Mặt bích & Đế</Label>
+                 <Label className="text-[11px] font-black text-slate-600 uppercase tracking-wider">Mặt bích & Đế</Label>
                  <div className="space-y-3">
                     <div className="flex justify-between text-sm border-b border-slate-100 pb-1">
                       <span className="text-slate-500">Dày đế (S1):</span>
@@ -143,13 +143,13 @@ export default function Step7GearboxHousing() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-500">Số bulông nền:</span>
-                      <span className="font-bold text-blue-600">{data.base.z}</span>
+                      <span className="font-bold text-gray-700">{data.base.z}</span>
                     </div>
                  </div>
               </div>
 
               <div className="space-y-4">
-                 <Label className="text-[11px] font-black text-emerald-600 uppercase tracking-wider">Khe hở an toàn</Label>
+                 <Label className="text-[11px] font-black text-slate-600 uppercase tracking-wider">Khe hở an toàn</Label>
                  <div className="space-y-3">
                     <div className="flex justify-between text-sm border-b border-slate-100 pb-1">
                       <span className="text-slate-500">B.Răng - Thành (Δ):</span>

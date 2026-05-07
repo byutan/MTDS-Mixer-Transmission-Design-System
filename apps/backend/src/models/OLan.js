@@ -120,4 +120,5 @@ export class OLan extends BoTruyen {
             ket_qua_kiem_nghiem: { Cd_kN: parseFloat(Cd.toFixed(3)), C_bang_tra_kN: thong_so_o.C_kN, ket_luan: Cd <= thong_so_o.C_kN ? "Passed (Cd <= C)" : "Failed (Cd > C)" }
         };
     }
+    
 }
