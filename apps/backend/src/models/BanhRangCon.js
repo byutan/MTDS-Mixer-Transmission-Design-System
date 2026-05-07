@@ -158,6 +158,8 @@ export class BanhRangCon extends BoTruyenBanhRang {
                 Ft2: parseFloat(Ft2.toFixed(2)),
                 Fr2: parseFloat(Fr2.toFixed(2)),
                 Fa2: parseFloat(Fr2.toFixed(2)),
+                dm1: parseFloat(dm1.toFixed(2)),
+                dm2: parseFloat(dm2.toFixed(2))
             },
             du_lieu_so: {
                 mte: mte,
