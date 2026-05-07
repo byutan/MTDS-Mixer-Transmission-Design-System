@@ -148,7 +148,7 @@ export default function Step1Init() {
             <div>
               <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Chiều quay</Label>
               <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
-                <SelectTrigger className="w-full border border-slate-200 rounded-md text-sm px-3 py-2 h-11 flex items-center bg-white hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 transition-all">
+                <SelectTrigger className="w-full border border-slate-200 rounded-md text-sm px-3 py-2 !h-11 flex items-center bg-white hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 transition-all">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white z-50">
@@ -160,7 +160,7 @@ export default function Step1Init() {
             <div>
               <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Tính chất tải trọng</Label>
               <Select value={formData.loadCharacter} onValueChange={(value) => handleInputChange('loadCharacter', value)}>
-                <SelectTrigger className="w-full border border-slate-200 rounded-md text-sm px-3 py-2 h-11 flex items-center bg-white hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 transition-all">
+                <SelectTrigger className="w-full border border-slate-200 rounded-md text-sm px-3 py-2 !h-11 flex items-center bg-white hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 transition-all">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white z-50">
@@ -173,7 +173,7 @@ export default function Step1Init() {
             <div>
               <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Chế độ làm việc</Label>
               <Select value={formData.workMode} onValueChange={(value) => handleInputChange('workMode', value)}>
-                <SelectTrigger className="w-full border border-slate-200 rounded-md text-sm px-3 py-2 h-11 flex items-center bg-white hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 transition-all">
+                <SelectTrigger className="w-full border border-slate-200 rounded-md text-sm px-3 py-2 !h-11 flex items-center bg-white hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 transition-all">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white z-50">
@@ -206,7 +206,7 @@ export default function Step1Init() {
             <div>
               <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Chế độ tải</Label>
               <Select value={formData.loadMode} onValueChange={(value) => handleInputChange('loadMode', value)}>
-                <SelectTrigger className="w-full border border-slate-200 rounded-md text-sm px-3 py-2 h-11 flex items-center bg-white hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 transition-all">
+                <SelectTrigger className="w-full border border-slate-200 rounded-md text-sm px-3 py-2 !h-11 flex items-center bg-white hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 transition-all">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-white z-50">

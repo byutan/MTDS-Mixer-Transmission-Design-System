@@ -162,35 +162,35 @@ export default function Step6Bearings() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Column 1: Bearing Selection */}
             <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden bg-white">
-              <CardContent className="pt-8 space-y-7 px-7">
-                <div className="pl-1 border-l-4 border-blue-600 pl-4">
-                  <h3 className="text-lg font-bold text-slate-900 leading-tight tracking-tight">Thông số chọn ổ ({mainPosKey.replace('vi_tri_', '')})</h3>
-                  <p className="text-xs text-slate-500 mt-1 uppercase font-bold tracking-widest">Kích thước cơ bản</p>
+              <CardContent className="pt-4 space-y-6">
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 leading-tight tracking-tight font-sans">Thông số chọn ổ ({mainPosKey.replace('vi_tri_', '')})</h3>
+                  <p className="text-sm text-gray-600 mt-1 font-sans">Kích thước cơ bản</p>
                 </div>
                 
                 <div className="space-y-5">
                   <div className="space-y-2">
-                    <Label className="text-[12px] font-bold text-slate-500 ml-1 uppercase tracking-tighter">Ký hiệu ổ lăn</Label>
+                    <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans uppercase tracking-tighter">Ký hiệu ổ lăn</Label>
                     <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl text-blue-700 font-black text-lg text-center shadow-inner">
                       {mainPos.bang_chon_o?.ky_hieu || "N/A"}
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                      <div className="space-y-2">
-                      <Label className="text-[11px] font-semibold text-slate-400 ml-1">Đường kính d</Label>
+                      <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Đường kính d</Label>
                       <Input readOnly value={`${mainPos.bang_chon_o?.d || 0} mm`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-semibold text-slate-400 ml-1">Đường kính D</Label>
+                      <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Đường kính D</Label>
                       <Input readOnly value={`${mainPos.bang_chon_o?.D || 0} mm`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Khả năng tải động (C)</Label>
+                    <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Khả năng tải động (C)</Label>
                     <Input readOnly value={`${mainPos.bang_chon_o?.C_kN || 0} kN`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Khả năng tải tĩnh (C0)</Label>
+                    <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Khả năng tải tĩnh (C0)</Label>
                     <Input readOnly value={`${mainPos.bang_chon_o?.C0_kN || 0} kN`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
                   </div>
                 </div>
@@ -199,29 +199,29 @@ export default function Step6Bearings() {
 
             {/* Column 2: Loads & Life */}
             <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden bg-white">
-              <CardContent className="pt-8 space-y-7 px-7">
-                <div className="pl-1 border-l-4 border-slate-300 pl-4">
-                  <h3 className="text-lg font-bold text-slate-900 leading-tight tracking-tight">Tải trọng & Tuổi thọ</h3>
-                  <p className="text-xs text-slate-500 mt-1 uppercase font-bold tracking-widest">Phản lực và thời gian</p>
+              <CardContent className="pt-4 space-y-6">
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 leading-tight tracking-tight font-sans">Tải trọng & Tuổi thọ</h3>
+                  <p className="text-sm text-gray-600 mt-1 font-sans">Phản lực và thời gian</p>
                 </div>
 
                 <div className="space-y-5">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-semibold text-slate-400 ml-1">Fr ({mainPosKey.replace('vi_tri_', '')})</Label>
+                      <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Fr ({mainPosKey.replace('vi_tri_', '')})</Label>
                       <Input readOnly value={`${(mainPos.chi_tiet_tinh_toan?.Fr_N || 0).toLocaleString()} N`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[11px] font-semibold text-slate-400 ml-1">Fr ({altPosKey.replace('vi_tri_', '')})</Label>
+                      <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Fr ({altPosKey.replace('vi_tri_', '')})</Label>
                       <Input readOnly value={`${(altPos?.chi_tiet_tinh_toan?.Fr_N || 0).toLocaleString()} N`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Tuổi thọ yêu cầu (Lh)</Label>
+                    <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Tuổi thọ yêu cầu (Lh)</Label>
                     <Input readOnly value={`${(safeParse(formData.lifespan) || 0).toLocaleString()} giờ`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Tuổi thọ triệu vòng (L)</Label>
+                    <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Tuổi thọ triệu vòng (L)</Label>
                     <Input readOnly value={`${(mainPos.chi_tiet_tinh_toan?.tuoi_tho_trieu_vong_quay_L || 0).toFixed(2)} triệu vòng`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
                   </div>
                 </div>
@@ -230,19 +230,19 @@ export default function Step6Bearings() {
 
             {/* Column 3: Verification */}
             <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden bg-white">
-              <CardContent className="pt-8 space-y-7 px-7">
-                <div className="pl-1 border-l-4 border-emerald-500 pl-4">
-                  <h3 className="text-lg font-bold text-slate-900 leading-tight tracking-tight">Kiểm nghiệm khả năng tải</h3>
-                  <p className="text-xs text-slate-500 mt-1 uppercase font-bold tracking-widest">Tải động tính toán Cd</p>
+              <CardContent className="pt-4 space-y-6">
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 leading-tight tracking-tight font-sans">Kiểm nghiệm khả năng tải</h3>
+                  <p className="text-sm text-gray-600 mt-1 font-sans">Tải động tính toán Cd</p>
                 </div>
 
                 <div className="space-y-5">
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Tải trọng tương đương (Q)</Label>
+                    <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Tải trọng tương đương (Q)</Label>
                     <Input readOnly value={`${(mainPos.chi_tiet_tinh_toan?.tai_trong_dong_quy_uoc_Q_N || 0).toLocaleString()} N`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[11px] font-semibold text-slate-400 ml-1">Tải động tính toán (Cd)</Label>
+                    <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Tải động tính toán (Cd)</Label>
                     <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
                        <div className="text-emerald-700 font-black text-xl text-center">{(mainPos.ket_qua_kiem_nghiem?.Cd_kN || 0).toFixed(2)} kN</div>
                        <div className="text-[10px] text-emerald-600 text-center font-bold mt-1 uppercase tracking-widest">Cd Phải &lt; C cơ bản ({mainPos.bang_chon_o?.C_kN || 0} kN)</div>

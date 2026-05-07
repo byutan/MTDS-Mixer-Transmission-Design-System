@@ -28,27 +28,27 @@ export default function Step7GearboxHousing() {
         
         {/* Block 1: Thành hộp & Gân tăng cứng */}
         <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden">
-          <CardContent className="pt-8 space-y-7 px-7">
+          <CardContent className="pt-4 space-y-6">
             <div className="pl-1">
-              <h3 className="text-lg font-bold text-slate-900 leading-tight">Thành hộp & Gân tăng cứng</h3>
-              <p className="text-xs text-slate-500 mt-1">Độ dày và kích thước cấu tạo vỏ</p>
+              <h3 className="text-xl font-bold text-gray-900 leading-tight font-sans">Thành hộp & Gân tăng cứng</h3>
+              <p className="text-sm text-gray-600 mt-1 font-sans">Độ dày và kích thước cấu tạo vỏ</p>
             </div>
             
             <div className="grid grid-cols-2 gap-5">
               <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Chiều dày thân (δ)</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Chiều dày thân (δ)</Label>
                 <Input readOnly value={data.thickness.delta} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Chiều dày nắp (δ1)</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Chiều dày nắp (δ1)</Label>
                 <Input readOnly value={data.thickness.delta1} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Dày gân tăng cứng (e)</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Dày gân tăng cứng (e)</Label>
                 <Input readOnly value={data.thickness.e} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Chiều cao gân (h)</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Chiều cao gân (h)</Label>
                 <Input readOnly value={data.thickness.h} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
             </div>
@@ -64,31 +64,31 @@ export default function Step7GearboxHousing() {
 
         {/* Block 2: Hệ thống Bulông & Vít */}
         <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden">
-          <CardContent className="pt-8 space-y-7 px-7">
+          <CardContent className="pt-4 space-y-6">
             <div className="pl-1">
-              <h3 className="text-lg font-bold text-slate-900 leading-tight">Hệ thống Bulông & Vít</h3>
-              <p className="text-xs text-slate-500 mt-1">Đường kính các loại bulông liên kết</p>
+              <h3 className="text-xl font-bold text-gray-900 leading-tight font-sans">Hệ thống Bulông & Vít</h3>
+              <p className="text-sm text-gray-600 mt-1 font-sans">Đường kính các loại bulông liên kết</p>
             </div>
 
             <div className="grid grid-cols-2 gap-x-5 gap-y-4">
               <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Bulông nền (d1)</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Bulông nền (d1)</Label>
                 <Input readOnly value={data.bolts.d1} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Bulông cạnh ổ (d2)</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Bulông cạnh ổ (d2)</Label>
                 <Input readOnly value={data.bolts.d2} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Vít ghép mặt bích (d3)</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Vít ghép mặt bích (d3)</Label>
                 <Input readOnly value={data.bolts.d3} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Vít nắp ổ (d4)</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Vít nắp ổ (d4)</Label>
                 <Input readOnly value={data.bolts.d4} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="col-span-2 space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Vít nắp cửa thăm (d5)</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Vít nắp cửa thăm (d5)</Label>
                 <Input readOnly value={data.bolts.d5} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
             </div>
@@ -97,10 +97,10 @@ export default function Step7GearboxHousing() {
 
         {/* Block 3: Kích thước gối trục */}
         <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden">
-          <CardContent className="pt-8 space-y-7 px-7">
+          <CardContent className="pt-4 space-y-6">
             <div className="pl-1">
-              <h3 className="text-lg font-bold text-slate-900 leading-tight">Kích thước gối trục</h3>
-              <p className="text-xs text-slate-500 mt-1">Đường kính ngoài và tâm lỗ vít</p>
+              <h3 className="text-xl font-bold text-gray-900 leading-tight font-sans">Kích thước gối trục</h3>
+              <p className="text-sm text-gray-600 mt-1 font-sans">Đường kính ngoài và tâm lỗ vít</p>
             </div>
 
             <div className="space-y-4">
@@ -123,10 +123,10 @@ export default function Step7GearboxHousing() {
 
         {/* Block 4: Mặt bích, Đế & Khe hở */}
         <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden">
-          <CardContent className="pt-8 space-y-7 px-7">
+          <CardContent className="pt-4 space-y-6">
             <div className="pl-1">
-              <h3 className="text-lg font-bold text-slate-900 leading-tight">Mặt bích, Đế & Khe hở</h3>
-              <p className="text-xs text-slate-500 mt-1">Thông số ghép nối và khoảng cách an toàn</p>
+              <h3 className="text-xl font-bold text-gray-900 leading-tight font-sans">Mặt bích, Đế & Khe hở</h3>
+              <p className="text-sm text-gray-600 mt-1 font-sans">Thông số ghép nối và khoảng cách an toàn</p>
             </div>
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-5">

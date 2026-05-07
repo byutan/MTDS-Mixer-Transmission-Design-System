@@ -336,7 +336,7 @@ export default function Step2Motor() {
             <div>
               <Label className="text-sm font-bold text-slate-700 block mb-2">Mã hiệu động cơ</Label>
               <Select value={step2Data.motor} onValueChange={handleMotorChange}>
-                <SelectTrigger className="border border-slate-200 rounded-md text-sm px-3 py-2 h-11 flex items-center bg-white shadow-sm text-gray-700 max-w-md">
+                <SelectTrigger className="border border-slate-200 rounded-md text-sm px-3 py-2 !h-11 flex items-center bg-white shadow-sm text-gray-700 max-w-md">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="z-50 bg-white shadow-2xl">

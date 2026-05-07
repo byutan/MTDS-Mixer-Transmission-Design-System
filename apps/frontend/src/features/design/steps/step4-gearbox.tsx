@@ -140,25 +140,25 @@ export default function Step4Gearbox() {
         <div className="space-y-6">
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 space-y-6">
             <div>
-              <h3 className="text-xl font-bold text-gray-900">Thông số bánh răng {activeTab === 'bevel' ? 'côn' : 'trụ'}</h3>
-              <p className="text-xs text-gray-500 italic">Thông số thiết kế chuyên sâu</p>
+              <h3 className="text-xl font-bold text-gray-900 font-sans">Thông số bánh răng {activeTab === 'bevel' ? 'côn' : 'trụ'}</h3>
+              <p className="text-sm text-gray-600 font-sans">Thông số thiết kế chuyên sâu</p>
             </div>
 
             <div className="space-y-5">
               <div>
-                <Label className="text-sm font-semibold text-slate-600 block mb-2">Vật liệu</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Vật liệu</Label>
                 <Input value="Thép 45" readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
 
               <div>
-                <Label className="text-sm font-semibold text-slate-600 block mb-2">
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">
                   {activeTab === 'bevel' ? 'Module vòng chia ngoài (m_te)' : 'Module (m)'}
                 </Label>
                 <Input value={getVal(activeTab as any, 'm')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
 
               <div>
-                <Label className="text-sm font-semibold text-slate-600 block mb-2">
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">
                    Module {activeTab === 'bevel' ? 'vòng chia ngoài' : ''} tiêu chuẩn
                 </Label>
                 <Select defaultValue={activeTab === 'bevel' ? "3" : "2"}>
@@ -175,17 +175,17 @@ export default function Step4Gearbox() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-semibold text-slate-600 block mb-2">Số răng z1</Label>
+                  <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Số răng z1</Label>
                   <Input value={getVal(activeTab as any, 'z1')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
                 </div>
                 <div>
-                  <Label className="text-sm font-semibold text-slate-600 block mb-2">Số răng z2</Label>
+                  <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Số răng z2</Label>
                   <Input value={getVal(activeTab as any, 'z2')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
                 </div>
               </div>
 
               <div>
-                <Label className="text-sm font-semibold text-slate-600 block mb-2">Tỉ số truyền (u)</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Tỉ số truyền (u)</Label>
                 <Input value={getVal(activeTab as any, 'u')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
             </div>
@@ -197,32 +197,32 @@ export default function Step4Gearbox() {
           {/* Card 1: Thông số hình học */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 space-y-6">
             <div>
-              <h3 className="text-xl font-bold text-gray-900">Thông số</h3>
-              <p className="text-xs text-gray-500 italic">Thông số cơ bản của bánh răng</p>
+              <h3 className="text-xl font-bold text-gray-900 font-sans">Thông số</h3>
+              <p className="text-sm text-gray-600 font-sans">Thông số cơ bản của bánh răng</p>
             </div>
             
             <div className="space-y-4">
               <div>
-                <Label className="text-sm font-semibold text-slate-600 block mb-2">Đường kính chia bánh nhỏ ({activeTab === 'bevel' ? 'de1' : 'd1'})</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Đường kính chia bánh nhỏ ({activeTab === 'bevel' ? 'de1' : 'd1'})</Label>
                 <Input value={getVal(activeTab as any, 'd1')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
               <div>
-                <Label className="text-sm font-semibold text-slate-600 block mb-2">Đường kính chia bánh lớn ({activeTab === 'bevel' ? 'de2' : 'd2'})</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Đường kính chia bánh lớn ({activeTab === 'bevel' ? 'de2' : 'd2'})</Label>
                 <Input value={getVal(activeTab as any, 'd2')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
               <div>
-                <Label className="text-sm font-semibold text-slate-600 block mb-2">Bề rộng vành răng (b)</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Bề rộng vành răng (b)</Label>
                 <Input value={getVal(activeTab as any, 'b')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
               
               {activeTab === 'bevel' && (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label className="text-sm font-semibold text-slate-600 block mb-2">Góc côn bánh nhỏ (δ1)</Label>
+                    <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Góc côn bánh nhỏ (δ1)</Label>
                     <Input value={getVal('bevel', 'delta1')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
                   </div>
                   <div>
-                    <Label className="text-sm font-semibold text-slate-600 block mb-2">Góc côn bánh lớn (δ2)</Label>
+                    <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Góc côn bánh lớn (δ2)</Label>
                     <Input value={getVal('bevel', 'delta2')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
                   </div>
                 </div>
@@ -233,21 +233,21 @@ export default function Step4Gearbox() {
           {/* Card 2: Lực tác dụng 3D */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 space-y-6">
             <div>
-              <h3 className="text-xl font-bold text-gray-900">Lực tác dụng 3D</h3>
-              <p className="text-xs text-gray-500 italic">Các thành phần lực tác dụng</p>
+              <h3 className="text-xl font-bold text-gray-900 font-sans">Lực tác dụng 3D</h3>
+              <p className="text-sm text-gray-600 font-sans">Các thành phần lực tác dụng</p>
             </div>
 
             <div className="space-y-4">
               <div>
-                <Label className="text-sm font-semibold text-slate-600 block mb-2">Lực vòng Ft</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Lực vòng Ft</Label>
                 <Input value={getVal(activeTab as any, 'ft')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
               <div>
-                <Label className="text-sm font-semibold text-slate-600 block mb-2">Lực hướng tâm Fr</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Lực hướng tâm Fr</Label>
                 <Input value={getVal(activeTab as any, 'fr')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
               <div>
-                <Label className="text-sm font-semibold text-slate-600 block mb-2">Lực dọc trục Fa</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">Lực dọc trục Fa</Label>
                 <Input value={getVal(activeTab as any, 'fa')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
             </div>

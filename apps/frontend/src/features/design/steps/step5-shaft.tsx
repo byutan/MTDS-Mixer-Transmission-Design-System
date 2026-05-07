@@ -285,8 +285,8 @@ export default function Step5Shaft() {
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 space-y-8">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="text-xl font-bold text-gray-900">Cấu hình thiết kế Trục {activeTab}</h3>
-            <p className="text-xs text-gray-500 italic">Xác định kích thước chiều dài và đường kính các đoạn trục</p>
+            <h3 className="text-xl font-bold text-gray-900 font-sans">Cấu hình thiết kế Trục {activeTab}</h3>
+            <p className="text-sm text-gray-600 font-sans">Xác định kích thước chiều dài và đường kính các đoạn trục</p>
           </div>
           <button 
             onClick={fetchDesignConstraints} 
@@ -298,12 +298,12 @@ export default function Step5Shaft() {
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-3">
-            <Label className="text-sm font-semibold text-slate-600 block">{labels.d}</Label>
+            <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">{labels.d}</Label>
             <Select 
               value={activeTab === "I" ? data.d1 : activeTab === "II" ? (data as any).d2 : (data as any).d3}
               onValueChange={(val) => handleInputChange(activeTab === "I" ? "d1" : activeTab === "II" ? "d2" : "d3", val)}
             >
-              <SelectTrigger className="w-full h-11 bg-white border-slate-200 font-bold text-gray-700">
+              <SelectTrigger className="w-full border border-slate-200 rounded-md text-sm px-3 py-2 !h-11 flex items-center bg-white hover:bg-slate-50 focus:ring-2 focus:ring-blue-500 transition-all font-sans">
                 <SelectValue placeholder="Chọn đường kính..." />
               </SelectTrigger>
               <SelectContent className="bg-white">
@@ -324,15 +324,15 @@ export default function Step5Shaft() {
           </div>
 
           <div className="space-y-3">
-            <Label className="text-sm font-semibold text-slate-600 block">{labels.l1}</Label>
+            <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">{labels.l1}</Label>
             <Input 
               value={activeTab === "III" ? (data as any).lmrt : data.lmrc} 
               onChange={(e) => handleInputChange(activeTab === "III" ? "lmrt" : "lmrc", e.target.value)}
               onBlur={(e) => handleBlur(activeTab === "III" ? "lmrt" : "lmrc", e.target.value)}
-              className={`h-11 font-bold text-gray-700 ${
+              className={`border rounded-md text-sm h-11 w-full transition-all ${
                 activeTab === "III" 
-                  ? (designSuggestions?.limits?.gh_lmrt && (safeParse((data as any).lmrt) < designSuggestions.limits.gh_lmrt.min || safeParse((data as any).lmrt) > designSuggestions.limits.gh_lmrt.max) ? "bg-red-50 border-red-500 ring-2 ring-red-100 text-red-600" : "bg-slate-50 border-slate-200")
-                  : (designSuggestions?.limits?.gh_lmrc && (safeParse(data.lmrc) < designSuggestions.limits.gh_lmrc.min || safeParse(data.lmrc) > designSuggestions.limits.gh_lmrc.max) ? "bg-red-50 border-red-500 ring-2 ring-red-100 text-red-600" : "bg-slate-50 border-slate-200")
+                  ? (designSuggestions?.limits?.gh_lmrt && (safeParse((data as any).lmrt) < designSuggestions.limits.gh_lmrt.min || safeParse((data as any).lmrt) > designSuggestions.limits.gh_lmrt.max) ? "bg-red-50 border-red-500 ring-1 ring-red-200 text-red-600" : "bg-white border-slate-200 focus:ring-2 focus:ring-blue-500")
+                  : (designSuggestions?.limits?.gh_lmrc && (safeParse(data.lmrc) < designSuggestions.limits.gh_lmrc.min || safeParse(data.lmrc) > designSuggestions.limits.gh_lmrc.max) ? "bg-red-50 border-red-500 ring-1 ring-red-200 text-red-600" : "bg-white border-slate-200 focus:ring-2 focus:ring-blue-500")
               }`}
             />
             {activeTab === "III" ? (
@@ -347,17 +347,17 @@ export default function Step5Shaft() {
           </div>
 
           <div className="space-y-3">
-            <Label className="text-sm font-semibold text-slate-600 block">{labels.l2}</Label>
+            <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">{labels.l2}</Label>
             <Input 
               value={activeTab === "I" ? data.lmdt : activeTab === "II" ? (data as any).lmrt : (data as any).lmkn} 
               onChange={(e) => handleInputChange(activeTab === "I" ? "lmdt" : activeTab === "II" ? "lmrt" : "lmkn", e.target.value)}
               onBlur={(e) => handleBlur(activeTab === "I" ? "lmdt" : activeTab === "II" ? "lmrt" : "lmkn", e.target.value)}
-              className={`h-11 font-bold text-gray-700 ${
+              className={`border rounded-md text-sm h-11 w-full transition-all ${
                 activeTab === "I"
-                  ? (designSuggestions?.limits?.gh_lmdt && (safeParse(data.lmdt) < designSuggestions.limits.gh_lmdt.min || safeParse(data.lmdt) > designSuggestions.limits.gh_lmdt.max) ? "bg-red-50 border-red-500 ring-2 ring-red-100 text-red-600" : "bg-slate-50 border-slate-200")
+                  ? (designSuggestions?.limits?.gh_lmdt && (safeParse(data.lmdt) < designSuggestions.limits.gh_lmdt.min || safeParse(data.lmdt) > designSuggestions.limits.gh_lmdt.max) ? "bg-red-50 border-red-500 ring-1 ring-red-200 text-red-600" : "bg-white border-slate-200 focus:ring-2 focus:ring-blue-500")
                   : activeTab === "II"
-                  ? (designSuggestions?.limits?.gh_lmrt && (safeParse((data as any).lmrt) < designSuggestions.limits.gh_lmrt.min || safeParse((data as any).lmrt) > designSuggestions.limits.gh_lmrt.max) ? "bg-red-50 border-red-500 ring-2 ring-red-100 text-red-600" : "bg-slate-50 border-slate-200")
-                  : (designSuggestions?.limits?.gh_lmkn && (safeParse((data as any).lmkn) < designSuggestions.limits.gh_lmkn.min || safeParse((data as any).lmkn) > designSuggestions.limits.gh_lmkn.max) ? "bg-red-50 border-red-500 ring-2 ring-red-100 text-red-600" : "bg-slate-50 border-slate-200")
+                  ? (designSuggestions?.limits?.gh_lmrt && (safeParse((data as any).lmrt) < designSuggestions.limits.gh_lmrt.min || safeParse((data as any).lmrt) > designSuggestions.limits.gh_lmrt.max) ? "bg-red-50 border-red-500 ring-1 ring-red-200 text-red-600" : "bg-white border-slate-200 focus:ring-2 focus:ring-blue-500")
+                  : (designSuggestions?.limits?.gh_lmkn && (safeParse((data as any).lmkn) < designSuggestions.limits.gh_lmkn.min || safeParse((data as any).lmkn) > designSuggestions.limits.gh_lmkn.max) ? "bg-red-50 border-red-500 ring-1 ring-red-200 text-red-600" : "bg-white border-slate-200 focus:ring-2 focus:ring-blue-500")
               }`}
             />
             {activeTab === "I" ? (
@@ -377,13 +377,13 @@ export default function Step5Shaft() {
 
           {activeTab === "I" && (
             <div className="space-y-3">
-              <Label className="text-sm font-semibold text-slate-600 block">{labels.extra}</Label>
+              <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">{labels.extra}</Label>
               <Input 
                 value={(data as any).l11} 
                 onChange={(e) => handleInputChange("l11", e.target.value)}
                 onBlur={(e) => handleBlur("l11", e.target.value)}
-                className={`h-11 font-bold text-gray-700 ${
-                  designSuggestions?.l11_limit && (safeParse((data as any).l11) < designSuggestions.l11_limit.min || safeParse((data as any).l11) > designSuggestions.l11_limit.max) ? "bg-red-50 border-red-500 ring-2 ring-red-100 text-red-600" : "bg-slate-50 border-slate-200"
+                className={`border rounded-md text-sm h-11 w-full transition-all ${
+                  designSuggestions?.l11_limit && (safeParse((data as any).l11) < designSuggestions.l11_limit.min || safeParse((data as any).l11) > designSuggestions.l11_limit.max) ? "bg-red-50 border-red-500 ring-1 ring-red-200 text-red-600" : "bg-white border-slate-200 focus:ring-2 focus:ring-blue-500"
                 }`}
               />
               <p className={`text-[10px] italic font-medium ${designSuggestions?.l11_limit && (safeParse((data as any).l11) < designSuggestions.l11_limit.min || safeParse((data as any).l11) > designSuggestions.l11_limit.max) ? "text-red-500 font-bold" : "text-slate-400"}`}>
@@ -432,8 +432,8 @@ export default function Step5Shaft() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 space-y-6">
                 <div>
-                   <h3 className="text-xl font-bold text-gray-900">Phản lực liên kết</h3>
-                   <p className="text-xs text-gray-500 italic">Giá trị phản lực tại các gối đỡ ổ lăn</p>
+                   <h3 className="text-xl font-bold text-gray-900 font-sans">Phản lực liên kết</h3>
+                   <p className="text-sm text-gray-600 font-sans not-italic">Giá trị phản lực tại các gối đỡ ổ lăn</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                     {shaftResults?.reactions ? Object.entries(shaftResults.reactions).map(([key, val]) => (
@@ -451,10 +451,10 @@ export default function Step5Shaft() {
              </div>
 
              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 space-y-6">
-                <div className="flex items-center gap-2">
-                   <h3 className="text-xl font-bold text-gray-900">Kiểm nghiệm tổng thể</h3>
+                <div>
+                   <h3 className="text-xl font-bold text-gray-900 font-sans">Kiểm nghiệm tổng thể</h3>
+                   <p className="text-sm text-gray-600 font-sans">Đánh giá khả năng chịu tải và độ bền</p>
                 </div>
-                <p className="text-xs text-gray-500 italic">Đánh giá khả năng chịu tải và độ bền</p>
                 
                 <div className="space-y-4">
                     <div className="flex justify-between items-center p-5 bg-emerald-50 rounded-2xl border border-emerald-100">
@@ -469,7 +469,6 @@ export default function Step5Shaft() {
                           <p className="text-[10px] text-blue-600 font-bold uppercase tracking-wider mb-1">Kiểm nghiệm quá tải</p>
                           <span className="text-lg font-black text-blue-800">{shaftResults?.overload?.gtd || "---"} MPa</span>
                        </div>
-                       <div className="text-right text-[10px] text-blue-500 font-bold italic">σ_td</div>
                     </div>
                 </div>
              </div>
@@ -477,8 +476,8 @@ export default function Step5Shaft() {
 
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 space-y-6">
             <div>
-              <h3 className="text-xl font-bold text-gray-900">Đường kính trục chính thức</h3>
-              <p className="text-xs text-gray-500 italic">Dựa trên lựa chọn thiết kế của người dùng và momen tương đương</p>
+              <h3 className="text-xl font-bold text-gray-900 font-sans">Đường kính trục chính thức</h3>
+              <p className="text-sm text-gray-600 font-sans">Dựa trên lựa chọn thiết kế của người dùng và momen tương đương</p>
             </div>
             
             <div className="overflow-x-auto rounded-xl border border-slate-100">
