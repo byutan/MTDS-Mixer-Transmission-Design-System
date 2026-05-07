@@ -7,6 +7,7 @@ import ThungTronRoutes from "./src/routes/ThungTron.routes.js"
 import BanhRangConRoutes from './src/routes/BanhRangCon.route.js';
 import authRoutes from "./src/routes/auth.routes.js"
 import projectRoutes from "./src/routes/Project.route.js"
+import oLanRoutes from './src/routes/OLan.route.js';
 import { connectDB } from './src/config/database.js';
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.use('/api/he-thong-truyen-dong', HeThongTruyenDongRoutes);
 app.use('/api/thung-tron', ThungTronRoutes);
 app.use('/api/banh-rang-con', BanhRangConRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/o-lan', oLanRoutes);
 
 app.listen(PORT, () => {
   console.log(`Running server at port ${PORT}`);
