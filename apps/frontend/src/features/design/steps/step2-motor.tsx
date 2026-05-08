@@ -138,7 +138,7 @@ export default function Step2Motor() {
     if (parseFloat(val) < 0) return;
 
     const ud = parseFloat(val) || 0;
-    const ut = parseFloat(step2Data.totalRatio) || 41.74;
+    const ut = parseFloat(step2Data.totalRatio) || 0;
 
     // Tính u_h = u_t / u_d
     const uh = ud > 0 ? (ut / ud).toFixed(2) : '0';

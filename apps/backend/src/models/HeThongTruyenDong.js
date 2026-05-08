@@ -534,6 +534,7 @@ export class HeThongTruyenDong {
         const dsChieuDay = standardSizes.filter(
             e => e >= e_min && e <= e_max
         )
+        const thickness_e = dsChieuDay.length > 0 ? dsChieuDay[0] : Math.ceil(e_min);
         const d1 = 0.04 * a_w + 10
         const duongKinhBoltNen = chonTieuChuan(d1)
         const dsBoltCanh = Array.from({ length: 2 }, (_, i) =>
@@ -580,8 +581,8 @@ export class HeThongTruyenDong {
                 napHop: chieuDayNapHop
             },
             ganTangCung: {
-                chieuDay_e: dsChieuDay,
-                chieuCao_h: `<= ${chieuCao}`,
+                chieuDay_e: thickness_e,
+                chieuCao_h: chieuCao,
                 doDoc: 2 // hardcode
             },
             duongKinh: {

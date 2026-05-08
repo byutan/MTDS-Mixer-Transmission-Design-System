@@ -37,8 +37,9 @@ export default function Step3Belt() {
               dongCo: {
                 congSuat: parseFloat(p_dc_match[1]) || 0,
                 vanTocQuay: parseFloat(n_dc_match[1]) || 0,
-                soCaLamViec: formData.workMode === '2 ca' ? 2 : 3,
-                taiTrong: formData.loadCharacter === 'Tải va đập nhẹ' ? 'nhe' : 'manh'
+                soCaLamViec: parseInt(formData.workMode) || 3,
+                taiTrong: formData.loadCharacter === 'Tải va đập nhẹ' ? 'nhe' : 
+                          formData.loadCharacter === 'Tải nặng' ? 'manh' : 'tinh'
               },
               boTruyenDai: {
                 tySoTruyenSoBo: parseFloat(step2Data.beltRatio) || 1

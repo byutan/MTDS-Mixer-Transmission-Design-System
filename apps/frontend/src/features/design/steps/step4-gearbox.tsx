@@ -35,8 +35,8 @@ export default function Step4Gearbox() {
               oLan: demoData.duLieuDauVao.heThongTruyenDong.oLan,
               noiTrucVongDanHoi: demoData.duLieuDauVao.heThongTruyenDong.noiTrucVongDanHoi,
               dongCo: {
-                congSuat: parseFloat(step2Data.motor.match(/\((.*?) kW/)?.[1] || "7.5"),
-                vanTocQuay: parseFloat(step2Data.motor.match(/, (.*?) v\/ph/)?.[1] || "2922")
+                congSuat: parseFloat(step2Data.motor.match(/\((.*?) kW/)?.[1] || "0"),
+                vanTocQuay: parseFloat(step2Data.motor.match(/, (.*?) v\/ph/)?.[1] || "0")
               },
               phanPhoiTySoTruyen: {
                 heSoThietKe: demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc.heSoThietKe?.psi_bd2 || 0.9,
@@ -157,21 +157,7 @@ export default function Step4Gearbox() {
                 <Input value={getVal(activeTab as any, 'm')} readOnly className="h-11 bg-slate-50 border-slate-200 font-bold text-gray-700" />
               </div>
 
-              <div>
-                <Label className="text-sm font-medium text-slate-700 block mb-2 font-sans">
-                   Module {activeTab === 'bevel' ? 'vòng chia ngoài' : ''} tiêu chuẩn
-                </Label>
-                <Select defaultValue={activeTab === 'bevel' ? "3" : "2"}>
-                  <SelectTrigger className="w-full h-11 bg-white border-slate-200 text-gray-700">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white">
-                    <SelectItem value="2">2.0</SelectItem>
-                    <SelectItem value="2.5">2.5</SelectItem>
-                    <SelectItem value="3">3.0</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+
 
               <div className="grid grid-cols-2 gap-4">
                 <div>

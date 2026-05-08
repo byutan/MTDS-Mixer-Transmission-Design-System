@@ -51,8 +51,8 @@ export default function Step6Bearings() {
               ]
             },
             truc: {
-              nhanhieuthep: "45",
-              nhietluyen: "Tôi cải thiện",
+              nhanhieuthep: demoData.duLieuDauVao.heThongTruyenDong.truc.nhanhieuthep || "45",
+              nhietluyen: demoData.duLieuDauVao.heThongTruyenDong.truc.nhietluyen || "Tôi cải thiện",
               Thongtintruc: {
                 trucI: { 
                   d1: safeParse(step5Data.trucI.d1), 
@@ -60,17 +60,17 @@ export default function Step6Bearings() {
                   lmdt: safeParse(step5Data.trucI.lmdt),
                   l11: safeParse(step5Data.trucI.l11),
                   "Bánh đai thang lớn": safeParse(step5Data.trucI.d1),
-                  "A": safeParse(step5Data.trucI.d1) + 5,
-                  "B": safeParse(step5Data.trucI.d1) + 5,
-                  "Bánh răng côn nhỏ": safeParse(step5Data.trucI.d1) + 10
+                  "A": safeParse(step5Data.trucI.d1),
+                  "B": safeParse(step5Data.trucI.d1),
+                  "Bánh răng côn nhỏ": safeParse(step5Data.trucI.d1)
                 },
                 trucII: { 
                   d2: safeParse(step5Data.trucII.d2), 
                   lmrc: safeParse(step5Data.trucII.lmrc), 
                   lmrt: safeParse(step5Data.trucII.lmrt),
                   "C": safeParse(step5Data.trucII.d2),
-                  "Bánh răng trụ nhỏ": safeParse(step5Data.trucII.d2) + 5,
-                  "Bánh răng côn lớn": safeParse(step5Data.trucII.d2) + 10,
+                  "Bánh răng trụ nhỏ": safeParse(step5Data.trucII.d2),
+                  "Bánh răng côn lớn": safeParse(step5Data.trucII.d2),
                   "D": safeParse(step5Data.trucII.d2)
                 },
                 trucIII: { 
@@ -78,8 +78,8 @@ export default function Step6Bearings() {
                   lmrt: safeParse(step5Data.trucIII.lmrt), 
                   lmkn: safeParse(step5Data.trucIII.lmkn),
                   "E": safeParse(step5Data.trucIII.d3),
-                  "Bánh răng trụ lớn": safeParse(step5Data.trucIII.d3) + 5,
-                  "F": safeParse(step5Data.trucIII.d3) + 5,
+                  "Bánh răng trụ lớn": safeParse(step5Data.trucIII.d3),
+                  "F": safeParse(step5Data.trucIII.d3),
                   "Khớp nối": safeParse(step5Data.trucIII.d3)
                 }
               }

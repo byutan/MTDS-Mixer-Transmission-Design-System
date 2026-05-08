@@ -62,8 +62,8 @@ export default function Step5Shaft() {
             ]
           },
           truc: {
-            nhanhieuthep: "45",
-            nhietluyen: "Tôi cải thiện",
+            nhanhieuthep: demoData.duLieuDauVao.heThongTruyenDong.truc.nhanhieuthep || "45",
+            nhietluyen: demoData.duLieuDauVao.heThongTruyenDong.truc.nhietluyen || "Tôi cải thiện",
             Thongtintruc: {
               trucI: { 
                 d1: safeParse(step5Data.trucI.d1), 
@@ -72,9 +72,9 @@ export default function Step5Shaft() {
                 l11: safeParse(step5Data.trucI.l11),
                 // Map descriptive names for backend
                 "Bánh đai thang lớn": safeParse(step5Data.trucI.d1),
-                "A": safeParse(step5Data.trucI.d1) + 5,
-                "B": safeParse(step5Data.trucI.d1) + 5,
-                "Bánh răng côn nhỏ": safeParse(step5Data.trucI.d1) + 10
+                "A": safeParse(step5Data.trucI.d1),
+                "B": safeParse(step5Data.trucI.d1),
+                "Bánh răng côn nhỏ": safeParse(step5Data.trucI.d1)
               },
               trucII: { 
                 d2: safeParse(step5Data.trucII.d2), 
@@ -82,8 +82,8 @@ export default function Step5Shaft() {
                 lmrt: safeParse(step5Data.trucII.lmrt),
                 // Map descriptive names for backend
                 "C": safeParse(step5Data.trucII.d2),
-                "Bánh răng trụ nhỏ": safeParse(step5Data.trucII.d2) + 5,
-                "Bánh răng côn lớn": safeParse(step5Data.trucII.d2) + 10,
+                "Bánh răng trụ nhỏ": safeParse(step5Data.trucII.d2),
+                "Bánh răng côn lớn": safeParse(step5Data.trucII.d2),
                 "D": safeParse(step5Data.trucII.d2)
               },
               trucIII: { 
@@ -92,8 +92,8 @@ export default function Step5Shaft() {
                 lmkn: safeParse(step5Data.trucIII.lmkn),
                 // Map descriptive names for backend
                 "E": safeParse(step5Data.trucIII.d3),
-                "Bánh răng trụ lớn": safeParse(step5Data.trucIII.d3) + 5,
-                "F": safeParse(step5Data.trucIII.d3) + 5,
+                "Bánh răng trụ lớn": safeParse(step5Data.trucIII.d3),
+                "F": safeParse(step5Data.trucIII.d3),
                 "Khớp nối": safeParse(step5Data.trucIII.d3)
               }
             }
@@ -286,7 +286,7 @@ export default function Step5Shaft() {
         <div className="flex justify-between items-start">
           <div>
             <h3 className="text-xl font-bold text-gray-900 font-sans">Cấu hình thiết kế Trục {activeTab}</h3>
-            <p className="text-sm text-gray-600 font-sans">Xác định kích thước chiều dài và đường kính các đoạn trục</p>
+            <p className="text-sm text-gray-600 font-sans">Vật liệu: {demoData.duLieuDauVao.heThongTruyenDong.truc.nhanhieuthep} ({demoData.duLieuDauVao.heThongTruyenDong.truc.nhietluyen})</p>
           </div>
           <button 
             onClick={fetchDesignConstraints} 
@@ -387,7 +387,7 @@ export default function Step5Shaft() {
                 }`}
               />
               <p className={`text-[10px] italic font-medium ${designSuggestions?.l11_limit && (safeParse((data as any).l11) < designSuggestions.l11_limit.min || safeParse((data as any).l11) > designSuggestions.l11_limit.max) ? "text-red-500 font-bold" : "text-slate-400"}`}>
-                Gợi ý: [{designSuggestions?.l11_limit?.min || "75"} - {designSuggestions?.l11_limit?.max || "90"}]
+                Gợi ý: [{designSuggestions?.l11_limit?.min || "---"} - {designSuggestions?.l11_limit?.max || "---"}]
               </p>
             </div>
           )}
