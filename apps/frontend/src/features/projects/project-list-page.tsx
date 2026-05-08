@@ -11,7 +11,7 @@ import { useDesign } from '../design/context/DesignContext'
 
 export default function ProjectListPage() {
   const navigate = useNavigate();
-  const { setFormData, setStep2Data, setProjectId, clearProjectData } = useDesign();
+  const { setFormData, setStep2Data, setStep5Data, setProjectId, clearProjectData } = useDesign();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');

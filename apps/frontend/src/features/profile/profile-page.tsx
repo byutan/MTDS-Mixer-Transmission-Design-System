@@ -126,7 +126,7 @@ export default function ProfilePage() {
                             contentStyle={{ borderRadius: '20px', border: 'none', boxShadow: '0 25px 50px -12px rgb(0 0 0 / 0.15)', padding: '16px', fontWeight: 'bold' }}
                         />
                         <Bar dataKey="visits" radius={[6, 6, 6, 6]} barSize={22}>
-                            {loginData.map((entry, index) => (
+                            {loginData.map((_, index) => (
                                 <Cell key={`cell-${index}`} fill={index === 11 ? '#2563eb' : '#f1f5f9'} className="transition-all hover:opacity-80" />
                             ))}
                         </Bar>

@@ -211,6 +211,8 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             cosPhi: p.motor_cos_phi?.toString() || '0.000',
             tMaxTdm: p.motor_t_max_tdm?.toString() || '0.000',
             tKdTdm: p.motor_t_kd_tdm?.toString() || '0.000',
+            motor: p.motor_code || '',
+            motorPower: p.motor_power_actual?.toString() || '0.000',
             motorSpeed: p.motor_speed_actual?.toString() || '0.000'
           });
 
