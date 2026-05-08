@@ -273,7 +273,7 @@ export default function Step5Shaft() {
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-8 space-y-8">
         <div>
           <h3 className="text-xl font-bold text-gray-900 font-sans">Cấu hình thiết kế Trục {activeTab}</h3>
-          <p className="text-sm text-gray-600 font-sans tracking-tight italic">
+          <p className="text-sm text-gray-600 font-sans tracking-tight">
             Vật liệu: {demoData.duLieuDauVao.heThongTruyenDong.truc.nhanhieuthep} ({demoData.duLieuDauVao.heThongTruyenDong.truc.nhietluyen})
           </p>
         </div>
