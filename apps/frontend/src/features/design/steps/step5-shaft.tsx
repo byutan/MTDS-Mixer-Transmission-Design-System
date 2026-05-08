@@ -151,27 +151,43 @@ export default function Step5Shaft() {
           
           let updates: any = {};
           if (activeTab === "I" && limits) {
+             const current = step5Data.trucI;
+             // Chỉ tự động cập nhật nếu giá trị hiện tại là trống hoặc là giá trị mặc định ban đầu
+             const shouldUpdateLmrc = !current.lmrc || current.lmrc === '42';
+             const shouldUpdateLmdt = !current.lmdt || current.lmdt === '45';
+             const shouldUpdateL11 = !current.l11 || current.l11 === '90';
+
              updates = {
-                lmrc: Math.round((limits.gh_lmrc.min + limits.gh_lmrc.max) / 2).toString(),
-                lmdt: Math.round((limits.gh_lmdt.min + limits.gh_lmdt.max) / 2).toString(),
-                l11: l11_limit ? Math.round(((l11_limit as any).min + (l11_limit as any).max) / 2).toString() : step5Data.trucI.l11
+                ...(shouldUpdateLmrc ? { lmrc: Math.round((limits.gh_lmrc.min + limits.gh_lmrc.max) / 2).toString() } : {}),
+                ...(shouldUpdateLmdt ? { lmdt: Math.round((limits.gh_lmdt.min + limits.gh_lmdt.max) / 2).toString() } : {}),
+                ...(shouldUpdateL11 && l11_limit ? { l11: Math.round(((l11_limit as any).min + (l11_limit as any).max) / 2).toString() } : {})
              };
           } else if (activeTab === "II" && limits) {
+             const current = step5Data.trucII;
+             const shouldUpdateLmrc = !current.lmrc || current.lmrc === '50';
+             const shouldUpdateLmrt = !current.lmrt || current.lmrt === '60';
+
              updates = {
-                lmrc: Math.round((limits.gh_lmrc.min + limits.gh_lmrc.max) / 2).toString(),
-                lmrt: Math.round((limits.gh_lmrt.min + limits.gh_lmrt.max) / 2).toString()
+                ...(shouldUpdateLmrc ? { lmrc: Math.round((limits.gh_lmrc.min + limits.gh_lmrc.max) / 2).toString() } : {}),
+                ...(shouldUpdateLmrt ? { lmrt: Math.round((limits.gh_lmrt.min + limits.gh_lmrt.max) / 2).toString() } : {})
              };
           } else if (limits) {
+             const current = step5Data.trucIII;
+             const shouldUpdateLmrt = !current.lmrt || current.lmrt === '65';
+             const shouldUpdateLmkn = !current.lmkn || current.lmkn === '80';
+
              updates = {
-                lmrt: Math.round((limits.gh_lmrt.min + limits.gh_lmrt.max) / 2).toString(),
-                lmkn: Math.round((limits.gh_lmkn.min + limits.gh_lmkn.max) / 2).toString()
+                ...(shouldUpdateLmrt ? { lmrt: Math.round((limits.gh_lmrt.min + limits.gh_lmrt.max) / 2).toString() } : {}),
+                ...(shouldUpdateLmkn ? { lmkn: Math.round((limits.gh_lmkn.min + limits.gh_lmkn.max) / 2).toString() } : {})
              };
           }
           
-          setStep5Data({
-            ...step5Data,
-            [trucKey]: { ...step5Data[trucKey], ...updates }
-          });
+          if (Object.keys(updates).length > 0) {
+            setStep5Data({
+              ...step5Data,
+              [trucKey]: { ...step5Data[trucKey], ...updates }
+            });
+          }
           lastDRef.current = currentD;
         }
       }

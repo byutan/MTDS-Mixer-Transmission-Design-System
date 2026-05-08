@@ -211,9 +211,27 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             cosPhi: p.motor_cos_phi?.toString() || '0.000',
             tMaxTdm: p.motor_t_max_tdm?.toString() || '0.000',
             tKdTdm: p.motor_t_kd_tdm?.toString() || '0.000',
-            motor: p.motor_code || '',
-            motorPower: p.motor_power_actual?.toString() || '0.000',
             motorSpeed: p.motor_speed_actual?.toString() || '0.000'
+          });
+
+          // Cập nhật Step 5
+          setStep5Data({
+            trucI: {
+              d1: (p.shaft_i_d1 || 30).toString(),
+              lmrc: (p.shaft_i_lmrc || 42).toString(),
+              lmdt: (p.shaft_i_lmdt || 45).toString(),
+              l11: (p.shaft_i_l11 || 90).toString()
+            },
+            trucII: {
+              d2: (p.shaft_ii_d2 || 40).toString(),
+              lmrc: (p.shaft_ii_lmrc || 50).toString(),
+              lmrt: (p.shaft_ii_lmrt || 60).toString()
+            },
+            trucIII: {
+              d3: (p.shaft_iii_d3 || 50).toString(),
+              lmrt: (p.shaft_iii_lmrt || 65).toString(),
+              lmkn: (p.shaft_iii_lmkn || 80).toString()
+            }
           });
         }
       } catch (error) {
@@ -272,7 +290,18 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       motor_t_max_tdm: parseFloat(activeStep2Data.tMaxTdm) || 0,
       motor_t_kd_tdm: parseFloat(activeStep2Data.tKdTdm) || 0,
       motor_power_actual: parseFloat(activeStep2Data.motorPower) || 0,
-      motor_speed_actual: parseFloat(activeStep2Data.motorSpeed) || 0
+      motor_speed_actual: parseFloat(activeStep2Data.motorSpeed) || 0,
+      // Step 5 data
+      shaft_i_d1: parseFloat(step5Data.trucI.d1) || 0,
+      shaft_i_lmrc: parseFloat(step5Data.trucI.lmrc) || 0,
+      shaft_i_lmdt: parseFloat(step5Data.trucI.lmdt) || 0,
+      shaft_i_l11: parseFloat(step5Data.trucI.l11) || 0,
+      shaft_ii_d2: parseFloat(step5Data.trucII.d2) || 0,
+      shaft_ii_lmrc: parseFloat(step5Data.trucII.lmrc) || 0,
+      shaft_ii_lmrt: parseFloat(step5Data.trucII.lmrt) || 0,
+      shaft_iii_d3: parseFloat(step5Data.trucIII.d3) || 0,
+      shaft_iii_lmrt: parseFloat(step5Data.trucIII.lmrt) || 0,
+      shaft_iii_lmkn: parseFloat(step5Data.trucIII.lmkn) || 0
     };
 
     console.log("Saving project payload:", payload);

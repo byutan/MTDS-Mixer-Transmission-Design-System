@@ -38,8 +38,11 @@ export const createProject = async (req, res) => {
         efficiency_sigma, required_power_pk, preliminary_speed_nsb, total_ratio_ut,
         belt_ratio_ud, gearbox_ratio_uh, u1, u2, motor_code,
         motor_cos_phi, motor_t_max_tdm, motor_t_kd_tdm,
-        motor_power_actual, motor_speed_actual
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)
+        motor_power_actual, motor_speed_actual,
+        shaft_i_d1, shaft_i_lmrc, shaft_i_lmdt, shaft_i_l11,
+        shaft_ii_d2, shaft_ii_lmrc, shaft_ii_lmrt,
+        shaft_iii_d3, shaft_iii_lmrt, shaft_iii_lmkn
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38)
       RETURNING *
     `;
     
@@ -50,7 +53,10 @@ export const createProject = async (req, res) => {
       specs.efficiency_sigma, specs.required_power_pk, specs.preliminary_speed_nsb, specs.total_ratio_ut,
       specs.belt_ratio_ud, specs.gearbox_ratio_uh, specs.u1, specs.u2, specs.motor_code,
       specs.motor_cos_phi, specs.motor_t_max_tdm, specs.motor_t_kd_tdm,
-      specs.motor_power_actual, specs.motor_speed_actual
+      specs.motor_power_actual, specs.motor_speed_actual,
+      specs.shaft_i_d1 || 30, specs.shaft_i_lmrc || 42, specs.shaft_i_lmdt || 45, specs.shaft_i_l11 || 90,
+      specs.shaft_ii_d2 || 40, specs.shaft_ii_lmrc || 50, specs.shaft_ii_lmrt || 60,
+      specs.shaft_iii_d3 || 50, specs.shaft_iii_lmrt || 65, specs.shaft_iii_lmkn || 80
     ];
 
     const result = await query(sql, params);
@@ -92,8 +98,13 @@ export const updateProject = async (req, res) => {
                 motor_code = $20,
                 motor_cos_phi = $21,
                 motor_t_max_tdm = $22,
-                motor_t_kd_tdm = $23
-            WHERE project_id = $24
+                motor_t_kd_tdm = $23,
+                motor_power_actual = $24,
+                motor_speed_actual = $25,
+                shaft_i_d1 = $26, shaft_i_lmrc = $27, shaft_i_lmdt = $28, shaft_i_l11 = $29,
+                shaft_ii_d2 = $30, shaft_ii_lmrc = $31, shaft_ii_lmrt = $32,
+                shaft_iii_d3 = $33, shaft_iii_lmrt = $34, shaft_iii_lmkn = $35
+            WHERE project_id = $36
             RETURNING *
         `;
         
@@ -121,6 +132,11 @@ export const updateProject = async (req, res) => {
             updateData.motor_cos_phi,
             updateData.motor_t_max_tdm,
             updateData.motor_t_kd_tdm,
+            updateData.motor_power_actual,
+            updateData.motor_speed_actual,
+            updateData.shaft_i_d1, updateData.shaft_i_lmrc, updateData.shaft_i_lmdt, updateData.shaft_i_l11,
+            updateData.shaft_ii_d2, updateData.shaft_ii_lmrc, updateData.shaft_ii_lmrt,
+            updateData.shaft_iii_d3, updateData.shaft_iii_lmrt, updateData.shaft_iii_lmkn,
             id
         ];
 

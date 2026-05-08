@@ -12,10 +12,10 @@ export default function Step3Belt() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const p_dc = parseFloat(step2Data.motorPower) || 0;
-      const n_dc = parseFloat(step2Data.motorSpeed) || 0;
+      const p_dc = parseFloat(step2Data.motorPower);
+      const n_dc = parseFloat(step2Data.motorSpeed);
 
-      if (p_dc <= 0 || n_dc <= 0) {
+      if (isNaN(p_dc) || isNaN(n_dc) || p_dc <= 0 || n_dc <= 0) {
         setLoading(false);
         return;
       }
