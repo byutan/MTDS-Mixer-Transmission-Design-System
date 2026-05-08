@@ -32,9 +32,10 @@ export const taoHGT = (danhSachBanhRang) => {
 export const tinhHieuSuatHGT = (danhSachBanhRang) => {
     const hgt=taoHGT(danhSachBanhRang);
     return {
+        tenHGT: hgt.constructor.name,
         soCap: hgt.getSoCap(),
-        hieuSuatHGT: Number(hgt.getHieuSuat().toFixed(3))
-    }
+        hieuSuatHGT: Number((hgt.getHieuSuat() || 0).toFixed(3))
+    };
 }
 
 export const tinhTySoTruyenThucTe = (duLieuDauVao) => {
@@ -47,10 +48,9 @@ export const tinhTySoTruyenThucTe = (duLieuDauVao) => {
     
     const uHGT = hgt.tinhTySoTruyenThucTe(uHeThong, uDai)
     return {
-        tySoTruyenChungThucTe: uHeThong,
-        tySoTruyenDai: uDai,
-        tySoTruyenThucTeHGT: Number(uHGT.toFixed(2))
-    }
+        tySoTruyenHGTSoBo: hgt.getTySoTruyenSoBo(),
+        tySoTruyenThucTeHGT: Number((uHGT || 0).toFixed(2))
+    };
 }
 
 export const phanPhoiTySoTruyenCapBanhRang = (duLieuDauVao) => {
@@ -79,9 +79,9 @@ export const phanPhoiTySoTruyenCapBanhRang = (duLieuDauVao) => {
     const ketQuaTySoTruyenThucTe=tinhTySoTruyenThucTe(duLieuDauVao)
     const u_h = ketQuaTySoTruyenThucTe.tySoTruyenThucTeHGT
 
-    const ketQua = hgt.phanPhoiTySoTruyenCacCap({ u_h, k_be: K_be, psi_bd2, c_k: c_K });
+    const res = hgt.phanPhoiTySoTruyenCacCap({ u_h, k_be: K_be, psi_bd2, c_k: c_K });
     return {
-        tySoTruyenThucTeHGT: Number(u_h.toFixed(2)),
-        tySoTruyenBanhRang: ketQua
+        tySoTruyenThucTeHGT: Number((u_h || 0).toFixed(2)),
+        phanPhoiTySoTruyen: res
     };
 }

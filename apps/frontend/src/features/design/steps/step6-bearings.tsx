@@ -1,38 +1,121 @@
-import React, { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { CheckCircle2 } from "lucide-react";
-
-// --- KHU VỰC MOCK DATA (Trích xuất từ o_lan_1.txt) ---
-const BEARING_MOCK_DATA = {
-  shaft1: {
-    selection: { type: "Ổ đũa côn 7507", d: "35 mm", D: "72 mm", T: "24.25 mm", C: "50.2 kN", C0: "40.3 kN" },
-    loads: { fr_a: "4,631.93 N", fa_a: "266.01 N", fr_b: "2,748.03 N", fa_b: "0 N", life_h: "12,000 h", life_mil: "2,104 triệu vòng" },
-    verification: { q1: "4.63 kN", q2: "2.75 kN", cd_a: "45.99 kN", cd_b: "27.29 kN", status: "Thỏa mãn điều kiện tải động" }
-  },
-  shaft2: {
-    selection: { type: "Ổ đũa côn 7509", d: "45 mm", D: "85 mm", T: "24.75 mm", C: "62.5 kN", C0: "52.1 kN" },
-    loads: { fr_a: "6,240.50 N", fa_a: "850.00 N", fr_b: "4,120.30 N", fa_b: "0 N", life_h: "12,000 h", life_mil: "2,104 triệu vòng" },
-    verification: { q1: "6.85 kN", q2: "4.12 kN", cd_a: "58.40 kN", cd_b: "35.10 kN", status: "Thỏa mãn điều kiện tải động" }
-  },
-  shaft3: {
-    selection: { type: "Ổ đũa côn 7512", d: "60 mm", D: "110 mm", T: "29.75 mm", C: "98.2 kN", C0: "85.4 kN" },
-    loads: { fr_a: "12,450.20 N", fa_a: "1,200.00 N", fr_b: "8,950.40 N", fa_b: "0 N", life_h: "12,000 h", life_mil: "2,104 triệu vòng" },
-    verification: { q1: "13.20 kN", q2: "8.95 kN", cd_a: "89.50 kN", cd_b: "62.40 kN", status: "Thỏa mãn điều kiện tải động" }
-  }
-};
+import { CheckCircle2, Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { useDesign } from "@/features/design/context/DesignContext";
+import demoData from "../../../../../../demodata.json";
 
 export default function Step6Bearings() {
-  const [activeTab, setActiveTab] = useState<keyof typeof BEARING_MOCK_DATA>("shaft1");
-  const data = BEARING_MOCK_DATA[activeTab];
+  const { formData, step2Data, step5Data } = useDesign();
+  const [activeTab, setActiveTab] = useState<"1" | "2" | "3">("1");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [bearingData, setBearingData] = useState<any>(null);
+
+  const safeParse = (val: any) => {
+    if (typeof val === 'string' && (val === '---' || val === '')) return 0;
+    const parsed = parseFloat(val);
+    return isNaN(parsed) ? 0 : parsed;
+  };
+
+  const fetchBearingData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const motorPower = parseFloat(step2Data.motorPower) || 0;
+      const motorSpeed = parseFloat(step2Data.motorSpeed) || 0;
+
+      const payload = {
+        duLieuDauVao: {
+          thungTron: {
+            congSuat: safeParse(formData.power),
+            soVongQuay: safeParse(formData.speed),
+            thoiGianPhucVu: safeParse(formData.lifespan)
+          },
+          heThongTruyenDong: {
+            dongCo: { congSuat: motorPower, vanTocQuay: motorSpeed },
+            hopGiamToc: demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc,
+            boTruyenDai: {
+              ...demoData.duLieuDauVao.heThongTruyenDong.boTruyenDai,
+              tySoTruyenSoBo: safeParse(step2Data.beltRatio)
+            },
+            oLan: demoData.duLieuDauVao.heThongTruyenDong.oLan,
+            noiTrucVongDanHoi: demoData.duLieuDauVao.heThongTruyenDong.noiTrucVongDanHoi,
+            phanPhoiTySoTruyen: {
+              heSoThietKe: demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc.heSoThietKe?.psi_bd2 || 0.9,
+              tySoTruyenBanhRang: [
+                { loai: "BanhRangCon", tySoTruyen: safeParse(step2Data.u1) },
+                { loai: "BanhRangTru", tySoTruyen: safeParse(step2Data.u2) }
+              ]
+            },
+            truc: {
+              nhanhieuthep: demoData.duLieuDauVao.heThongTruyenDong.truc.nhanhieuthep,
+              nhietluyen: demoData.duLieuDauVao.heThongTruyenDong.truc.nhietluyen,
+              Thongtintruc: {
+                trucI: { 
+                  d1: safeParse(step5Data.trucI.d1), 
+                  lmrc: safeParse(step5Data.trucI.lmrc), 
+                  lmdt: safeParse(step5Data.trucI.lmdt),
+                  l11: safeParse(step5Data.trucI.l11),
+                  "Bánh đai thang lớn": safeParse(step5Data.trucI.d1),
+                  "A": safeParse(step5Data.trucI.d1),
+                  "B": safeParse(step5Data.trucI.d1),
+                  "Bánh răng côn nhỏ": safeParse(step5Data.trucI.d1)
+                },
+                trucII: { 
+                  d2: safeParse(step5Data.trucII.d2), 
+                  lmrc: safeParse(step5Data.trucII.lmrc), 
+                  lmrt: safeParse(step5Data.trucII.lmrt),
+                  "C": safeParse(step5Data.trucII.d2),
+                  "Bánh răng trụ nhỏ": safeParse(step5Data.trucII.d2),
+                  "Bánh răng côn lớn": safeParse(step5Data.trucII.d2),
+                  "D": safeParse(step5Data.trucII.d2)
+                },
+                trucIII: { 
+                  d3: safeParse(step5Data.trucIII.d3), 
+                  lmrt: safeParse(step5Data.trucIII.lmrt), 
+                  lmkn: safeParse(step5Data.trucIII.lmkn),
+                  "E": safeParse(step5Data.trucIII.d3),
+                  "Bánh răng trụ lớn": safeParse(step5Data.trucIII.d3),
+                  "F": safeParse(step5Data.trucIII.d3),
+                  "Khớp nối": safeParse(step5Data.trucIII.d3)
+                }
+              }
+            }
+          }
+        }
+      };
+
+      const res = await fetch(`http://localhost:3001/api/o-lan/tinh-toan-truc/${activeTab}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        setBearingData(data.data);
+      } else {
+        setError(data.message || "Không tìm thấy ổ lăn phù hợp cho thiết kế hiện tại.");
+      }
+    } catch (err) {
+      setError("Lỗi kết nối Backend.");
+    } finally {
+      setLoading(false);
+    }
+  }, [activeTab, formData, step2Data, step5Data]);
+
+  useEffect(() => {
+    fetchBearingData();
+  }, [fetchBearingData]);
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-20">
-      {/* Tab Switcher - Thiết kế tinh tế, tối giản */}
+      {/* Tab Switcher */}
       <div className="flex justify-center">
         <div className="bg-slate-100 p-1 rounded-xl flex items-center w-full max-w-md border border-slate-200">
-          {["shaft1", "shaft2", "shaft3"].map((id) => (
+          {["1", "2", "3"].map((id) => (
             <button 
               key={id}
               onClick={() => setActiveTab(id as any)}
@@ -42,103 +125,169 @@ export default function Step6Bearings() {
                 : "text-slate-500 hover:text-slate-700"
               }`}
             >
-              {id === "shaft1" ? "Ổ Trục I" : id === "shaft2" ? "Ổ Trục II" : "Ổ Trục III"}
+              Ổ Lăn {id === "1" ? "I" : id === "2" ? "II" : "III"}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Cột 1: Thông số chọn ổ */}
-        <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden">
-          <CardContent className="pt-8 space-y-7 px-7">
-            <div className="pl-1">
-              <h3 className="text-lg font-bold text-slate-900 leading-tight">Thông số chọn ổ</h3>
-              <p className="text-xs text-slate-500 mt-1">Loại ổ và kích thước cơ bản</p>
-            </div>
-            
-            <div className="space-y-5">
-              <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Ký hiệu ổ lăn</Label>
-                <Input readOnly value={data.selection.type} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Đường kính ngoài (D)</Label>
-                <Input readOnly value={data.selection.D} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Khả năng tải động (C)</Label>
-                <Input readOnly value={data.selection.C} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Khả năng tải tĩnh (C0)</Label>
-                <Input readOnly value={data.selection.C0} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-              </div>
-            </div>
-          </CardContent>
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-32 space-y-4">
+          <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+          <p className="text-slate-500 font-medium italic text-sm">Đang tính toán chọn ổ lăn từ thư viện...</p>
+        </div>
+      ) : error ? (
+        <Card className="border-amber-100 bg-amber-50/50 p-12 text-center flex flex-col items-center space-y-4">
+          <AlertCircle className="w-12 h-12 text-amber-500" />
+          <div className="space-y-1">
+             <h3 className="font-bold text-amber-900">Thiết kế trục chưa phù hợp</h3>
+             <p className="text-sm text-amber-700 max-w-md">{error}</p>
+          </div>
+          <button onClick={fetchBearingData} className="flex items-center gap-2 px-6 py-2 bg-white border border-amber-200 rounded-lg text-amber-700 text-sm font-bold hover:bg-amber-100 transition-all">
+            <RefreshCw className="w-4 h-4" /> Thử lại
+          </button>
         </Card>
+      ) : bearingData ? (() => {
+        const mainPosKey = activeTab === "1" ? "vi_tri_A" : activeTab === "2" ? "vi_tri_C" : "vi_tri_E";
+        
+        const mainPos = bearingData[mainPosKey];
+        if (!mainPos) return <div className="py-20 text-center text-slate-400 italic">Dữ liệu ổ lăn không đầy đủ...</div>;
 
-        {/* Cột 2: Tải trọng & Tuổi thọ */}
-        <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden">
-          <CardContent className="pt-8 space-y-7 px-7">
-            <div className="pl-1">
-              <h3 className="text-lg font-bold text-slate-900 leading-tight">Tải trọng & Tuổi thọ</h3>
-              <p className="text-xs text-slate-500 mt-1">Phản lực và thời gian làm việc</p>
-            </div>
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Column 1: Bearing Specification */}
+            <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden bg-white">
+              <CardContent className="pt-4 space-y-6">
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 leading-tight tracking-tight font-sans">Thông số ổ lăn chọn ({mainPosKey.replace('vi_tri_', '')})</h3>
+                  <p className="text-sm text-gray-600 mt-1 font-sans">Loại ổ: {mainPos.bang_chon_o?.loai_o}</p>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-[11px] font-black text-slate-500 uppercase tracking-wider">Ký hiệu ổ lăn</Label>
+                    <div className="p-4 bg-blue-50 border border-blue-100 rounded-xl text-blue-700 font-black text-2xl text-center shadow-inner">
+                      {mainPos.bang_chon_o?.ky_hieu || "N/A"}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                     <div className="space-y-2">
+                      <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">Đường kính (d)</Label>
+                      <Input readOnly value={`${mainPos.bang_chon_o?.d || 0} mm`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">Đường kính (D)</Label>
+                      <Input readOnly value={`${mainPos.bang_chon_o?.D || 0} mm`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">Khả năng tải động cơ bản (C)</Label>
+                    <Input readOnly value={`${mainPos.bang_chon_o?.C_kN || 0} kN`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">Khả năng tải tĩnh cơ bản (C0)</Label>
+                    <Input readOnly value={`${mainPos.bang_chon_o?.C0_kN || 0} kN`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-            <div className="space-y-5">
-              <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Lực hướng tâm FrA</Label>
-                <Input readOnly value={data.loads.fr_a} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Lực hướng tâm FrB</Label>
-                <Input readOnly value={data.loads.fr_b} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Tuổi thọ yêu cầu (Lh)</Label>
-                <Input readOnly value={data.loads.life_h} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Tuổi thọ (triệu vòng L)</Label>
-                <Input readOnly value={data.loads.life_mil} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            {/* Column 2: Calculation Details */}
+            <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden bg-white">
+              <CardContent className="pt-4 space-y-6">
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 leading-tight tracking-tight font-sans">Chi tiết tính toán</h3>
+                  <p className="text-sm text-gray-600 mt-1 font-sans">Lực tác dụng và hệ số quy đổi</p>
+                </div>
 
-        {/* Cột 3: Kiểm nghiệm khả năng tải */}
-        <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden">
-          <CardContent className="pt-8 space-y-7 px-7">
-            <div className="pl-1">
-              <h3 className="text-lg font-bold text-slate-900 leading-tight">Kiểm nghiệm khả năng tải</h3>
-              <p className="text-xs text-slate-500 mt-1">So sánh Cd với C cơ bản</p>
-            </div>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans text-[11px]">Lực hướng tâm (Fr)</Label>
+                      <Input readOnly value={`${Number(mainPos.chi_tiet_tinh_toan?.Fr_N || 0).toLocaleString()} N`} className="bg-slate-50 border-slate-200 h-9 text-gray-700 font-bold text-xs" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans text-[11px]">Lực dọc trục (Fa)</Label>
+                      <Input readOnly value={`${Number(mainPos.chi_tiet_tinh_toan?.Fa_N || 0).toLocaleString()} N`} className="bg-slate-50 border-slate-200 h-9 text-gray-700 font-bold text-xs" />
+                    </div>
+                  </div>
 
-            <div className="space-y-5">
-              <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Tải trọng quy ước (Q1)</Label>
-                <Input readOnly value={data.verification.q1} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Tải động tính toán (Cd_A)</Label>
-                <Input readOnly value={data.verification.cd_a} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[12px] font-semibold text-slate-600 ml-1">Tải động tính toán (Cd_B)</Label>
-                <Input readOnly value={data.verification.cd_b} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
-              </div>
-            </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="space-y-1">
+                      <Label className="text-xs text-slate-500 mb-1 font-sans">Fa/VFr</Label>
+                      <Input readOnly value={mainPos.chi_tiet_tinh_toan?.ti_so_Fa_VFr} className="bg-slate-50 border-slate-200 h-9 text-gray-700 font-bold text-xs" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-slate-500 mb-1 font-sans">Hệ số (e)</Label>
+                      <Input readOnly value={mainPos.chi_tiet_tinh_toan?.he_so_e} className="bg-slate-50 border-slate-200 h-9 text-gray-700 font-bold text-xs" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs text-slate-500 mb-1 font-sans">Hệ số (X)</Label>
+                      <Input readOnly value={mainPos.chi_tiet_tinh_toan?.he_so_X} className="bg-slate-50 border-slate-200 h-9 text-gray-700 font-bold text-xs" />
+                    </div>
+                  </div>
 
-            <div className="pt-2">
-               <div className="bg-emerald-50 text-emerald-700 p-4 rounded-xl border border-emerald-100 flex items-center justify-center gap-3 text-[13px] font-bold shadow-sm">
-                  <CheckCircle2 className="w-5 h-5" />
-                  {data.verification.status}
-               </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                  <div className="space-y-2 pt-1 border-t border-slate-100">
+                    <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">Tải trọng động quy ước (Q)</Label>
+                    <Input readOnly value={`${Number(mainPos.chi_tiet_tinh_toan?.tai_trong_dong_quy_uoc_Q_N || 0).toLocaleString()} N`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans text-[11px]">Tuổi thọ triệu vòng (L)</Label>
+                      <Input readOnly value={`${Number(mainPos.chi_tiet_tinh_toan?.tuoi_tho_trieu_vong_quay_L || 0).toFixed(2)} triệu vòng`} className="bg-slate-50 border-slate-200 h-9 text-gray-700 font-bold text-xs" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans text-[11px]">Thời gian phục vụ (Lh)</Label>
+                      <Input readOnly value={`${Number(formData.lifespan || 0).toLocaleString()} giờ`} className="bg-slate-50 border-slate-200 h-9 text-gray-700 font-bold text-xs" />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Column 3: Verification */}
+            <Card className="shadow-sm border-slate-200 rounded-2xl overflow-hidden bg-white">
+              <CardContent className="pt-4 space-y-6">
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 leading-tight tracking-tight font-sans">Kiểm nghiệm khả năng tải</h3>
+                  <p className="text-sm text-gray-600 mt-1 font-sans">So sánh Cd và C cơ bản</p>
+                </div>
+
+                <div className="space-y-5">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans text-xs">Khả năng tải động tính toán (Cd)</Label>
+                    <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl relative overflow-hidden group">
+                       <div className="text-emerald-700 font-black text-3xl text-center relative z-10">
+                         {(mainPos.ket_qua_kiem_nghiem?.Cd_kN || 0).toFixed(3)} kN
+                       </div>
+                       <div className="text-[10px] text-emerald-600 text-center font-bold mt-2 uppercase tracking-widest relative z-10 border-t border-emerald-100 pt-2">
+                          Cd ({(mainPos.ket_qua_kiem_nghiem?.Cd_kN || 0).toFixed(2)} kN) ≤ C ({mainPos.bang_chon_o?.C_kN || 0} kN)
+                       </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-4">
+                    {mainPos.ket_qua_kiem_nghiem?.ket_luan === "Passed" ? (
+                      <div className="bg-emerald-600 text-white p-5 rounded-2xl flex flex-col items-center justify-center gap-2 text-sm font-black shadow-lg shadow-emerald-100">
+                        <CheckCircle2 className="w-8 h-8" />
+                        <span>ĐẠT ĐIỀU KIỆN BỀN</span>
+                      </div>
+                    ) : (
+                      <div className="bg-red-600 text-white p-5 rounded-2xl flex flex-col items-center justify-center gap-2 text-sm font-black shadow-lg shadow-red-100">
+                        <AlertCircle className="w-8 h-8" />
+                        <span>KHÔNG ĐẠT ĐIỀU KIỆN</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      })() : (
+        <div className="py-20 text-center text-slate-400 italic">Chọn trục để xem thông tin tính toán ổ lăn...</div>
+      )}
     </div>
   );
 }

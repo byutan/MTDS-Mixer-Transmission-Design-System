@@ -110,10 +110,10 @@ export class Truc {
         return {
             "Tietdientai": Ten_tietdien,
             "Momenxoan": momenxoan,
-            "Momentd": Number(Mtd.toFixed(2)),
+            "Momentd": Number((Mtd || 0).toFixed(2)),
             "Trisosuatchophep": t,
-            "Dtuongduong": Number(dtd.toFixed(2)),
-            "Dtang11": Number(d_tang_11.toFixed(2)),
+            "Dtuongduong": Number((dtd || 0).toFixed(2)),
+            "Dtang11": Number((d_tang_11 || 0).toFixed(2)),
             "Dtieuchuan": dtieuchuan
             }
         }
@@ -122,9 +122,9 @@ export class Truc {
          return {
             "Tietdientai": Ten_tietdien,
             "Momenxoan": momenxoan,
-            "Momentd": Number(Mtd.toFixed(2)),
+            "Momentd": Number((Mtd || 0).toFixed(2)),
             "Trisosuatchophep": t,
-            "Dtuongduong": Number(dtd.toFixed(2)),
+            "Dtuongduong": Number((dtd || 0).toFixed(2)),
             "Dtang11": d_tang_11,
             "Dtieuchuan": dtieuchuan
             }
@@ -377,21 +377,21 @@ export class Truc {
         if (g_aj != '-'&& T_aj != '-'){
             return{
                 "Tietdientai": Tietdien,
-                "Wj": Number(Wj.toFixed(2)) ,
-                "Woj": Number(Woj.toFixed(2)),
-                "Mj": Number(Mj.toFixed(2)),
-                "Tj": Number(Tj.toFixed(2)),
-                "g_aj": Number(g_aj.toFixed(2)),
-                "T_aj": Number(T_aj.toFixed(2))
+                "Wj": Number((Wj || 0).toFixed(2)) ,
+                "Woj": Number((Woj || 0).toFixed(2)),
+                "Mj": Number((Mj || 0).toFixed(2)),
+                "Tj": Number((Tj || 0).toFixed(2)),
+                "g_aj": Number((g_aj || 0).toFixed(2)),
+                "T_aj": Number((T_aj || 0).toFixed(2))
             }
         }
         else {
             return{
             "Tietdientai": Tietdien,
-            "Wj": Number(Wj.toFixed(2)) ,
-            "Woj": Number(Woj.toFixed(2)),
-            "Mj": Number(Mj.toFixed(2)),
-            "Tj": Number(Tj.toFixed(2)),
+            "Wj": Number((Wj || 0).toFixed(2)) ,
+            "Woj": Number((Woj || 0).toFixed(2)),
+            "Mj": Number((Mj || 0).toFixed(2)),
+            "Tj": Number((Tj || 0).toFixed(2)),
             "g_aj": g_aj,
             "T_aj": T_aj
             }
@@ -567,24 +567,24 @@ export class Truc {
         let combined_safety = "-";
 
         if (sigma_aj !== "-" && tau_aj !== "-") {
-            sigma_j_safety = Number(this.Tinh_hesoantoanuon(sigma_minus_1, Kx_dj, sigma_aj, W_g, sigma_minus_1).toFixed(2));
-            tau_j_safety = Number(this.Tinh_hesoantoanxoan(tau_minus_1, Ky_dj, tau_aj, W_t, tau_minus_1).toFixed(2));
+            sigma_j_safety = Number((this.Tinh_hesoantoanuon(sigma_minus_1, Kx_dj, sigma_aj, W_g, sigma_minus_1 || 0) || 0).toFixed(2));
+            tau_j_safety = Number((this.Tinh_hesoantoanxoan(tau_minus_1, Ky_dj, tau_aj, W_t, tau_minus_1 || 0) || 0).toFixed(2));
             combined_safety = this.Tinh_HSAT(sigma_j_safety, tau_j_safety);
-            combined_safety = Number(combined_safety.toFixed(2));
+            combined_safety = Number((combined_safety || 0).toFixed(2));
         } else if (sigma_aj !== "-") {
-            sigma_j_safety = Number(this.Tinh_hesoantoanuon(sigma_minus_1, Kx_dj, sigma_aj, W_g, sigma_minus_1).toFixed(2));
+            sigma_j_safety = Number((this.Tinh_hesoantoanuon(sigma_minus_1, Kx_dj, sigma_aj, W_g, sigma_minus_1 || 0) || 0).toFixed(2));
         } else if (tau_aj !== "-") {
-            tau_j_safety = Number(this.Tinh_hesoantoanxoan(tau_minus_1, Ky_dj, tau_aj, W_t, tau_minus_1).toFixed(2));
+            tau_j_safety = Number((this.Tinh_hesoantoanxoan(tau_minus_1, Ky_dj, tau_aj, W_t, tau_minus_1 || 0) || 0).toFixed(2));
         }
 
         return {
             "Tietdientai": tenTietDien,
-            "εσ": Number(epsilonSigma.toFixed(3)),
-            "ετ": Number(epsilonTau.toFixed(3)),
+            "εσ": Number((epsilonSigma || 0).toFixed(3)),
+            "ετ": Number((epsilonTau || 0).toFixed(3)),
             "Kσ": Kx,
             "Kτ": Ky,
-            "Kσdj": Number(Kx_dj.toFixed(2)),
-            "Kτdj": Number(Ky_dj.toFixed(2)),
+            "Kσdj": Number((Kx_dj || 0).toFixed(2)),
+            "Kτdj": Number((Ky_dj || 0).toFixed(2)),
             "sσj": sigma_j_safety,
             "sτj": tau_j_safety,
             "s": combined_safety
@@ -749,11 +749,11 @@ export class Truc {
         return {
             tentruc,
             d,
-            Mmax: Mmax.toFixed(2),
-            Tmax: Tmax.toFixed(2),
-            g: g.toFixed(2),
-            t: t.toFixed(2),
-            gtd: gtd.toFixed(2),
+            Mmax: (Mmax || 0).toFixed(2),
+            Tmax: (Tmax || 0).toFixed(2),
+            g: (g || 0).toFixed(2),
+            t: (t || 0).toFixed(2),
+            gtd: (gtd || 0).toFixed(2),
         };
     }
     kiemnghiemdobenquatai(){
@@ -811,9 +811,9 @@ export class Truc {
         if(!infor) {
             throw new Error(`Không tìm thấy thông tin cho trục ${tenTruc}`)
         }
-        const d = infor[duongkinh]
-        const l_1 = infor[l1]
-        const l_2 = infor[l2]
+        const d = Number(infor[duongkinh] || 0)
+        const l_1 = Number(infor[l1] || 0)
+        const l_2 = Number(infor[l2] || 0)
         const result = {d, l_1, l_2}
         return {
            result
@@ -901,10 +901,10 @@ export class Truc {
         const gh_lmrc_lmdt = this.tinh_gh_l_I(d1)
         
         if (lmrc < gh_lmrc_lmdt.gh_lmrc.min || lmrc > gh_lmrc_lmdt.gh_lmrc.max) {
-            throw new Error(`lmrc = ${lmrc} không nằm trong khoảng [${lmrc_gh.gh_l_1.min}, ${lmrc_gh.gh_l_1.max}]`);
+            throw new Error(`lmrc = ${lmrc} không nằm trong khoảng [${gh_lmrc_lmdt.gh_lmrc.min}, ${gh_lmrc_lmdt.gh_lmrc.max}]`);
         }
         if (lmdt < gh_lmrc_lmdt.gh_lmdt.min || lmdt > gh_lmrc_lmdt.gh_lmdt.max) {
-            throw new Error(`lmdt = ${lmdt} không nằm trong khoảng [${lmdt_gh.gh_l_2.min}, ${lmdt_gh.gh_l_2.max}]`);
+            throw new Error(`lmdt = ${lmdt} không nằm trong khoảng [${gh_lmrc_lmdt.gh_lmdt.min}, ${gh_lmrc_lmdt.gh_lmdt.max}]`);
         }
         return {
             tenTruc: this.#tenTruc,
@@ -925,10 +925,10 @@ export class Truc {
         }
         const gh_lmrc_lmrt = this.tinh_gh_l_II(d2)
         if (lmrc < gh_lmrc_lmrt.gh_lmrc.min || lmrc > gh_lmrc_lmrt.gh_lmrc.max) {
-            throw new Error(`lmrc = ${lmrc} không nằm trong khoảng [${lmrc_gh.gh_l_1.min}, ${lmrc_gh.gh_l_1.max}]`);
+            throw new Error(`lmrc = ${lmrc} không nằm trong khoảng [${gh_lmrc_lmrt.gh_lmrc.min}, ${gh_lmrc_lmrt.gh_lmrc.max}]`);
         }
         if (lmrt < gh_lmrc_lmrt.gh_lmrt.min || lmrt > gh_lmrc_lmrt.gh_lmrt.max) {
-            throw new Error(`lmrt = ${lmrt} không nằm trong khoảng [${lmrt_gh.gh_l_2.min}, ${lmrt_gh.gh_l_2.max}]`);
+            throw new Error(`lmrt = ${lmrt} không nằm trong khoảng [${gh_lmrc_lmrt.gh_lmrt.min}, ${gh_lmrc_lmrt.gh_lmrt.max}]`);
         }
         return {
             tenTruc: this.#tenTruc,
@@ -949,10 +949,10 @@ export class Truc {
         }
         const gh_lmrt_lmkn = this.tinh_gh_l_III(d3)
         if (lmrt < gh_lmrt_lmkn.gh_lmrt.min || lmrt > gh_lmrt_lmkn.gh_lmrt.max) {
-            throw new Error(`lmrt = ${lmrt} không nằm trong khoảng [${lmrt_gh.gh_l_1.min}, ${lmrt_gh.gh_l_1.max}]`);
+            throw new Error(`lmrt = ${lmrt} không nằm trong khoảng [${gh_lmrt_lmkn.gh_lmrt.min}, ${gh_lmrt_lmkn.gh_lmrt.max}]`);
         }
         if (lmkn < gh_lmrt_lmkn.gh_lmkn.min || lmkn > gh_lmrt_lmkn.gh_lmkn.max) {
-            throw new Error(`lmkn = ${lmkn} không nằm trong khoảng [${lmkn_gh.gh_l_2.min}, ${lmkn_gh.gh_l_2.max}]`);
+            throw new Error(`lmkn = ${lmkn} không nằm trong khoảng [${gh_lmrt_lmkn.gh_lmkn.min}, ${gh_lmrt_lmkn.gh_lmkn.max}]`);
         }
         return {
             tenTruc: this.#tenTruc,
@@ -978,17 +978,13 @@ export class Truc {
     Tinh_l_11(){
         const infor_truc_I = this.#Thongtintruc.trucI
         const l11 = infor_truc_I.l11
-        const d1 = infor_truc_I.d1
-        const gh_l11 = this.Tinh_gh_l_11()
-        if (l11 < gh_l11.min || l11 > gh_l11.max) {
-            throw new Error(`l11 = ${l11} không nằm trong khoảng [${gh_l11.min}, ${gh_l11.max}]`);
-        }
         return l11
     }
     Tinh_l_12( ){
-        const result = this.Tinh_l_I()
-        const l_mdt = result.lmdt
-        const b0 = this.tim_bo(this.Tinh_l_I().d1)
+        const infor = this.getinfor("I", "d1", "lmrc", "lmdt")
+        const l_mdt = infor.result.l_2
+        const d1 = infor.result.d
+        const b0 = this.tim_bo(d1)
         const k3 = 16
         const hn =17.25
         const l_12= 0.5*(l_mdt+b0)+k3+hn
@@ -996,8 +992,10 @@ export class Truc {
     }
     Tinh_l_13(){
         const l_11 = this.Tinh_l_11()
-        const l_mrc = this.Tinh_l_I().lmrc
-        const b0 = this.tim_bo(this.Tinh_l_I().d1)
+        const infor = this.getinfor("I", "d1", "lmrc", "lmdt")
+        const l_mrc = infor.result.l_1
+        const d1 = infor.result.d
+        const b0 = this.tim_bo(d1)
         const k1=12.6
         const k2=10
         const b13=38
@@ -1039,11 +1037,11 @@ export class Truc {
         const Ay = this.Tinh_Ay(By,Fr1,Fr)
         const Az = this.Tinh_Az(Fa1)
         return {
-            By: Number(By.toFixed(2)),
-            Bx: Number(Bx.toFixed(2)),
-            Ax: Number(Ax.toFixed(2)),
-            Ay: Number(Ay.toFixed(2)),
-            Az: Number(Az.toFixed(2))
+            By: Number((By || 0).toFixed(2)),
+            Bx: Number((Bx || 0).toFixed(2)),
+            Ax: Number((Ax || 0).toFixed(2)),
+            Ay: Number((Ay || 0).toFixed(2)),
+            Az: Number((Az || 0).toFixed(2))
         }
     }
 //======================================================================================================
@@ -1112,11 +1110,11 @@ export class Truc {
         const Cx = this.Tinh_Cx(Ft3,Ft2, Dx)
         const Cy = this.Tinh_Cy(Fr3, Fr2, Dy)
         return {
-            Dx: Number(Dx.toFixed(2)),
-            Dy: Number(Dy.toFixed(2)),
-            Dz: Number(Dz.toFixed(2)),
-            Cx: Number(Cx.toFixed(2)),
-            Cy: Number(Cy.toFixed(2))
+            Dx: Number((Dx || 0).toFixed(2)),
+            Dy: Number((Dy || 0).toFixed(2)),
+            Dz: Number((Dz || 0).toFixed(2)),
+            Cx: Number((Cx || 0).toFixed(2)),
+            Cy: Number((Cy || 0).toFixed(2))
         }
     }
 //=============================================================================================================
@@ -1155,27 +1153,27 @@ export class Truc {
         const Ex = this.Tinh_Ex(Ft5, F6, Fx)
         const Ey = this.Tinh_Ey(Fr5, Fy)
         return {
-            Fx: Number(Fx.toFixed(2)),
-            Fy: Number(Fy.toFixed(2)),
-            Ex: Number(Ex.toFixed(2)),
-            Ey: Number(Ey.toFixed(2))
+            Fx: Number((Fx || 0).toFixed(2)),
+            Fy: Number((Fy || 0).toFixed(2)),
+            Ex: Number((Ex || 0).toFixed(2)),
+            Ey: Number((Ey || 0).toFixed(2))
         }
     }
 //suport front end giới hạn chọn của người dùng
     Tinh_Min_max_lmrc_lmdt_I(){
-        const result = this.Tinh_l_I()
-        const gh = result.gh_lmrc_lmdt
-        return gh
+        const infor = this.getinfor("I", "d1", "lmrc", "lmdt")
+        const d1 = infor.result.d
+        return this.tinh_gh_l_I(d1)
     }
     Tinh_Min_max_lmrc_lmrt_II(){
-        const result = this.Tinh_l_II()
-        const gh = result.gh_lmrc_lmrt
-        return gh
+        const infor = this.getinfor("II", "d2", "lmrc", "lmrt")
+        const d2 = infor.result.d
+        return this.tinh_gh_l_II(d2)
     }
     Tinh_Min_max_lmrt_lmkn_III(){
-        const result = this.Tinh_l_III()
-        const gh = result.gh_lmrt_lmkn
-        return gh
+        const infor = this.getinfor("III", "d3", "lmrt", "lmkn")
+        const d3 = infor.result.d
+        return this.tinh_gh_l_III(d3)
     }
 }   
 

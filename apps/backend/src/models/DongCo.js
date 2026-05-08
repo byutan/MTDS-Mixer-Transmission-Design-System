@@ -64,6 +64,6 @@ export class DongCo {
         } else if (this.#soCaLamViec === 3) {
             taiTrong += 0.2
         }
-        return Number((taiTrong).toFixed(1))
+        return Number((taiTrong || 1.0).toFixed(1))
     }
 }

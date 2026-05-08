@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ChevronRight, Check } from 'lucide-react'
 import { Navbar } from '../common/navbar'
@@ -16,7 +16,7 @@ const steps = [
 ];
 
 export default function DesignProject() {
-  const { user, formData, step2Data, setStep2Data, loadSampleData, saveProject } = useDesign();
+  const { user, formData, step2Data, setStep2Data, saveProject } = useDesign();
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
@@ -26,25 +26,20 @@ export default function DesignProject() {
   const currentStepObj = steps.find(s => s.path === currentPath) || steps[0];
   const currentStep = currentStepObj.number;
 
-  const handleBack = () => {
+  const handleBack = async () => {
     if (currentStep > 1) {
-      navigate(steps[currentStep - 2].path);
+      const prevStep = currentStep - 1;
+      // Cập nhật trạng thái bước trong DB khi quay lại
+      await saveProject(prevStep);
+      navigate(steps[prevStep - 1].path);
       window.scrollTo(0, 0);
     }
   }
 
-  const [isSaving, setIsSaving] = useState(false);
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    await saveProject(currentStep);
-    setIsSaving(false);
-  };
-
   const handleNext = async () => {
-    // Tự động lưu khi nhấn tiếp tục
-    handleSave();
-
+    const nextStep = currentStep < 7 ? currentStep + 1 : 7;
+    
+    // Nếu ở bước 1, thực hiện tính toán trước khi lưu và chuyển bước
     if (currentStep === 1) {
       setIsLoading(true);
       try {
@@ -84,20 +79,26 @@ export default function DesignProject() {
             const P_out = parseFloat(formData.power) || 0;
             
             const P_yc = (P_out / hieuSuat).toFixed(3);
-            const u_total_sb = parseFloat(dataRatio.data.tySoTruyenChungSoBo) || 1;
-            const n_sb = (n_out * u_total_sb).toFixed(0);
+            const u_total_sb = dataRatio.data.tySoTruyenChungSoBo;
+            const n_sb = (n_out * parseFloat(u_total_sb)).toFixed(0);
 
-            setStep2Data((prev) => ({
-                ...prev,
+            const hasSelectedMotor = step2Data.motor && step2Data.motor !== 'Chưa chọn động cơ';
+            const newStep2Data = {
+                ...step2Data,
                 systemEfficiency: hieuSuat.toFixed(3),
                 requiredPower: P_yc,
-                totalRatio: dataRatio.data.tySoTruyenChungSoBo,
-                beltRatio: dataRatio.data.tySoTruyenDai,
-                gearboxRatio: dataRatio.data.tySoTruyenHGT,
-                u1: "2.0", 
-                u2: (parseFloat(dataRatio.data.tySoTruyenHGT) / 2).toFixed(2),
-                preliminarySpeed: n_sb,
-            }));
+                totalRatio: hasSelectedMotor ? step2Data.totalRatio : u_total_sb,
+                preliminarySpeed: hasSelectedMotor ? step2Data.preliminarySpeed : n_sb,
+                beltRatio: (hasSelectedMotor && step2Data.beltRatio !== '---') ? step2Data.beltRatio : dataRatio.data.tySoTruyenDai,
+                gearboxRatio: (hasSelectedMotor && step2Data.gearboxRatio !== '---') ? step2Data.gearboxRatio : dataRatio.data.tySoTruyenHGT,
+                u1: (hasSelectedMotor && step2Data.u1 !== '---') ? step2Data.u1 : "2.0",
+                u2: (hasSelectedMotor && step2Data.u2 !== '---') ? step2Data.u2 : (parseFloat(dataRatio.data.tySoTruyenHGT) / 2).toFixed(2),
+            };
+
+            setStep2Data(newStep2Data);
+            
+            // Lưu trạng thái đã sang Bước 2 với dữ liệu mới nhất
+            await saveProject(2, { step2Data: newStep2Data });
             navigate('step-2');
         }
       } catch (error) {
@@ -106,13 +107,22 @@ export default function DesignProject() {
         setIsLoading(false);
       }
     } else if (currentStep === 2) {
-      if (step2Data.motor === 'Chưa chọn động cơ') {
+      if (step2Data.motor === 'Chưa chọn động cơ' || !step2Data.motor) {
         alert("Vui lòng chọn mã động cơ!");
         return;
       }
+      // Lưu trạng thái đã sang Bước 3
+      await saveProject(3);
       navigate('step-3');
     } else if (currentStep < 7) {
+      // Lưu bước tiếp theo trước khi chuyển
+      await saveProject(nextStep);
       navigate(steps[currentStep].path);
+    } else {
+      // Lưu bước cuối cùng và quay lại danh sách dự án
+      await saveProject(7);
+      alert("Chúc mừng! Bạn đã hoàn thành thiết kế hệ thống dẫn động.");
+      navigate('/projects');
     }
     window.scrollTo(0, 0);
   }
@@ -171,7 +181,7 @@ export default function DesignProject() {
                   </Button>
                 )}
                 
-                <Button onClick={handleNext} disabled={isLoading || isSaving} className="bg-blue-600 hover:bg-blue-700 text-white gap-2 px-6 py-2 h-auto text-base font-bold shadow-lg transition-all active:scale-95 disabled:opacity-70">
+                <Button onClick={handleNext} disabled={isLoading} className="bg-blue-600 hover:bg-blue-700 text-white gap-2 px-6 py-2 h-auto text-base font-bold shadow-lg transition-all active:scale-95 disabled:opacity-70">
                   {isLoading ? 'Đang tính toán...' : (currentStep === 7 ? 'Hoàn thành' : 'Tiếp tục')} 
                   {!isLoading && <ChevronRight className="w-5 h-5" />}
                 </Button>

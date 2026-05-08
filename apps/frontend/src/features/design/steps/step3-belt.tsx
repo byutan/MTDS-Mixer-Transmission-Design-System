@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
 import { CheckCircle2, Loader2, AlertCircle } from 'lucide-react'
 import { useDesign } from '@/features/design/context/DesignContext'
 
@@ -13,12 +12,10 @@ export default function Step3Belt() {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Chỉ gọi API khi đã có dữ liệu động cơ
-      const motorLabel = step2Data.motor || "";
-      const n_dc_match = motorLabel.match(/,\s*(\d+)\s*v\/ph/);
-      const p_dc_match = motorLabel.match(/\((.*?)\s*kW/);
+      const p_dc = parseFloat(step2Data.motorPower);
+      const n_dc = parseFloat(step2Data.motorSpeed);
 
-      if (!n_dc_match || !p_dc_match) {
+      if (isNaN(p_dc) || isNaN(n_dc) || p_dc <= 0 || n_dc <= 0) {
         setLoading(false);
         return;
       }
@@ -35,10 +32,11 @@ export default function Step3Belt() {
             },
             heThongTruyenDong: {
               dongCo: {
-                congSuat: parseFloat(p_dc_match[1]) || 0,
-                vanTocQuay: parseFloat(n_dc_match[1]) || 0,
-                soCaLamViec: formData.workMode === '2 ca' ? 2 : 3,
-                taiTrong: formData.loadCharacter === 'Tải va đập nhẹ' ? 'nhe' : 'manh'
+                congSuat: p_dc,
+                vanTocQuay: n_dc,
+                soCaLamViec: parseInt(formData.workMode) || 3,
+                taiTrong: formData.loadCharacter === 'Tải va đập nhẹ' ? 'nhe' : 
+                          formData.loadCharacter === 'Tải nặng' ? 'manh' : 'tinh'
               },
               boTruyenDai: {
                 tySoTruyenSoBo: parseFloat(step2Data.beltRatio) || 1
@@ -73,7 +71,7 @@ export default function Step3Belt() {
     return (
       <div className="flex flex-col items-center justify-center py-32 bg-white rounded-2xl border border-slate-200">
         <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-4" />
-        <p className="text-gray-500 font-medium">Đang tính toán thông số đai từ hệ thống...</p>
+        <p className="text-gray-500 font-medium font-sans">Đang tính toán thông số đai từ hệ thống...</p>
       </div>
     );
   }
@@ -82,50 +80,45 @@ export default function Step3Belt() {
     return (
       <div className="flex flex-col items-center justify-center py-20 bg-red-50 rounded-2xl border border-red-100">
         <AlertCircle className="w-10 h-10 text-red-500 mb-4" />
-        <p className="text-red-700 font-bold mb-2">Lỗi kỹ thuật</p>
-        <p className="text-red-500 text-sm">{error}</p>
+        <p className="text-red-700 font-bold mb-2 font-sans">Lỗi kỹ thuật</p>
+        <p className="text-red-500 text-sm font-sans">{error}</p>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in duration-700">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in duration-700 font-sans">
 
       {/* Cột 1: Thông số bánh đai */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-6">
         <div>
-          <h3 className="text-lg font-bold text-gray-900">Thông số bánh đai</h3>
-          <p className="text-xs text-gray-500 italic">Kích thước và loại đai</p>
+          <h3 className="text-xl font-bold text-gray-900">Thông số bánh đai</h3>
+          <p className="text-sm text-gray-600">Kích thước và loại đai</p>
         </div>
 
         <div className="space-y-4">
           <div>
-            <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Loại tiết diện đai</Label>
+            <Label className="text-sm font-medium text-slate-700 block mb-2">Loại tiết diện đai</Label>
             <Input value={`Đai loại ${results?.tietDienDai || '---'}`} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div>
-            <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Đường kính bánh dẫn (d1)</Label>
-            <Input value={`${results?.duongKinhBanhDan || '---'} mm`} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+            <Label className="text-sm font-medium text-slate-700 block mb-2">Đường kính bánh dẫn (d1)</Label>
+            <Input value={results?.duongKinhBanhDan ? `${results.duongKinhBanhDan} mm` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div>
-            <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Đường kính bánh bị dẫn lý thuyết (d2_lt)</Label>
-            <Input value={`${(parseFloat(results?.duongKinhBanhBiDan || "0") / (parseFloat(step2Data.beltRatio) || 1)).toFixed(2)} mm`} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
-          </div>
-
-          <div>
-            <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Đường kính bánh bị dẫn (d2)</Label>
+            <Label className="text-sm font-medium text-slate-700 block mb-2">Đường kính bánh bị dẫn (d2)</Label>
             <Input value={results?.duongKinhBanhBiDan ? `${results.duongKinhBanhBiDan} mm` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div className="pt-2">
-            <Badge className="w-full h-9 bg-green-50 text-green-700 border border-green-200 flex items-center gap-2 justify-start px-3 shadow-none hover:bg-green-50">
+            <div className="w-full h-10 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg flex items-center gap-2 px-3">
               <CheckCircle2 className="w-4 h-4" />
-              <span className="text-[11px] font-bold">
-                Tỉ số truyền thực tế: {results?.duongKinhBanhDan ? (results?.duongKinhBanhBiDan / results?.duongKinhBanhDan).toFixed(2) : '---'}
+              <span className="text-xs font-bold">
+                Tỉ số truyền thực tế (u): {results?.duongKinhBanhDan ? (results?.duongKinhBanhBiDan / results?.duongKinhBanhDan).toFixed(2) : '---'}
               </span>
-            </Badge>
+            </div>
           </div>
         </div>
       </div>
@@ -133,29 +126,29 @@ export default function Step3Belt() {
       {/* Cột 2: Khoảng cách & Chiều dài */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-6">
         <div>
-          <h3 className="text-lg font-bold text-gray-900">Khoảng cách & Chiều dài</h3>
-          <p className="text-xs text-gray-500 italic">Thông số khoảng cách trục</p>
+          <h3 className="text-xl font-bold text-gray-900">Khoảng cách & Chiều dài</h3>
+          <p className="text-sm text-gray-600">Thông số lắp đặt</p>
         </div>
 
         <div className="space-y-4">
           <div>
-            <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Khoảng cách trục thực tế (a)</Label>
+            <Label className="text-sm font-medium text-slate-700 block mb-2">Khoảng cách trục thực tế (a)</Label>
             <Input value={results?.khoangCachTruc ? `${results.khoangCachTruc} mm` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div>
-            <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Chiều dài đai thiết kế (L)</Label>
+            <Label className="text-sm font-medium text-slate-700 block mb-2">Chiều dài đai thiết kế (L)</Label>
             <Input value={results?.chieuDaiDai ? `${(results.chieuDaiDai * 1000).toFixed(0)} mm` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div>
-            <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Góc ôm bánh nhỏ (α1)</Label>
-            <Input value={`${results?.gocOmDai || '---'}°`} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+            <Label className="text-sm font-medium text-slate-700 block mb-2">Góc ôm bánh nhỏ (α1)</Label>
+            <Input value={results?.gocOmDai ? `${results.gocOmDai}°` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div>
-            <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Số vòng chạy / giây</Label>
-            <Input value={results?.soVongChayTrong1Giay || '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+            <Label className="text-sm font-medium text-slate-700 block mb-2">Số vòng chạy trong 1 giây (i)</Label>
+            <Input value={results?.soVongChayTrong1Giay ? `${results.soVongChayTrong1Giay} s⁻¹` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
         </div>
       </div>
@@ -163,28 +156,29 @@ export default function Step3Belt() {
       {/* Cột 3: Thông số chịu lực */}
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-6">
         <div>
-          <h3 className="text-lg font-bold text-gray-900">Thông số chịu lực</h3>
-          <p className="text-xs text-gray-500 italic">Số dây đai và lực tác dụng</p>
+          <h3 className="text-xl font-bold text-gray-900">Thông số chịu lực</h3>
+          <p className="text-sm text-gray-600">Số dây và lực tác dụng</p>
         </div>
 
         <div className="space-y-4">
           <div>
-            <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Số dây đai tính toán</Label>
-            <Input value={results?.soDayDai !== undefined ? `${results?.soDayDai} sợi` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+            <Label className="text-sm font-medium text-slate-700 block mb-2">Số dây đai thiết kế (z)</Label>
+            <Input value={results?.soDayDai || '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div>
-            <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Số dây đai thiết kế (z)</Label>
-            <Input value={results?.soDayDai !== undefined ? results?.soDayDai : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+            <Label className="text-sm font-medium text-slate-700 block mb-2">Lực căng đai ban đầu (F0)</Label>
+            <Input value={results?.lucCangDaiBanDau ? `${results.lucCangDaiBanDau} N` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
 
           <div>
-            <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Lực tác dụng lên trục (F_r)</Label>
-            <Input value={results?.lucTacDungLenTruc !== undefined ? `${results?.lucTacDungLenTruc} N` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+            <Label className="text-sm font-medium text-slate-700 block mb-2">Lực tác dụng lên trục (Fr)</Label>
+            <Input value={results?.lucTacDungLenTruc ? `${results.lucTacDungLenTruc} N` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
+
           <div>
-            <Label className="text-xs font-semibold text-slate-600 block mb-1.5">Ứng suất cho phép</Label>
-            <Input value={results?.ungSuatLonNhat !== undefined ? `${results?.ungSuatLonNhat} MPa` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+            <Label className="text-sm font-medium text-slate-700 block mb-2">Ứng suất lớn nhất (σmax)</Label>
+            <Input value={results?.ungSuatLonNhat ? `${results.ungSuatLonNhat} MPa` : '---'} readOnly className="h-10 bg-slate-50 border-slate-200 text-gray-700 font-bold" />
           </div>
         </div>
       </div>

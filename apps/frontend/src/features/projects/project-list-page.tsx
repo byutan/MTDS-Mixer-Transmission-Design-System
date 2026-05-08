@@ -11,7 +11,7 @@ import { useDesign } from '../design/context/DesignContext'
 
 export default function ProjectListPage() {
   const navigate = useNavigate();
-  const { setFormData, setStep2Data, setProjectId, clearProjectData } = useDesign();
+  const { setFormData, setStep2Data, setStep5Data, setProjectId, clearProjectData } = useDesign();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
@@ -62,47 +62,76 @@ export default function ProjectListPage() {
   };
 
   const handleOpenProject = (project: any) => {
-    // Quan trọng: Nạp ID dự án để lưu đè thay vì tạo mới
-    setProjectId(project.project_id);
+    try {
+      console.log("Opening project:", project.project_id);
+      
+      // Quan trọng: Nạp ID dự án để lưu đè thay vì tạo mới
+      setProjectId(project.project_id);
 
-    // Nạp dữ liệu vào Context
-    setFormData({
-      projectName: project.project_name || '',
-      major: project.major || '',
-      studentId: project.student_id || '',
-      studentName: user?.fullname || '',
-      instructor: project.instructor || '',
-      createdDate: new Date(project.created_date).toISOString().split('T')[0],
-      power: project.power_kw?.toString() || '',
-      speed: project.speed_rpm?.toString() || '',
-      lifespan: project.lifespan_hours?.toString() || '',
-      type: project.rotation_type || 'Quay 1 chiều',
-      loadCharacter: project.load_character || 'Tải va đập nhẹ',
-      workMode: project.work_mode || '2 ca',
-      workDaysYear: project.work_days_per_year?.toString() || '360',
-      workHoursDay: project.work_hours_per_day?.toString() || '8',
-      loadMode: project.load_mode || 'Thay đổi theo bậc',
-    });
+      // Nạp dữ liệu vào Context với sự an toàn tuyệt đối
+      setFormData({
+        projectName: project.project_name || '',
+        major: project.major || '',
+        studentId: project.student_id || '',
+        studentName: user?.fullname || '',
+        instructor: project.instructor || '',
+        createdDate: project.created_date ? new Date(project.created_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        power: (project.power_kw || '').toString(),
+        speed: (project.speed_rpm || '').toString(),
+        lifespan: (project.lifespan_hours || '').toString(),
+        type: project.rotation_type || 'Quay 1 chiều',
+        loadCharacter: project.load_character || 'Tải va đập nhẹ',
+        workMode: project.work_mode || '2 ca',
+        workDaysYear: (project.work_days_per_year || '360').toString(),
+        workHoursDay: (project.work_hours_per_day || '8').toString(),
+        loadMode: project.load_mode || 'Thay đổi theo bậc',
+      });
 
-    setStep2Data({
-      systemEfficiency: project.efficiency_sigma?.toString() || '0',
-      motorEfficiency: '---',
-      requiredPower: project.required_power_pk?.toString() || '0',
-      preliminarySpeed: project.preliminary_speed_nsb?.toString() || '0',
-      totalRatio: project.total_ratio_ut?.toString() || '---',
-      beltRatio: project.belt_ratio_ud?.toString() || '---',
-      gearboxRatio: project.gearbox_ratio_uh?.toString() || '---',
-      u1: project.u1?.toString() || '---',
-      u2: project.u2?.toString() || '---',
-      cosPhi: project.motor_cos_phi?.toString() || '---',
-      tMaxTdm: project.motor_t_max_tdm?.toString() || '---',
-      tKdTdm: project.motor_t_kd_tdm?.toString() || '---',
-      motor: project.motor_code || 'Chưa chọn động cơ',
-    });
+      setStep2Data({
+        systemEfficiency: (project.efficiency_sigma || '0.000').toString(),
+        motorEfficiency: '0.000',
+        requiredPower: (project.required_power_pk || '0.000').toString(),
+        preliminarySpeed: (project.preliminary_speed_nsb || '0.000').toString(),
+        totalRatio: (project.total_ratio_ut || '0.000').toString(),
+        beltRatio: (project.belt_ratio_ud || '0.000').toString(),
+        gearboxRatio: (project.gearbox_ratio_uh || '0.000').toString(),
+        u1: (project.u1 || '0.000').toString(),
+        u2: (project.u2 || '0.000').toString(),
+        cosPhi: (project.motor_cos_phi || '0.000').toString(),
+        tMaxTdm: (project.motor_t_max_tdm || '0.000').toString(),
+        tKdTdm: (project.motor_t_kd_tdm || '0.000').toString(),
+        motor: project.motor_code || '',
+        motorPower: (project.motor_power_actual || '0.000').toString(),
+        motorSpeed: (project.motor_speed_actual || '0.000').toString()
+      });
 
-    // Điều hướng đến bước đang làm dở
-    const step = project.current_step || 1;
-    navigate(`/design/step-${step}`);
+      setStep5Data({
+        trucI: {
+          d1: (project.shaft_i_d1 || '').toString(),
+          lmrc: (project.shaft_i_lmrc || '').toString(),
+          lmdt: (project.shaft_i_lmdt || '').toString(),
+          l11: (project.shaft_i_l11 || '').toString()
+        },
+        trucII: {
+          d2: (project.shaft_ii_d2 || '').toString(),
+          lmrc: (project.shaft_ii_lmrc || '').toString(),
+          lmrt: (project.shaft_ii_lmrt || '').toString()
+        },
+        trucIII: {
+          d3: (project.shaft_iii_d3 || '').toString(),
+          lmrt: (project.shaft_iii_lmrt || '').toString(),
+          lmkn: (project.shaft_iii_lmkn || '').toString()
+        }
+      });
+
+      // Điều hướng đến bước đang làm dở
+      const step = project.current_step || 1;
+      navigate(`/design/step-${step}`);
+    } catch (err) {
+      console.error("Lỗi khi mở dự án:", err);
+      // Vẫn cố gắng chuyển trang nếu có thể
+      navigate(`/design/step-${project.current_step || 1}`);
+    }
   };
 
   const filteredProjects = projects
@@ -250,7 +279,7 @@ export default function ProjectListPage() {
            <div className="text-center py-24 bg-white rounded-3xl border-2 border-dashed border-slate-200">
               <FolderOpen className="w-16 h-16 text-slate-200 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-slate-900 mb-1">Không tìm thấy dự án nào</h3>
-              <p className="text-slate-500 italic">Hãy bắt đầu tạo đồ án đầu tiên của bạn!</p>
+              <p className="text-slate-500">Hãy bắt đầu tạo đồ án đầu tiên của bạn!</p>
               <Button className="mt-6 bg-blue-600 font-bold" onClick={() => navigate('/design/step-1')}>Tạo đồ án mới</Button>
            </div>
         )}
