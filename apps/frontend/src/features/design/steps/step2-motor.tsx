@@ -345,7 +345,7 @@ export default function Step2Motor() {
                       ))}
                     </tr>
                     <tr className="bg-slate-50/50 font-bold border-t border-slate-200">
-                      <td className="py-4 px-4 text-blue-600 font-bold italic text-xs">Tỉ số truyền (u)</td>
+                      <td className="py-4 px-4 text-blue-600 font-bold text-xs">Tỉ số truyền (u)</td>
                       {tableData.map((col, idx) => (
                         <td key={idx} className="text-center py-4 px-4 text-blue-600 font-bold">{col.tySoTruyen}</td>
                       ))}

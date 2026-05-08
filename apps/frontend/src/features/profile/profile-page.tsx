@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Navbar } from '../common/navbar'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { User, Mail, IdCard, Calendar, ShieldCheck, MapPin, BarChart3, Briefcase, Plus, Settings } from 'lucide-react'
+import { 
+  Settings, 
+  Calendar, 
+  IdCard, 
+  BarChart3, 
+  Mail 
+} from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 
 export default function ProfilePage() {
@@ -71,7 +76,7 @@ export default function ProfilePage() {
                     </div>
                     <div className="flex items-center gap-3 text-slate-500">
                         <IdCard className="w-5 h-5 opacity-70" />
-                        <span className="text-sm font-semibold italic">MSSV: {user.student_id}</span>
+                        <span className="text-sm font-semibold">MSSV: {user.student_id}</span>
                     </div>
                     <div className="flex items-center gap-3 text-slate-500">
                         <Calendar className="w-5 h-5 opacity-70" />
@@ -92,7 +97,7 @@ export default function ProfilePage() {
             <div className="flex items-center justify-between mb-12">
                 <div>
                     <h3 className="text-2xl font-black text-slate-900 tracking-tight">Tần suất đăng nhập</h3>
-                    <p className="text-sm text-slate-400 font-medium italic">Thống kê hoạt động hàng năm của bạn</p>
+                    <p className="text-sm text-slate-400 font-medium">Thống kê hoạt động hàng năm của bạn</p>
                 </div>
                 <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
                     <BarChart3 className="w-8 h-8" />
@@ -134,10 +139,4 @@ export default function ProfilePage() {
   )
 }
 
-function ChevronRight({ className }: { className?: string }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="m9 18 6-6-6-6"/>
-    </svg>
-  );
-}
+

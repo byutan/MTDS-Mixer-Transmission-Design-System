@@ -256,7 +256,7 @@ export default function Step6Bearings() {
 
                 <div className="space-y-5">
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans text-xs italic">Khả năng tải động tính toán (Cd)</Label>
+                    <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans text-xs">Khả năng tải động tính toán (Cd)</Label>
                     <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl relative overflow-hidden group">
                        <div className="text-emerald-700 font-black text-3xl text-center relative z-10">
                          {(mainPos.ket_qua_kiem_nghiem?.Cd_kN || 0).toFixed(3)} kN

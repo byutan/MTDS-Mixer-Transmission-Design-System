@@ -405,7 +405,7 @@ export default function Step5Shaft() {
           </div>
 
           <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 space-y-6">
-            <h3 className="text-xl font-bold text-gray-900 font-sans">Bảng 4.5: Tính toán Momen và Đường kính tương đương</h3>
+            <h3 className="text-xl font-bold text-gray-900 font-sans">Tính toán Momen và Đường kính tương đương</h3>
             <div className="overflow-x-auto rounded-xl border border-slate-100">
               <table className="w-full text-sm">
                 <thead>

@@ -85,19 +85,21 @@ export default function ProjectListPage() {
     });
 
     setStep2Data({
-      systemEfficiency: project.efficiency_sigma?.toString() || '0',
-      motorEfficiency: '---',
-      requiredPower: project.required_power_pk?.toString() || '0',
-      preliminarySpeed: project.preliminary_speed_nsb?.toString() || '0',
-      totalRatio: project.total_ratio_ut?.toString() || '---',
-      beltRatio: project.belt_ratio_ud?.toString() || '---',
-      gearboxRatio: project.gearbox_ratio_uh?.toString() || '---',
-      u1: project.u1?.toString() || '---',
-      u2: project.u2?.toString() || '---',
-      cosPhi: project.motor_cos_phi?.toString() || '---',
-      tMaxTdm: project.motor_t_max_tdm?.toString() || '---',
-      tKdTdm: project.motor_t_kd_tdm?.toString() || '---',
-      motor: project.motor_code || 'Chưa chọn động cơ',
+      systemEfficiency: project.efficiency_sigma?.toString() || '0.000',
+      motorEfficiency: '0.000',
+      requiredPower: project.required_power_pk?.toString() || '0.000',
+      preliminarySpeed: project.preliminary_speed_nsb?.toString() || '0.000',
+      totalRatio: project.total_ratio_ut?.toString() || '0.000',
+      beltRatio: project.belt_ratio_ud?.toString() || '0.000',
+      gearboxRatio: project.gearbox_ratio_uh?.toString() || '0.000',
+      u1: project.u1?.toString() || '0.000',
+      u2: project.u2?.toString() || '0.000',
+      cosPhi: project.motor_cos_phi?.toString() || '0.000',
+      tMaxTdm: project.motor_t_max_tdm?.toString() || '0.000',
+      tKdTdm: project.motor_t_kd_tdm?.toString() || '0.000',
+      motor: project.motor_code || '',
+      motorPower: project.motor_power_actual?.toString() || '0.000',
+      motorSpeed: project.motor_speed_actual?.toString() || '0.000'
     });
 
     // Điều hướng đến bước đang làm dở
@@ -250,7 +252,7 @@ export default function ProjectListPage() {
            <div className="text-center py-24 bg-white rounded-3xl border-2 border-dashed border-slate-200">
               <FolderOpen className="w-16 h-16 text-slate-200 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-slate-900 mb-1">Không tìm thấy dự án nào</h3>
-              <p className="text-slate-500 italic">Hãy bắt đầu tạo đồ án đầu tiên của bạn!</p>
+              <p className="text-slate-500">Hãy bắt đầu tạo đồ án đầu tiên của bạn!</p>
               <Button className="mt-6 bg-blue-600 font-bold" onClick={() => navigate('/design/step-1')}>Tạo đồ án mới</Button>
            </div>
         )}
