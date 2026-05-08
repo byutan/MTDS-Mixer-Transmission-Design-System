@@ -84,20 +84,27 @@ export default function DesignProject() {
             const P_out = parseFloat(formData.power) || 0;
             
             const P_yc = (P_out / hieuSuat).toFixed(3);
-            const u_total_sb = parseFloat(dataRatio.data.tySoTruyenChungSoBo) || 1;
-            const n_sb = (n_out * u_total_sb).toFixed(0);
+            const u_total_sb = dataRatio.data.tySoTruyenChungSoBo;
+            const n_sb = (n_out * parseFloat(u_total_sb)).toFixed(0);
 
-            setStep2Data((prev) => ({
-                ...prev,
-                systemEfficiency: hieuSuat.toFixed(3),
-                requiredPower: P_yc,
-                totalRatio: dataRatio.data.tySoTruyenChungSoBo,
-                beltRatio: dataRatio.data.tySoTruyenDai,
-                gearboxRatio: dataRatio.data.tySoTruyenHGT,
-                u1: "2.0", 
-                u2: (parseFloat(dataRatio.data.tySoTruyenHGT) / 2).toFixed(2),
-                preliminarySpeed: n_sb,
-            }));
+            setStep2Data((prev) => {
+                // Nếu đã chọn động cơ (mã hiệu có chứa 'kW'), không ghi đè các giá trị thực tế bằng giá trị sơ bộ
+                const hasSelectedMotor = prev.motor && prev.motor.includes('kW');
+                
+                return {
+                    ...prev,
+                    systemEfficiency: hieuSuat.toFixed(3),
+                    requiredPower: P_yc,
+                    // Chỉ cập nhật totalRatio và preliminarySpeed nếu chưa chọn động cơ
+                    totalRatio: hasSelectedMotor ? prev.totalRatio : u_total_sb,
+                    preliminarySpeed: hasSelectedMotor ? prev.preliminarySpeed : n_sb,
+                    // Nếu chưa có tỷ số truyền phân phối, mới lấy từ sơ bộ
+                    beltRatio: (hasSelectedMotor && prev.beltRatio !== '---') ? prev.beltRatio : dataRatio.data.tySoTruyenDai,
+                    gearboxRatio: (hasSelectedMotor && prev.gearboxRatio !== '---') ? prev.gearboxRatio : dataRatio.data.tySoTruyenHGT,
+                    u1: (hasSelectedMotor && prev.u1 !== '---') ? prev.u1 : "2.0",
+                    u2: (hasSelectedMotor && prev.u2 !== '---') ? prev.u2 : (parseFloat(dataRatio.data.tySoTruyenHGT) / 2).toFixed(2),
+                };
+            });
             navigate('step-2');
         }
       } catch (error) {
