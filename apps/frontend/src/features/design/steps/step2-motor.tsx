@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import demoData from '../../../../../../demodata.json'
 import { useDesign } from '@/features/design/context/DesignContext'
-import { Gauge, ShieldCheck, Activity } from 'lucide-react'
+import { ShieldCheck } from 'lucide-react'
 
 export default function Step2Motor() {
   const { step2Data, setStep2Data, formData, tableData, setTableData, saveProject } = useDesign();
@@ -353,7 +353,9 @@ export default function Step2Motor() {
                   </>
                 ) : (
                   <tr>
-                    <td colSpan={6} className="py-10 text-center text-slate-400 italic">Đang tải dữ liệu tính toán...</td>
+                    <td colSpan={6} className="py-10 text-center text-slate-400 italic">
+                      {isCalculating ? 'Đang tính toán dữ liệu...' : 'Vui lòng chọn động cơ để hiển thị bảng đặc tính'}
+                    </td>
                   </tr>
                 )}
               </tbody>

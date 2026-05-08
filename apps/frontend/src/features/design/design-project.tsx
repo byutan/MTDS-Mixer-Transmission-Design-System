@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { ChevronRight, Check } from 'lucide-react'
 import { Navbar } from '../common/navbar'
@@ -16,7 +16,7 @@ const steps = [
 ];
 
 export default function DesignProject() {
-  const { user, formData, step2Data, setStep2Data, loadSampleData, saveProject } = useDesign();
+  const { user, formData, step2Data, setStep2Data, saveProject } = useDesign();
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
@@ -35,14 +35,6 @@ export default function DesignProject() {
       window.scrollTo(0, 0);
     }
   }
-
-  const [isSaving, setIsSaving] = useState(false);
-
-  const handleSave = async (stepToSave?: number) => {
-    setIsSaving(true);
-    await saveProject(stepToSave || currentStep);
-    setIsSaving(false);
-  };
 
   const handleNext = async () => {
     const nextStep = currentStep < 7 ? currentStep + 1 : 7;
@@ -127,8 +119,10 @@ export default function DesignProject() {
       await saveProject(nextStep);
       navigate(steps[currentStep].path);
     } else {
-      // Lưu bước cuối cùng
+      // Lưu bước cuối cùng và quay lại danh sách dự án
       await saveProject(7);
+      alert("Chúc mừng! Bạn đã hoàn thành thiết kế hệ thống dẫn động.");
+      navigate('/projects');
     }
     window.scrollTo(0, 0);
   }
@@ -187,7 +181,7 @@ export default function DesignProject() {
                   </Button>
                 )}
                 
-                <Button onClick={handleNext} disabled={isLoading || isSaving} className="bg-blue-600 hover:bg-blue-700 text-white gap-2 px-6 py-2 h-auto text-base font-bold shadow-lg transition-all active:scale-95 disabled:opacity-70">
+                <Button onClick={handleNext} disabled={isLoading} className="bg-blue-600 hover:bg-blue-700 text-white gap-2 px-6 py-2 h-auto text-base font-bold shadow-lg transition-all active:scale-95 disabled:opacity-70">
                   {isLoading ? 'Đang tính toán...' : (currentStep === 7 ? 'Hoàn thành' : 'Tiếp tục')} 
                   {!isLoading && <ChevronRight className="w-5 h-5" />}
                 </Button>

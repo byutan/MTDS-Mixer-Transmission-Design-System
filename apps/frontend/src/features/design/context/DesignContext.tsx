@@ -58,7 +58,7 @@ interface DesignContextType {
   setTableData: React.Dispatch<React.SetStateAction<any[]>>;
   loadSampleData: () => void;
   clearProjectData: (shouldReload?: boolean) => void;
-  saveProject: (currentStep: number) => Promise<void>;
+  saveProject: (currentStep: number, overrides?: { formData?: any, step2Data?: any }) => Promise<void>;
 }
 
 const DesignContext = createContext<DesignContextType | undefined>(undefined);

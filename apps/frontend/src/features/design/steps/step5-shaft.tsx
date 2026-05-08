@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, AlertCircle, Loader2, Info, Ruler, RefreshCw } from "lucide-react";
+import { AlertCircle, Loader2, Info } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useDesign } from "@/features/design/context/DesignContext";
 import demoData from "../../../../../../demodata.json";
@@ -146,23 +145,23 @@ export default function Step5Shaft() {
         });
         
         if (currentD !== lastDRef.current && dataLimits.success) {
-          const limits = dataLimits.data;
-          const l11_limit = dataL11.data;
+          const limits = dataLimits.data as any;
+          const l11_limit = dataL11.data as any;
           const trucKey = activeTab === "I" ? "trucI" : activeTab === "II" ? "trucII" : "trucIII";
           
           let updates: any = {};
-          if (activeTab === "I") {
+          if (activeTab === "I" && limits) {
              updates = {
                 lmrc: Math.round((limits.gh_lmrc.min + limits.gh_lmrc.max) / 2).toString(),
                 lmdt: Math.round((limits.gh_lmdt.min + limits.gh_lmdt.max) / 2).toString(),
-                l11: l11_limit ? Math.round((l11_limit.min + l11_limit.max) / 2).toString() : step5Data.trucI.l11
+                l11: l11_limit ? Math.round(((l11_limit as any).min + (l11_limit as any).max) / 2).toString() : step5Data.trucI.l11
              };
-          } else if (activeTab === "II") {
+          } else if (activeTab === "II" && limits) {
              updates = {
                 lmrc: Math.round((limits.gh_lmrc.min + limits.gh_lmrc.max) / 2).toString(),
                 lmrt: Math.round((limits.gh_lmrt.min + limits.gh_lmrt.max) / 2).toString()
              };
-          } else {
+          } else if (limits) {
              updates = {
                 lmrt: Math.round((limits.gh_lmrt.min + limits.gh_lmrt.max) / 2).toString(),
                 lmkn: Math.round((limits.gh_lmkn.min + limits.gh_lmkn.max) / 2).toString()
@@ -280,7 +279,10 @@ export default function Step5Shaft() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-3">
             <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">{labels.d}</Label>
-            <Select value={activeTab === "I" ? data.d1 : activeTab === "II" ? (data as any).d2 : (data as any).d3} onValueChange={(val) => handleInputChange(activeTab === "I" ? "d1" : activeTab === "II" ? "d2" : "d3", val)}>
+            <Select 
+              value={(data as any)[activeTab === "I" ? "d1" : activeTab === "II" ? "d2" : "d3"]} 
+              onValueChange={(val) => handleInputChange(activeTab === "I" ? "d1" : activeTab === "II" ? "d2" : "d3", val)}
+            >
               <SelectTrigger className="w-full border border-slate-200 rounded-md text-sm px-3 py-2 !h-11 flex items-center bg-white hover:bg-slate-50 font-sans">
                 <SelectValue placeholder="Chọn d..." />
               </SelectTrigger>
