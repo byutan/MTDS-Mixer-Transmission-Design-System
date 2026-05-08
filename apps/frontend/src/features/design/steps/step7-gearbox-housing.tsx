@@ -28,8 +28,8 @@ export default function Step7GearboxHousing() {
               oLan: demoData.duLieuDauVao.heThongTruyenDong.oLan,
               noiTrucVongDanHoi: demoData.duLieuDauVao.heThongTruyenDong.noiTrucVongDanHoi,
               dongCo: {
-                congSuat: parseFloat(step2Data.motor.match(/\((.*?) kW/)?.[1] || "0"),
-                vanTocQuay: parseFloat(step2Data.motor.match(/, (.*?) v\/ph/)?.[1] || "0")
+                congSuat: parseFloat(step2Data.motorPower) || 0,
+                vanTocQuay: parseFloat(step2Data.motorSpeed) || 0,
               },
               hopGiamToc: {
                 ...demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc,

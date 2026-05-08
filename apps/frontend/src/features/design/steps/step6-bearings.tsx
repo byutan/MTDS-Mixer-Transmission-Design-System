@@ -23,9 +23,8 @@ export default function Step6Bearings() {
     setLoading(true);
     setError(null);
     try {
-      const motorMatch = step2Data.motor.match(/\((.*?) kW/);
-      const motorPower = motorMatch ? safeParse(motorMatch[1]) : 0;
-      const motorSpeed = safeParse(step2Data.motor.match(/, (.*?) v\/ph/)?.[1]);
+      const motorPower = parseFloat(step2Data.motorPower) || 0;
+      const motorSpeed = parseFloat(step2Data.motorSpeed) || 0;
 
       const payload = {
         duLieuDauVao: {

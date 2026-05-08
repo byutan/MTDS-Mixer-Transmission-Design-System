@@ -40,9 +40,8 @@ export default function Step5Shaft() {
   };
 
   const getPayload = useCallback(() => {
-    const motorMatch = step2Data.motor.match(/\((.*?) kW/);
-    const motorPower = motorMatch ? safeParse(motorMatch[1]) : 0;
-    const motorSpeed = safeParse(step2Data.motor.match(/, (.*?) v\/ph/)?.[1]);
+    const motorPower = safeParse(step2Data.motorPower);
+    const motorSpeed = safeParse(step2Data.motorSpeed);
 
     return {
       duLieuDauVao: {

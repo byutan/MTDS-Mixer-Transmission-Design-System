@@ -35,8 +35,8 @@ export default function Step4Gearbox() {
               oLan: demoData.duLieuDauVao.heThongTruyenDong.oLan,
               noiTrucVongDanHoi: demoData.duLieuDauVao.heThongTruyenDong.noiTrucVongDanHoi,
               dongCo: {
-                congSuat: parseFloat(step2Data.motor.match(/\((.*?) kW/)?.[1] || "0"),
-                vanTocQuay: parseFloat(step2Data.motor.match(/, (.*?) v\/ph/)?.[1] || "0")
+                congSuat: parseFloat(step2Data.motorPower) || 0,
+                vanTocQuay: parseFloat(step2Data.motorSpeed) || 0,
               },
               phanPhoiTySoTruyen: {
                 heSoThietKe: demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc.heSoThietKe?.psi_bd2 || 0.9,

@@ -12,11 +12,10 @@ export default function Step3Belt() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const motorLabel = step2Data.motor || "";
-      const n_dc_match = motorLabel.match(/,\s*(\d+)\s*v\/ph/);
-      const p_dc_match = motorLabel.match(/\((.*?)\s*kW/);
+      const p_dc = parseFloat(step2Data.motorPower) || 0;
+      const n_dc = parseFloat(step2Data.motorSpeed) || 0;
 
-      if (!n_dc_match || !p_dc_match) {
+      if (p_dc <= 0 || n_dc <= 0) {
         setLoading(false);
         return;
       }
@@ -33,8 +32,8 @@ export default function Step3Belt() {
             },
             heThongTruyenDong: {
               dongCo: {
-                congSuat: parseFloat(p_dc_match[1]) || 0,
-                vanTocQuay: parseFloat(n_dc_match[1]) || 0,
+                congSuat: p_dc,
+                vanTocQuay: n_dc,
                 soCaLamViec: parseInt(formData.workMode) || 3,
                 taiTrong: formData.loadCharacter === 'Tải va đập nhẹ' ? 'nhe' : 
                           formData.loadCharacter === 'Tải nặng' ? 'manh' : 'tinh'

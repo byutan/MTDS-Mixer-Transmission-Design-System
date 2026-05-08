@@ -33,6 +33,8 @@ export interface Step2Data {
   tMaxTdm: string;
   tKdTdm: string;
   motor: string;
+  motorPower: string;
+  motorSpeed: string;
 }
 
 export interface Step5Data {
@@ -92,19 +94,21 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const getInitialStep2Data = (): Step2Data => {
     const saved = localStorage.getItem('mtds_project_step2');
     return saved ? JSON.parse(saved) : {
-      systemEfficiency: '0',
-      motorEfficiency: '---',
-      requiredPower: '0',
-      preliminarySpeed: '0',
-      totalRatio: '---',
-      beltRatio: '---',
-      gearboxRatio: '---',
-      u1: '---',
-      u2: '---',
-      cosPhi: '---',
-      tMaxTdm: '---',
-      tKdTdm: '---',
-      motor: 'Chưa chọn động cơ',
+      systemEfficiency: '0.000',
+      motorEfficiency: '0.000',
+      requiredPower: '0.000',
+      preliminarySpeed: '0.000',
+      totalRatio: '0.000',
+      beltRatio: '0.000',
+      gearboxRatio: '0.000',
+      u1: '0.000',
+      u2: '0.000',
+      cosPhi: '0.000',
+      tMaxTdm: '0.000',
+      tKdTdm: '0.000',
+      motor: '',
+      motorPower: '0.000',
+      motorSpeed: '0.000',
     };
   };
 
@@ -158,47 +162,117 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
   }, []);
 
-  const saveProject = async (currentStep: number) => {
+  useEffect(() => {
+    if (!projectId || !user) return;
+
+    const fetchProjectData = async () => {
+      try {
+        const p_dc = parseFloat(step2Data.motorPower) || 0;
+        const n_dc = parseFloat(step2Data.motorSpeed) || 0;
+
+        if (p_dc <= 0 || n_dc <= 0) {
+          // setLoading(false);
+        }
+
+        const res = await fetch(`http://localhost:3001/api/projects/${projectId}`);
+        const result = await res.json();
+        if (result.success) {
+          const p = result.data;
+          // Cập nhật Step 1
+          setFormData({
+            projectName: p.project_name || '',
+            major: p.major || '',
+            studentId: p.student_id || user.student_id,
+            studentName: user.fullname || '',
+            instructor: p.instructor || '',
+            createdDate: p.created_date ? p.created_date.split('T')[0] : new Date().toISOString().split('T')[0],
+            power: p.power_kw?.toString() || '',
+            speed: p.speed_rpm?.toString() || '',
+            lifespan: p.lifespan_hours?.toString() || '',
+            type: p.rotation_type || 'Quay 1 chiều',
+            loadCharacter: p.load_character || 'Tải va đập nhẹ',
+            workMode: p.work_mode || '2 ca',
+            workDaysYear: p.work_days_per_year?.toString() || '360',
+            workHoursDay: p.work_hours_per_day?.toString() || '8',
+            loadMode: p.load_mode || 'Thay đổi theo bậc'
+          });
+
+          // Cập nhật Step 2
+          setStep2Data({
+            systemEfficiency: p.efficiency_sigma?.toString() || '0.000',
+            motorEfficiency: '0.000', 
+            requiredPower: p.required_power_pk?.toString() || '0.000',
+            preliminarySpeed: p.preliminary_speed_nsb?.toString() || '0.000',
+            totalRatio: p.total_ratio_ut?.toString() || '0.000',
+            beltRatio: p.belt_ratio_ud?.toString() || '0.000',
+            gearboxRatio: p.gearbox_ratio_uh?.toString() || '0.000',
+            u1: p.u1?.toString() || '0.000',
+            u2: p.u2?.toString() || '0.000',
+            cosPhi: p.motor_cos_phi?.toString() || '0.000',
+            tMaxTdm: p.motor_t_max_tdm?.toString() || '0.000',
+            tKdTdm: p.motor_t_kd_tdm?.toString() || '0.000',
+            motor: p.motor_code || '',
+            motorPower: p.motor_power_actual?.toString() || '0.000',
+            motorSpeed: p.motor_speed_actual?.toString() || '0.000'
+          });
+        }
+      } catch (error) {
+        console.error("Lỗi khi tải dữ liệu dự án:", error);
+      }
+    };
+
+    fetchProjectData();
+  }, [projectId, user?.student_id]);
+
+  const saveProject = async (currentStep: number, overrides?: { formData?: any, step2Data?: any }) => {
     // Không lưu nếu thiếu thông tin tối thiểu hoặc chưa đăng nhập
     if (!user) {
       console.warn("Save skipped: User not logged in");
       return;
     }
     
-    if (!formData.projectName || !formData.power) {
+    // Ưu tiên lấy dữ liệu từ overrides nếu có (để tránh race condition khi state chưa kịp update)
+    const activeFormData = overrides?.formData || formData;
+    const activeStep2Data = overrides?.step2Data || step2Data;
+
+    if (!activeFormData.projectName || !activeFormData.power) {
       console.warn("Save skipped: Project Name or Power is missing");
       return;
     }
 
+    const cleanMotorCode = activeStep2Data.motor || null;
+
     // Chuyển đổi an toàn, tránh NaN
     const payload = {
       student_id: user.student_id,
-      project_name: formData.projectName,
-      major: formData.major || 'Cơ Kỹ Thuật',
-      instructor: formData.instructor || '',
-      power_kw: parseFloat(formData.power) || 0,
-      speed_rpm: parseFloat(formData.speed) || 0,
-      lifespan_hours: parseInt(formData.lifespan) || 0,
-      rotation_type: formData.type,
-      load_character: formData.loadCharacter,
-      work_mode: formData.workMode,
-      work_days_per_year: parseInt(formData.workDaysYear) || 360,
-      work_hours_per_day: parseInt(formData.workHoursDay) || 8,
-      load_mode: formData.loadMode,
+      project_name: activeFormData.projectName,
+      major: activeFormData.major || 'Cơ Kỹ Thuật',
+      instructor: activeFormData.instructor || '',
+      power_kw: parseFloat(activeFormData.power) || 0,
+      speed_rpm: parseFloat(activeFormData.speed) || 0,
+      lifespan_hours: parseInt(activeFormData.lifespan) || 0,
+      rotation_type: activeFormData.type,
+      load_character: activeFormData.loadCharacter,
+      work_mode: activeFormData.workMode,
+      work_days_per_year: parseInt(activeFormData.workDaysYear) || 360,
+      work_hours_per_day: parseInt(activeFormData.workHoursDay) || 8,
+      load_mode: activeFormData.loadMode,
       current_step: currentStep,
-      // Step 2 data - Chuyển sang số và tránh NaN
-      efficiency_sigma: parseFloat(step2Data.systemEfficiency) || 0,
-      required_power_pk: parseFloat(step2Data.requiredPower) || 0,
-      preliminary_speed_nsb: parseFloat(step2Data.preliminarySpeed) || 0,
-      total_ratio_ut: parseFloat(step2Data.totalRatio) || 0,
-      belt_ratio_ud: parseFloat(step2Data.beltRatio) || 0,
-      gearbox_ratio_uh: parseFloat(step2Data.gearboxRatio) || 0,
-      u1: parseFloat(step2Data.u1) || 0,
-      u2: parseFloat(step2Data.u2) || 0,
-      motor_code: step2Data.motor,
-      motor_cos_phi: parseFloat(step2Data.cosPhi) || 0,
-      motor_t_max_tdm: parseFloat(step2Data.tMaxTdm) || 0,
-      motor_t_kd_tdm: parseFloat(step2Data.tKdTdm) || 0
+      // Step 2 data
+      efficiency_sigma: parseFloat(activeStep2Data.systemEfficiency) || 0,
+      required_power_pk: parseFloat(activeStep2Data.requiredPower) || 0,
+      preliminary_speed_nsb: parseFloat(activeStep2Data.preliminarySpeed) || 0,
+      total_ratio_ut: parseFloat(activeStep2Data.totalRatio) || 0,
+      belt_ratio_ud: parseFloat(activeStep2Data.beltRatio) || 0,
+      gearbox_ratio_uh: parseFloat(activeStep2Data.gearboxRatio) || 0,
+      u1: parseFloat(activeStep2Data.u1) || 0,
+      u2: parseFloat(activeStep2Data.u2) || 0,
+      motor_code: cleanMotorCode,
+      motor_cos_phi: parseFloat(activeStep2Data.cosPhi) || 0,
+      motor_t_max_tdm: parseFloat(activeStep2Data.tMaxTdm) || 0,
+      motor_t_kd_tdm: parseFloat(activeStep2Data.tKdTdm) || 0,
+      motor_power_actual: parseFloat(activeStep2Data.motorPower) || 0,
+      motor_speed_actual: parseFloat(activeStep2Data.motorSpeed) || 0
     };
 
     console.log("Saving project payload:", payload);

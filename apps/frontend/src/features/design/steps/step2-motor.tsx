@@ -7,7 +7,7 @@ import { useDesign } from '@/features/design/context/DesignContext'
 import { Gauge, ShieldCheck, Activity } from 'lucide-react'
 
 export default function Step2Motor() {
-  const { step2Data, setStep2Data, formData, tableData, setTableData } = useDesign();
+  const { step2Data, setStep2Data, formData, tableData, setTableData, saveProject } = useDesign();
   const [isCalculating, setIsCalculating] = useState(false);
   const [recommendedMotors, setRecommendedMotors] = useState<any[]>([]);
 
@@ -49,8 +49,9 @@ export default function Step2Motor() {
   const isErrorOk = delta_u <= 5;
 
   const updateTechnicalTable = async (currentStep2: any) => {
-    const motorMatch = currentStep2.motor.match(/\((.*?) kW/);
-    if (!motorMatch) return;
+    // Tìm thông tin động cơ hiện tại từ danh sách gợi ý
+    const selectedMotor = recommendedMotors.find(m => m.motor_code === currentStep2.motor);
+    if (!selectedMotor) return;
 
     setIsCalculating(true);
     try {
@@ -62,8 +63,8 @@ export default function Step2Motor() {
           },
           heThongTruyenDong: {
             dongCo: {
-              congSuat: safeParse(motorMatch[1]),
-              vanTocQuay: safeParse(currentStep2.motor.match(/, (.*?) v\/ph/)?.[1])
+              congSuat: selectedMotor.power_kw,
+              vanTocQuay: selectedMotor.speed_rpm
             },
             hopGiamToc: {
               ...demoData.duLieuDauVao.heThongTruyenDong.hopGiamToc,
@@ -104,7 +105,7 @@ export default function Step2Motor() {
 
   useEffect(() => {
     updateTechnicalTable(step2Data);
-  }, [step2Data.motor, step2Data.u1, step2Data.u2]);
+  }, [step2Data.motor, step2Data.u1, step2Data.u2, recommendedMotors]); // Thêm recommendedMotors vào deps
 
   const handleBeltRatioChange = (val: string) => {
     if (val !== '' && !/^\d*\.?\d*$/.test(val)) return;
@@ -125,9 +126,11 @@ export default function Step2Motor() {
     setStep2Data({ ...step2Data, u1: val, u2: u2 });
   };
 
-  const handleMotorChange = (val: string) => {
-    const motorSpeedMatch = val.match(/, (.*?) v\/ph/);
-    const n_dc = motorSpeedMatch ? parseFloat(motorSpeedMatch[1]) : 0;
+  const handleMotorChange = async (val: string) => {
+    const selectedMotorData = recommendedMotors.find(m => m.motor_code === val);
+    if (!selectedMotorData) return;
+
+    const n_dc = selectedMotorData.speed_rpm;
     const n_out = parseFloat(formData.speed) || 1;
     const u_total_new = n_dc > 0 ? (n_dc / n_out).toFixed(2) : "0";
     const ud = parseFloat(step2Data.beltRatio) || 1;
@@ -135,24 +138,27 @@ export default function Step2Motor() {
     const u_1 = parseFloat(step2Data.u1) || 1;
     const u_2_new = u_1 > 0 ? (parseFloat(u_h_new) / u_1).toFixed(2) : "0";
 
-    const selectedMotorData = recommendedMotors.find(m => 
-      `${m.motor_code} (${m.power_kw} kW, ${m.speed_rpm} v/ph)` === val
-    );
-
-    setStep2Data({
+    const updatedData = {
       ...step2Data,
       motor: val,
+      motorPower: selectedMotorData.power_kw?.toString() || '0.000',
+      motorSpeed: selectedMotorData.speed_rpm?.toString() || '0.000',
       totalRatio: u_total_new,
       gearboxRatio: u_h_new,
       u2: u_2_new,
-      motorEfficiency: selectedMotorData?.efficiency_eta?.toString() || '---',
-      cosPhi: selectedMotorData?.cos_phi?.toString() || '---',
-      tMaxTdm: selectedMotorData?.t_max_tdn?.toString() || '---',
-      tKdTdm: selectedMotorData?.t_k_tdn?.toString() || '---'
-    });
+      motorEfficiency: selectedMotorData.efficiency_eta?.toString() || '0.000',
+      cosPhi: selectedMotorData.cos_phi?.toString() || '0.000',
+      tMaxTdm: selectedMotorData.t_max_tdn?.toString() || '0.000',
+      tKdTdm: selectedMotorData.t_k_tdn?.toString() || '0.000'
+    };
+
+    setStep2Data(updatedData);
+    
+    // Lưu ngay khi chọn động cơ để tránh mất dữ liệu khi thoát
+    await saveProject(2, { step2Data: updatedData });
   };
 
-  const hasMotor = step2Data.motor && step2Data.motor.includes('kW');
+  const hasMotor = !!step2Data.motor;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in duration-500 font-sans pb-20">
@@ -238,7 +244,7 @@ export default function Step2Motor() {
                   Sai số tỷ số truyền (Δu)
                 </span>
                 <span className={`text-sm font-bold ${hasMotor ? (isErrorOk ? 'text-emerald-600' : 'text-red-600') : 'text-slate-300'}`}>
-                  {hasMotor ? `${delta_u.toFixed(2)} %` : '---'}
+                  {hasMotor ? `${delta_u.toFixed(2)} %` : '0.000 %'}
                 </span>
               </div>
               <p className={`text-[10px] italic ${hasMotor ? (isErrorOk ? 'text-emerald-500' : 'text-red-500') : 'text-slate-400'}`}>
@@ -259,16 +265,15 @@ export default function Step2Motor() {
             <div>
               <Label className="text-sm font-medium text-slate-700 block mb-2">Mã hiệu động cơ (P, n)</Label>
               <Select value={step2Data.motor} onValueChange={handleMotorChange}>
-                <SelectTrigger className="border border-slate-200 rounded-md text-sm px-3 py-2 !h-11 flex items-center bg-white text-gray-700 w-full max-w-md shadow-sm">
-                  <SelectValue placeholder="Chọn động cơ từ danh sách..." />
+                <SelectTrigger className="border-2 border-blue-100 rounded-xl text-sm px-4 py-2 !h-12 flex items-center bg-white text-gray-700 w-full max-w-md shadow-sm hover:border-blue-300 transition-all focus:ring-2 focus:ring-blue-500/20">
+                  <SelectValue placeholder="Chọn mã hiệu động cơ" />
                 </SelectTrigger>
                 <SelectContent className="bg-white shadow-2xl">
                   {recommendedMotors.length > 0 ? (
                     recommendedMotors.map((m) => {
-                      const value = `${m.motor_code} (${m.power_kw} kW, ${m.speed_rpm} v/ph)`;
                       return (
-                        <SelectItem key={m.motor_code} value={value} className="py-2.5">
-                          {value}
+                        <SelectItem key={m.motor_code} value={m.motor_code} className="py-2.5">
+                          {`${m.motor_code} (${m.power_kw} kW, ${m.speed_rpm} v/ph)`}
                         </SelectItem>
                       );
                     })
