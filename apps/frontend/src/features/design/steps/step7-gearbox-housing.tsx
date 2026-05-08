@@ -93,7 +93,7 @@ export default function Step7GearboxHousing() {
           <CardContent className="pt-4 space-y-6">
             <div className="pl-1">
               <h3 className="text-xl font-bold text-gray-900 leading-tight font-sans">Thành hộp & Gân tăng cứng</h3>
-              <p className="text-sm text-gray-600 mt-1 font-sans">Độ dày cấu tạo vỏ (tính theo a_w = {results?.chieuDay?.khoangCachTruc_a}mm)</p>
+              <p className="text-sm text-gray-600 mt-1 font-sans">Độ dày cấu tạo vỏ (tính theo a_w = {results?.chieuDay?.khoangCachTruc_a} mm)</p>
             </div>
             
             <div className="grid grid-cols-2 gap-5">
@@ -106,7 +106,7 @@ export default function Step7GearboxHousing() {
                 <Input readOnly value={`${results?.chieuDay?.napHop} mm`} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">Dày gân tăng cứng (e)</Label>
+                <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">Chiều dày gân tăng cứng (e)</Label>
                 <Input readOnly value={`${results?.ganTangCung?.chieuDay_e} mm`} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
@@ -128,23 +128,23 @@ export default function Step7GearboxHousing() {
             <div className="grid grid-cols-2 gap-x-5 gap-y-4">
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">Bu lông nền (d1)</Label>
-                <Input readOnly value={results?.duongKinh?.boltNen} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+                <Input readOnly value={`${results?.duongKinh?.boltNen} mm`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">Bu lông cạnh ổ (d2)</Label>
-                <Input readOnly value={`M${results?.duongKinh?.boltCanh}`} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+                <Input readOnly value={`M${results?.duongKinh?.boltCanh} mm`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">Vít bích thân và nắp (d3)</Label>
-                <Input readOnly value={`M${results?.duongKinh?.boltGhepMatBichVaThan}`} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+                <Input readOnly value={`M${results?.duongKinh?.boltGhepMatBichVaThan} mm`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">Vít ghép nắp ổ (d4)</Label>
-                <Input readOnly value={`M${results?.duongKinh?.vitGhepNapO}`} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+                <Input readOnly value={`M${results?.duongKinh?.vitGhepNapO} mm`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
               <div className="col-span-2 space-y-2">
                 <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">Vít nắp cửa thăm (d5)</Label>
-                <Input readOnly value={`M${results?.duongKinh?.vitGhepNapCuaTham}`} className="bg-slate-50 border-slate-200 text-gray-700 font-bold" />
+                <Input readOnly value={`M${results?.duongKinh?.vitGhepNapCuaTham} mm`} className="bg-slate-50 border-slate-200 h-10 text-gray-700 font-bold" />
               </div>
             </div>
           </CardContent>
