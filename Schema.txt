@@ -1,0 +1,183 @@
+DROP TABLE IF EXISTS user_activities;
+DROP TABLE IF EXISTS transmission_specs;
+DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS catalog_motors CASCADE;
+-- 1. Bảng Người dùng
+CREATE TABLE users (
+    student_id VARCHAR(7) PRIMARY KEY, -- MSSV là 7 chữ số, dùng làm khóa chính
+    fullname VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password TEXT NOT NULL,       -- Lưu mật khẩu đã được mã hóa (bcrypt/argon2)
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Bảng Dự án thiết kế 
+CREATE TABLE projects (
+    project_id SERIAL PRIMARY KEY,
+    student_id VARCHAR(7) REFERENCES users(student_id) ON DELETE CASCADE,
+    project_name VARCHAR(255) DEFAULT 'Hệ thống dẫn động thùng trộn',
+    major VARCHAR(100) DEFAULT 'Cơ Kỹ Thuật',
+    instructor VARCHAR(100),
+    created_date DATE DEFAULT CURRENT_DATE,
+    
+    -- Thông số kỹ thuật đầu vào (Step 1)
+    power_kw DECIMAL(10, 3),           -- Công suất (kW)
+    speed_rpm DECIMAL(10, 3),          -- Vòng quay (v/ph)
+    lifespan_hours INTEGER,            -- Tuổi thọ (giờ)
+    rotation_type VARCHAR(50),         -- Chiều quay (1 chiều/2 chiều)
+    load_character VARCHAR(50),        -- Tính chất tải trọng
+    work_mode VARCHAR(50),             -- Chế độ làm việc (1 ca, 2 ca...)
+    work_days_per_year INTEGER,        -- Số ngày làm việc/năm
+    work_hours_per_day INTEGER,        -- Số giờ mỗi ca
+    load_mode VARCHAR(50),             -- Chế độ tải (bậc/liên tục)
+    
+    -- Thông số tính toán Động cơ (Step 2)
+    efficiency_sigma DECIMAL(10, 4),   -- Hiệu suất hệ thống
+    required_power_pk DECIMAL(10, 3),  -- Công suất yêu cầu
+    preliminary_speed_nsb DECIMAL(10, 3), -- Vòng quay sơ bộ
+    total_ratio_ut DECIMAL(10, 3),     -- Tỉ số truyền tổng
+    belt_ratio_ud DECIMAL(10, 3),      -- Tỉ số truyền đai
+    gearbox_ratio_uh DECIMAL(10, 3),   -- Tỉ số truyền hộp giảm tốc
+    u1 DECIMAL(10, 3),                 -- Cấp nhanh côn
+    u2 DECIMAL(10, 3),                 -- Cấp chậm trụ
+    motor_code VARCHAR(100),           -- Mã hiệu động cơ (4A112M2Y6...)
+    motor_cos_phi DECIMAL(10, 3),      -- cos phi
+    motor_t_max_tdm DECIMAL(10, 3),    -- T_max/T_dm
+    motor_t_kd_tdm DECIMAL(10, 3),     -- T_kd/T_dm
+    
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. Bảng Bảng đặc tính truyền động (Dữ liệu bảng ở Step 2)
+-- Lưu trữ các thông số P, n, M, u cho từng trục
+CREATE TABLE transmission_specs (
+    spec_id SERIAL PRIMARY KEY,
+    project_id INTEGER REFERENCES projects(project_id) ON DELETE CASCADE,
+    shaft_name VARCHAR(20),            -- 'Động cơ', 'Trục I', 'Trục II', 'Trục III', 'Công tác'
+    power_kw DECIMAL(10, 3),
+    speed_rpm DECIMAL(10, 3),
+    torque_nmm DECIMAL(15, 3),         -- Moment xoắn (N.mm)
+    ratio_u DECIMAL(10, 3)             -- Tỉ số truyền tại trục đó
+);
+
+-- 4. Bảng Ghi lại hoạt động đăng nhập (Login Frequency)
+CREATE TABLE user_activities (
+    activity_id SERIAL PRIMARY KEY,
+    student_id VARCHAR(7) REFERENCES users(student_id) ON DELETE CASCADE,
+    login_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Các thông tin bổ sung (tùy chọn nhưng nên có để bảo mật)
+    ip_address VARCHAR(45), -- Lưu IPv4 hoặc IPv6
+    user_agent TEXT         -- Lưu trình duyệt/thiết bị (Chrome, Firefox, Mobile...)
+);
+-- 5. Bảng Từ điển Catalog Động cơ (Master Data)
+CREATE TABLE catalog_motors (
+    motor_code VARCHAR(100) PRIMARY KEY, -- Lấy mã động cơ làm Khóa chính (VD: '4A112M2Y6')
+    power_kw DOUBLE PRECISION NOT NULL CHECK (power_kw > 0),       -- Công suất (kW)
+    speed_rpm INTEGER NOT NULL CHECK (speed_rpm > 0),              -- Vận tốc quay (vg/ph)
+    cos_phi DOUBLE PRECISION CHECK (cos_phi > 0 AND cos_phi <= 1), -- Hệ số công suất
+    efficiency_eta DOUBLE PRECISION CHECK (efficiency_eta > 0 AND efficiency_eta <= 1), -- Hiệu suất
+    t_max_tdn DOUBLE PRECISION NOT NULL,                           -- Tỉ số Moment Max (T_max / T_dn)
+    t_k_tdn DOUBLE PRECISION NOT NULL                              -- Tỉ số Moment Khởi động (T_k / T_dn)
+);
+
+-- (Cực kỳ quan trọng) 7. Cập nhật Khóa ngoại (Foreign Key) nối bảng projects (Phần 1) với bảng catalog_motors
+ALTER TABLE projects 
+ADD CONSTRAINT fk_projects_motor 
+FOREIGN KEY (motor_code) REFERENCES catalog_motors(motor_code) ON DELETE SET NULL;
+
+-- Thêm cột design_state để lưu trữ linh hoạt dữ liệu các bước 3, 4, 5, 6
+ALTER TABLE projects ADD COLUMN design_state JSONB DEFAULT '{}';
+
+-- (Tùy chọn) Thêm cột current_step để biết người dùng đang làm tới đâu
+ALTER TABLE projects ADD COLUMN current_step INTEGER DEFAULT 1;
+
+
+-- Trigger để tự động cập nhật updated_at
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_users_modtime BEFORE UPDATE ON users FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+CREATE TRIGGER update_projects_modtime BEFORE UPDATE ON projects FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+
+-- Index để tìm kiếm nhanh dự án theo sinh viên
+CREATE INDEX idx_projects_student_id ON projects(student_id);
+
+-- Index để tăng tốc độ truy vấn cho biểu đồ (thường truy vấn theo thời gian và user)
+CREATE INDEX idx_user_activities_student_time ON user_activities(student_id, login_at);
+
+-- 8. Tạo Index để tối ưu tốc độ truy vấn thuật toán Chọn động cơ
+CREATE INDEX idx_catalog_motors_power_speed ON catalog_motors(power_kw, speed_rpm);
+
+INSERT INTO catalog_motors (
+    motor_code, power_kw, speed_rpm, cos_phi, efficiency_eta, t_max_tdn, t_k_tdn
+) VALUES 
+    -- =========================================================================
+    -- NHÓM 1: Động cơ 4 cực (Tốc độ đồng bộ 1500 RPM) - Dùng với hộp giảm tốc tỷ số truyền trung bình
+    -- =========================================================================
+    ('4A71A4Y3', 0.55, 1370, 0.73, 0.710, 2.2, 2.0),
+    ('4A71B4Y3', 0.75, 1395, 0.76, 0.730, 2.2, 2.0),
+    ('4A80A4Y3', 1.1, 1420, 0.81, 0.750, 2.2, 2.0),
+    ('4A80B4Y3', 1.5, 1420, 0.82, 0.780, 2.2, 2.0),
+    ('4A90L4Y3', 2.2, 1425, 0.83, 0.800, 2.2, 2.0),
+    ('4A100S4Y3', 3.0, 1435, 0.84, 0.820, 2.2, 2.0),
+    ('4A100L4Y3', 4.0, 1435, 0.85, 0.840, 2.2, 2.0),
+    ('4A112M4Y3', 5.5, 1445, 0.85, 0.855, 2.2, 2.0),
+    ('4A132S4Y3', 7.5, 1455, 0.86, 0.875, 2.2, 2.0),
+    ('4A132M4Y3', 11.0, 1455, 0.87, 0.880, 2.2, 2.0),
+    ('4A160S4Y3', 15.0, 1460, 0.88, 0.885, 2.2, 2.0),
+    ('4A160M4Y3', 18.5, 1460, 0.88, 0.895, 2.2, 2.0),
+    ('4A180S4Y3', 22.0, 1470, 0.89, 0.900, 2.2, 2.0),
+    ('4A180M4Y3', 30.0, 1470, 0.89, 0.910, 2.2, 2.0),
+    ('4A200L4Y3', 37.0, 1470, 0.89, 0.915, 2.2, 2.0),
+    ('4A225M4Y3', 45.0, 1475, 0.90, 0.920, 2.2, 2.0),
+    ('4A250S4Y3', 55.0, 1475, 0.90, 0.925, 2.2, 2.0),
+    ('4A280S4Y3', 75.0, 1475, 0.90, 0.930, 2.2, 2.0),
+
+    -- =========================================================================
+    -- NHÓM 2: Động cơ 6 cực (Tốc độ đồng bộ 1000 RPM) - Rất phổ biến cho thùng trộn
+    -- =========================================================================
+    ('4A71A6Y3', 0.37, 900, 0.68, 0.650, 2.0, 1.8),
+    ('4A71B6Y3', 0.55, 900, 0.70, 0.680, 2.0, 1.8),
+    ('4A80A6Y3', 0.75, 915, 0.72, 0.710, 2.0, 1.9),
+    ('4A80B6Y3', 1.1, 915, 0.73, 0.730, 2.0, 1.9),
+    ('4A90L6Y3', 1.5, 930, 0.76, 0.760, 2.0, 1.9),
+    ('4A100L6Y3', 2.2, 940, 0.77, 0.790, 2.1, 1.9),
+    ('4A112M6Y3', 3.0, 950, 0.79, 0.810, 2.1, 2.0),
+    ('4A132S6Y3', 4.0, 960, 0.81, 0.830, 2.2, 2.0),
+    ('4A132M6Y3', 5.5, 960, 0.81, 0.850, 2.2, 2.0),
+    ('4A160S6Y3', 7.5, 969, 0.83, 0.860, 2.2, 2.0),
+    ('4A160M6Y3', 11.0, 970, 0.83, 0.870, 2.2, 2.0),
+    ('4A180S6Y3', 15.0, 975, 0.85, 0.880, 2.2, 2.0),
+    ('4A200M6Y3', 18.5, 975, 0.85, 0.895, 2.2, 2.0),
+    ('4A200L6Y3', 22.0, 975, 0.86, 0.900, 2.2, 2.0),
+    ('4A225M6Y3', 30.0, 980, 0.86, 0.905, 2.2, 2.0),
+    ('4A250S6Y3', 37.0, 980, 0.87, 0.910, 2.2, 2.0),
+    ('4A280S6Y3', 45.0, 980, 0.87, 0.915, 2.2, 2.0),
+    ('4A280M6Y3', 55.0, 985, 0.88, 0.920, 2.2, 2.0),
+
+    -- =========================================================================
+    -- NHÓM 3: Động cơ 8 cực (Tốc độ đồng bộ 750 RPM) - Chuyên dùng khuấy tốc độ chậm, đặc hoặc cần mô men lớn
+    -- =========================================================================
+    ('4A80A8Y3', 0.37, 680, 0.65, 0.640, 1.8, 1.6),
+    ('4A80B8Y3', 0.55, 680, 0.67, 0.670, 1.8, 1.6),
+    ('4A90L8Y3', 0.75, 695, 0.69, 0.700, 1.8, 1.6),
+    ('4A100L8Y3', 1.1, 700, 0.71, 0.730, 1.9, 1.7),
+    ('4A112M8Y3', 1.5, 710, 0.73, 0.760, 1.9, 1.7),
+    ('4A132S8Y3', 2.2, 715, 0.75, 0.790, 2.0, 1.8),
+    ('4A132M8Y3', 3.0, 715, 0.76, 0.810, 2.0, 1.8),
+    ('4A160S8Y3', 4.0, 725, 0.78, 0.830, 2.0, 1.8),
+    ('4A160M8Y3', 5.5, 725, 0.79, 0.845, 2.0, 1.8),
+    ('4A180S8Y3', 7.5, 730, 0.80, 0.860, 2.1, 1.9),
+    ('4A200M8Y3', 11.0, 730, 0.81, 0.870, 2.1, 1.9),
+    ('4A200L8Y3', 15.0, 730, 0.81, 0.880, 2.1, 1.9),
+    ('4A225M8Y3', 18.5, 735, 0.82, 0.890, 2.1, 1.9),
+    ('4A250S8Y3', 22.0, 735, 0.83, 0.900, 2.1, 1.9);
