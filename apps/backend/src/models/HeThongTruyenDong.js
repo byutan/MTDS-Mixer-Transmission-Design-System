@@ -149,7 +149,14 @@ export class HeThongTruyenDong {
             [20, 3.75],
             [25, 4.2]
         ]
+        if (v <= table[0][0]) {
+            return table[0][1]
+        }
 
+        // lớn hơn max
+        if (v >= table[table.length - 1][0]) {
+            return table[table.length - 1][1]
+        }
         const pair = table.find((_, i) => {
             const next = table[i + 1]
             return next && v >= table[i][0] && v <= next[0]
@@ -170,7 +177,17 @@ export class HeThongTruyenDong {
             200, 224, 250, 280, 315, 355, 400, 450, 500,
             560, 630, 710, 800, 900, 1000
         ]
+        
         let d2 = u_soBo * d1 * (1 - heSoTaiTruot)
+        // nhỏ hơn min
+        if (d2 <= DuongKinhTieuChuan[0]) {
+            return DuongKinhTieuChuan[0]
+        }
+        // lớn hơn max
+        const max = DuongKinhTieuChuan[DuongKinhTieuChuan.length - 1]
+        if (d2 >= max) {
+            return max
+        }
         d2 = DuongKinhTieuChuan.find(d => d >= d2)
         return d2
     }
@@ -181,29 +198,50 @@ export class HeThongTruyenDong {
         return Number((((u_thucTe - u_soBo) / u_soBo) || 0).toFixed(4))
     }
 
-    // hàm tính chiều dài đai
     static tinhChieuDaiDai(a, d1, d2, v1) {
         const DAY_CHIEU_DAI_TIEU_CHUAN = [
-            400, 425, 450, 475, 500, 530, 560, 600, 630, 670, 710, 750, 800, 850,
-            900, 950, 1000, 1060, 1120, 1180, 1250, 1320, 1400, 1500, 1600, 1700,
-            1800, 1900, 2000, 2120, 2240, 2360, 2500, 2650, 2800, 3000, 3150, 3350,
-            3750, 4000, 4250, 4500, 4750, 5000, 5300, 5600, 6000
+            400, 425, 450, 475, 500, 530, 560, 600, 630, 670, 710,
+            750, 800, 850, 900, 950, 1000, 1060, 1120, 1180, 1250,
+            1320, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2120,
+            2240, 2360, 2500, 2650, 2800, 3000, 3150, 3350, 3750,
+            4000, 4250, 4500, 4750, 5000, 5300, 5600, 6000
         ];
+    
         const PI = Math.PI
-        const L = (2 * a + (PI * (d1 + d2) / 2) + (Math.pow((d2 - d1), 2) / (4 * a))).toFixed(3)
+    
+        const L = Number((
+            2 * a +
+            (PI * (d1 + d2) / 2) +
+            (Math.pow((d2 - d1), 2) / (4 * a))
+        ).toFixed(3))
+    
+        // chặn trên
+        const maxL = DAY_CHIEU_DAI_TIEU_CHUAN.at(-1)
+    
+        if (L >= maxL) {
+            return maxL
+        }
+    
         let l_chon = DAY_CHIEU_DAI_TIEU_CHUAN.reduce((prev, curr) =>
             Math.abs(curr - L) < Math.abs(prev - L) ? curr : prev
-        );
-        let currentIndex = DAY_CHIEU_DAI_TIEU_CHUAN.indexOf(l_chon);
+        )
+    
+        let currentIndex = DAY_CHIEU_DAI_TIEU_CHUAN.indexOf(l_chon)
+    
         while (currentIndex < DAY_CHIEU_DAI_TIEU_CHUAN.length) {
-            let l_thu = DAY_CHIEU_DAI_TIEU_CHUAN[currentIndex];
-            let i = v1 / (l_thu / 1000);
+        
+            let l_thu = DAY_CHIEU_DAI_TIEU_CHUAN[currentIndex]
+        
+            let i = v1 / (l_thu / 1000)
+        
             if (i <= 10) {
-                return l_thu;
+                return l_thu
             }
-            currentIndex++;
+        
+            currentIndex++
         }
-        return (DAY_CHIEU_DAI_TIEU_CHUAN[DAY_CHIEU_DAI_TIEU_CHUAN.length - 1]);
+    
+        throw new Error("Không tìm được chiều dài đai phù hợp")
     }
 
     static tinhKhoangCachTrucThucTe(d1, d2, L) {
@@ -223,7 +261,15 @@ export class HeThongTruyenDong {
             [130, 0.86], [140, 0.89], [150, 0.92],
             [160, 0.95], [170, 0.98], [180, 1]
         ]
+        // chặn dưới
+        if (a <= map[0][0]) {
+            return map[0][1]
+        }
 
+        // chặn trên
+        if (a >= map[map.length - 1][0]) {
+            return map[map.length - 1][1]
+        }
         const pair = map.find((_, i) => {
             const next = map[i + 1]
             return next && a >= map[i][0] && a <= next[0]
@@ -252,6 +298,14 @@ export class HeThongTruyenDong {
         cL_map.set(2.0, 1.15)
         cL_map.set(2.4, 1.2)
         const entries = Array.from(cL_map.entries())
+        if (ratio <= entries[0][0]) {
+            return entries[0][1]
+        }
+
+        // chặn trên
+        if (ratio >= entries[entries.length - 1][0]) {
+            return entries[entries.length - 1][1]
+        }
         const pair = entries.find(([x1], i) => {
             const next = entries[i + 1]
             return next && ratio >= x1 && ratio <= next[0]
@@ -275,8 +329,13 @@ export class HeThongTruyenDong {
         cU_map.set(2.4, 1.135)
         cU_map.set(3, 1.14)
         const entries = Array.from(cU_map.entries())
-        if (u >= 3) {
-            return 1.14
+         if (u <= entries[0][0]) {
+            return entries[0][1]
+        }
+
+        // chặn trên
+        if (u >= entries[entries.length - 1][0]) {
+            return entries[entries.length - 1][1]
         }
         const pair = entries.find(([x1], i) => {
             const next = entries[i + 1]
@@ -346,7 +405,6 @@ export class HeThongTruyenDong {
         const cZ = 0.95 // (z = 2 : 3)
         // số dây đai cần thiết
         const z = HeThongTruyenDong.tinhSoDayDaiCanThiet(pDongCo, kd, p0, cA, cL, cU, cZ)
-
         const t = this.boTruyenDai.getThongSoT(this.boTruyenDai.setTietDienDai(pDongCo, this.dongCo.getVanTocQuay()))
         const e = this.boTruyenDai.getThongSoE(this.boTruyenDai.setTietDienDai(pDongCo, this.dongCo.getVanTocQuay()))
         const ho = this.boTruyenDai.getThongSoH0(this.boTruyenDai.setTietDienDai(pDongCo, this.dongCo.getVanTocQuay()))
