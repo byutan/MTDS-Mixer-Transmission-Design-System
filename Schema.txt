@@ -94,6 +94,14 @@ ALTER TABLE projects ADD COLUMN design_state JSONB DEFAULT '{}';
 
 -- (Tùy chọn) Thêm cột current_step để biết người dùng đang làm tới đâu
 ALTER TABLE projects ADD COLUMN current_step INTEGER DEFAULT 1;
+ALTER TABLE projects 
+ADD COLUMN motor_power_actual NUMERIC,
+ADD COLUMN motor_speed_actual NUMERIC;
+
+ALTER TABLE projects 
+ADD COLUMN shaft_i_d1 NUMERIC, ADD COLUMN shaft_i_lmrc NUMERIC, ADD COLUMN shaft_i_lmdt NUMERIC, ADD COLUMN shaft_i_l11 NUMERIC,
+ADD COLUMN shaft_ii_d2 NUMERIC, ADD COLUMN shaft_ii_lmrc NUMERIC, ADD COLUMN shaft_ii_lmrt NUMERIC,
+ADD COLUMN shaft_iii_d3 NUMERIC, ADD COLUMN shaft_iii_lmrt NUMERIC, ADD COLUMN shaft_iii_lmkn NUMERIC;
 
 
 -- Trigger để tự động cập nhật updated_at
