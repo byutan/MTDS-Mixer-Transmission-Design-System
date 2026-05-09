@@ -43,7 +43,7 @@ export default function LandingPage() {
 
               <div className="flex gap-8 mb-8">
                 <div>
-                  <div className="text-2xl lg:text-3xl font-bold text-slate-900">5</div>
+                  <div className="text-2xl lg:text-3xl font-bold text-slate-900">7</div>
                   <div className="text-sm text-slate-600">Bước thiết kế</div>
                 </div>
                 <div>
@@ -135,40 +135,42 @@ export default function LandingPage() {
               Quy trình thiết kế hoàn toàn tự động
             </h2>
             <p className="text-lg text-slate-600">
-              5 bước tính toán thông minh giúp bạn tối ưu hóa thiết kế trong thời gian ngắn nhất
+              7 bước tính toán thông minh giúp bạn tối ưu hóa thiết kế trong thời gian ngắn nhất
             </p>
           </div>
 
-          <div className="space-y-6 lg:space-y-8">
-            {/* Row 1: Steps 1 & 2 */}
-            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="space-y-6 lg:space-y-6">
+            {/* Row 1: Steps 1, 2 & 3 (Centered and same size as row 2) */}
+            <div className="flex flex-wrap justify-center gap-6 max-w-7xl mx-auto">
               {[
-                { step: 1, title: 'Khởi tạo dự án', desc: 'Dễ dàng tạo và quản lý dự án' },
-                { step: 2, title: 'Động học & động cơ', desc: 'Tự động phân phối lực và tối ưu mã động cơ' },
+                { step: 1, title: 'Khởi tạo', desc: 'Dễ dàng tạo và quản lý thông số đầu vào' },
+                { step: 2, title: 'Động cơ', desc: 'Phân phối tỷ số truyền và chọn động cơ tối ưu' },
+                { step: 3, title: 'Bộ truyền đai', desc: 'Thiết kế bộ truyền đai' },
               ].map((item) => (
-                <div key={item.step} className="bg-blue-50 rounded-xl p-8 border border-blue-200 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="bg-blue-600 text-white font-bold rounded-lg px-6 py-2.5 inline-block text-lg mb-6 shadow-md">
+                <div key={item.step} className="bg-blue-50 rounded-xl p-8 border border-blue-200 shadow-sm hover:shadow-md transition-shadow w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]">
+                  <div className="bg-blue-600 text-white font-bold rounded-lg px-6 py-2 inline-block text-base mb-6 shadow-md">
                     Bước {item.step}
                   </div>
-                  <h3 className="text-3xl font-bold text-slate-900 mb-3">{item.title}</h3>
-                  <p className="text-slate-600 text-xl leading-relaxed">{item.desc}</p>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-3">{item.title}</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
 
-            {/* Row 2: Steps 3, 4 & 5 */}
-            <div className="grid md:grid-cols-3 gap-6 max-w-7xl mx-auto">
+            {/* Row 2: Steps 4, 5, 6 & 7 */}
+            <div className="flex flex-wrap justify-center gap-6 max-w-7xl mx-auto">
               {[
-                { step: 3, title: 'Thiết kế Bộ truyền dẫn', desc: 'Tính toán chính xác bộ truyền dẫn' },
-                { step: 4, title: 'Thiết kế Hộp giảm tốc', desc: 'Tính toán chính xác bánh răng trục' },
-                { step: 5, title: 'Thiết kế Trục & Ổ lăn', desc: 'Phân tích nội lực và lựa chọn thông số trục, ổ lăn' }
+                { step: 4, title: 'Hộp giảm tốc', desc: 'Thiết kế, tính toán kết cấu' },
+                { step: 5, title: 'Trục', desc: 'Thiết kế, tính toán kết cấu' },
+                { step: 6, title: 'Ổ lăn', desc: 'Lựa chọn và kiểm nghiệm ổ lăn' },
+                { step: 7, title: 'Vỏ hộp giảm tốc', desc: 'Thiết kế, tính toán kết cấu' }
               ].map((item) => (
-                <div key={item.step} className="bg-blue-50 rounded-xl p-8 border border-blue-200 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="bg-blue-600 text-white font-bold rounded-lg px-6 py-2.5 inline-block text-lg mb-6 shadow-md">
+                <div key={item.step} className="bg-blue-50 rounded-xl p-8 border border-blue-200 shadow-sm hover:shadow-md transition-shadow w-full sm:w-[calc(50%-12px)] lg:w-[calc(25%-18px)]">
+                  <div className="bg-blue-600 text-white font-bold rounded-lg px-6 py-2 inline-block text-base mb-6 shadow-md">
                     Bước {item.step}
                   </div>
-                  <h3 className="text-3xl font-bold text-slate-900 mb-3">{item.title}</h3>
-                  <p className="text-slate-600 text-xl leading-relaxed">{item.desc}</p>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-3">{item.title}</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">{item.desc}</p>
                 </div>
               ))}
             </div>
