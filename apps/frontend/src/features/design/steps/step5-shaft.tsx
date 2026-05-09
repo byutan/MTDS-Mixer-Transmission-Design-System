@@ -330,6 +330,15 @@ export default function Step5Shaft() {
             const rawValue = (data as any)[field.id];
             const displayValue = rawValue ? `${rawValue} mm` : "";
             
+            // "Phù phép" biên: Tăng Min lên 1 và giảm Max đi 1 để tạo vùng đệm an toàn
+            const safeMin = field.limit ? Number((field.limit.min + 1).toFixed(1)) : null;
+            const safeMax = field.limit ? Number((field.limit.max - 1).toFixed(1)) : null;
+            
+            const isError = field.limit && (
+              safeParse(rawValue) < (safeMin || 0) || 
+              safeParse(rawValue) > (safeMax || 999)
+            );
+
             return (
               <div key={field.id} className="space-y-3">
                 <Label className="text-sm font-medium text-slate-700 block mb-1 font-sans">{field.label}</Label>
@@ -337,12 +346,11 @@ export default function Step5Shaft() {
                   value={displayValue} 
                   onChange={(e) => handleInputChange(field.id, e.target.value)} 
                   className={`border rounded-md text-sm h-11 w-full font-bold transition-all font-sans ${
-                    field.limit && (safeParse(rawValue) < Number(field.limit.min.toFixed(2)) || safeParse(rawValue) > Number(field.limit.max.toFixed(2))) 
-                    ? "bg-red-50 border-red-500 text-red-600 focus:ring-red-200" : "bg-white border-slate-200 focus:ring-blue-500"
+                    isError ? "bg-red-50 border-red-500 text-red-600 focus:ring-red-200" : "bg-white border-slate-200 focus:ring-blue-500"
                   }`} 
                 />
-                <p className={`text-[10px] italic font-medium ${field.limit && (safeParse(rawValue) < Number(field.limit.min.toFixed(2)) || safeParse(rawValue) > Number(field.limit.max.toFixed(2))) ? "text-red-500 font-bold" : "text-slate-400"}`}>
-                  Gợi ý: [{field.limit?.min?.toFixed(1) || "---"} - {field.limit?.max?.toFixed(1) || "---"}]
+                <p className={`text-[10px] italic font-medium ${isError ? "text-red-500 font-bold" : "text-slate-400"}`}>
+                  Gợi ý: [{safeMin || "---"} - {safeMax || "---"}]
                 </p>
               </div>
             );
