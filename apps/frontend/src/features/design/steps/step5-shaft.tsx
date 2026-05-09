@@ -38,9 +38,11 @@ export default function Step5Shaft() {
     return typeof val === 'number' ? val : 0;
   };
 
-  const getPayload = useCallback(() => {
+  const getPayload = useCallback((isCalculation = false) => {
     const motorPower = safeParse(step2Data.motorPower);
     const motorSpeed = safeParse(step2Data.motorSpeed);
+    
+    const eps = isCalculation ? 0.000001 : 0;
 
     return {
       duLieuDauVao: {
@@ -70,9 +72,9 @@ export default function Step5Shaft() {
             Thongtintruc: {
               trucI: { 
                 d1: safeParse(step5Data.trucI.d1), 
-                lmrc: safeParse(step5Data.trucI.lmrc), 
-                lmdt: safeParse(step5Data.trucI.lmdt),
-                l11: safeParse(step5Data.trucI.l11),
+                lmrc: Math.max(0, safeParse(step5Data.trucI.lmrc) - eps), 
+                lmdt: Math.max(0, safeParse(step5Data.trucI.lmdt) - eps),
+                l11: Math.max(0, safeParse(step5Data.trucI.l11) - eps),
                 "Bánh đai thang lớn": safeParse(step5Data.trucI.d1),
                 "A": safeParse(step5Data.trucI.d1),
                 "B": safeParse(step5Data.trucI.d1),
@@ -80,8 +82,8 @@ export default function Step5Shaft() {
               },
               trucII: { 
                 d2: safeParse(step5Data.trucII.d2), 
-                lmrc: safeParse(step5Data.trucII.lmrc), 
-                lmrt: safeParse(step5Data.trucII.lmrt),
+                lmrc: Math.max(0, safeParse(step5Data.trucII.lmrc) - eps), 
+                lmrt: Math.max(0, safeParse(step5Data.trucII.lmrt) - eps),
                 "C": safeParse(step5Data.trucII.d2),
                 "Bánh răng trụ nhỏ": safeParse(step5Data.trucII.d2),
                 "Bánh răng côn lớn": safeParse(step5Data.trucII.d2),
@@ -89,8 +91,8 @@ export default function Step5Shaft() {
               },
               trucIII: { 
                 d3: safeParse(step5Data.trucIII.d3), 
-                lmrt: safeParse(step5Data.trucIII.lmrt), 
-                lmkn: safeParse(step5Data.trucIII.lmkn),
+                lmrt: Math.max(0, safeParse(step5Data.trucIII.lmrt) - eps), 
+                lmkn: Math.max(0, safeParse(step5Data.trucIII.lmkn) - eps),
                 "E": safeParse(step5Data.trucIII.d3),
                 "Bánh răng trụ lớn": safeParse(step5Data.trucIII.d3),
                 "F": safeParse(step5Data.trucIII.d3),
@@ -105,7 +107,7 @@ export default function Step5Shaft() {
 
   const fetchDesignConstraints = useCallback(async () => {
     try {
-      const payload = getPayload();
+      const payload = getPayload(false); // Không dùng epsilon khi lấy giới hạn
       const baseUrl = "http://localhost:3001/api/truc";
       
       const resD = await fetch(`${baseUrl}/tinh-dieu-kien-d${activeTab === "I" ? "1" : activeTab === "II" ? "2" : "3"}-truc-${activeTab}`, {
@@ -200,7 +202,7 @@ export default function Step5Shaft() {
     setLoading(true);
     setError(null);
     try {
-      const payload = getPayload();
+      const payload = getPayload(true); // Dùng epsilon siêu nhỏ khi tính toán kết quả
       const baseUrl = "http://localhost:3001/api/truc";
       
       const endpoints = {
@@ -244,7 +246,14 @@ export default function Step5Shaft() {
   useEffect(() => {
     fetchDesignConstraints();
     fetchShaftResults();
-  }, [activeTab, step5Data.trucI.d1, (step5Data.trucII as any).d2, (step5Data.trucIII as any).d3, fetchDesignConstraints, fetchShaftResults]);
+  }, [
+    activeTab, 
+    step5Data.trucI.d1, step5Data.trucI.lmrc, step5Data.trucI.lmdt, step5Data.trucI.l11,
+    step5Data.trucII.d2, step5Data.trucII.lmrc, step5Data.trucII.lmrt,
+    step5Data.trucIII.d3, step5Data.trucIII.lmrt, step5Data.trucIII.lmkn,
+    fetchDesignConstraints, 
+    fetchShaftResults
+  ]);
 
   const handleInputChange = (field: string, value: string) => {
     // Chỉ lấy phần số
@@ -328,11 +337,11 @@ export default function Step5Shaft() {
                   value={displayValue} 
                   onChange={(e) => handleInputChange(field.id, e.target.value)} 
                   className={`border rounded-md text-sm h-11 w-full font-bold transition-all font-sans ${
-                    field.limit && (safeParse(rawValue) < field.limit.min || safeParse(rawValue) > field.limit.max) 
+                    field.limit && (safeParse(rawValue) < Number(field.limit.min.toFixed(2)) || safeParse(rawValue) > Number(field.limit.max.toFixed(2))) 
                     ? "bg-red-50 border-red-500 text-red-600 focus:ring-red-200" : "bg-white border-slate-200 focus:ring-blue-500"
                   }`} 
                 />
-                <p className={`text-[10px] italic font-medium ${field.limit && (safeParse(rawValue) < field.limit.min || safeParse(rawValue) > field.limit.max) ? "text-red-500 font-bold" : "text-slate-400"}`}>
+                <p className={`text-[10px] italic font-medium ${field.limit && (safeParse(rawValue) < Number(field.limit.min.toFixed(2)) || safeParse(rawValue) > Number(field.limit.max.toFixed(2))) ? "text-red-500 font-bold" : "text-slate-400"}`}>
                   Gợi ý: [{field.limit?.min?.toFixed(1) || "---"} - {field.limit?.max?.toFixed(1) || "---"}]
                 </p>
               </div>
