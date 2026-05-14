@@ -8,6 +8,17 @@ import { Search, Calendar, FolderOpen, MoreVertical, Trash2, ArrowUpDown, Loader
 import { Navbar } from '../common/navbar'
 import { useNavigate } from 'react-router-dom'
 import { useDesign } from '../design/context/DesignContext'
+import { useToast } from '@/hooks/use-toast'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function ProjectListPage() {
   const navigate = useNavigate();
@@ -18,6 +29,9 @@ export default function ProjectListPage() {
   const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const { toast } = useToast();
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<number | null>(null);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('mtds_user');
@@ -45,19 +59,35 @@ export default function ProjectListPage() {
     }
   };
 
-  const handleDelete = async (projectId: number) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa dự án này?")) return;
+  const handleDelete = (projectId: number) => {
+    setProjectToDelete(projectId);
+    setDeleteConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!projectToDelete) return;
     
     try {
-      const res = await fetch(`http://localhost:3001/api/projects/${projectId}`, {
+      const res = await fetch(`http://localhost:3001/api/projects/${projectToDelete}`, {
         method: 'DELETE'
       });
       const result = await res.json();
       if (result.success) {
-        setProjects(projects.filter(p => p.project_id !== projectId));
+        setProjects(projects.filter(p => p.project_id !== projectToDelete));
+        toast({
+          title: "Đã xóa dự án",
+          description: "Dự án đã được loại bỏ khỏi danh sách thành công.",
+        });
       }
     } catch (error) {
-      alert("Không thể xóa dự án. Vui lòng thử lại.");
+      toast({
+        title: "Lỗi",
+        description: "Không thể xóa dự án. Vui lòng thử lại sau.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleteConfirmOpen(false);
+      setProjectToDelete(null);
     }
   };
 
@@ -284,6 +314,26 @@ export default function ProjectListPage() {
            </div>
         )}
       </div>
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent className="bg-white rounded-2xl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-xl font-black text-slate-900">Xác nhận xóa dự án?</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-500 font-medium">
+              Hành động này không thể hoàn tác. Dự án của bạn sẽ bị xóa vĩnh viễn khỏi hệ thống.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2">
+            <AlertDialogCancel className="rounded-xl border-slate-200 font-bold">Hủy bỏ</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl"
+            >
+              Xác nhận xóa
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

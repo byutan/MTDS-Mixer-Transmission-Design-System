@@ -13,6 +13,7 @@ import Step5Shaft from "./features/design/steps/step5-shaft"
 import Step6Bearings from "./features/design/steps/step6-bearings"
 import Step7GearboxHousing from "./features/design/steps/step7-gearbox-housing"
 import ProjectListPage from "./features/projects/project-list-page"
+import { Toaster } from "@/components/ui/toaster"
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </DesignProvider>
+      <Toaster />
     </BrowserRouter>
   );
 }
