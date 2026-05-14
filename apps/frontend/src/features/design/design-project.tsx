@@ -4,6 +4,7 @@ import { ChevronRight, Check } from 'lucide-react'
 import { Navbar } from '../common/navbar'
 import { useDesign } from '@/features/design/context/DesignContext'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
+import { useToast } from "@/hooks/use-toast"
 
 const steps = [
   { number: 1, title: 'Khởi tạo', label: 'Khởi tạo', path: 'step-1' },
@@ -17,6 +18,7 @@ const steps = [
 
 export default function DesignProject() {
   const { user, formData, step2Data, setStep2Data, saveProject } = useDesign();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
@@ -108,7 +110,11 @@ export default function DesignProject() {
       }
     } else if (currentStep === 2) {
       if (step2Data.motor === 'Chưa chọn động cơ' || !step2Data.motor) {
-        alert("Vui lòng chọn mã động cơ!");
+        toast({
+          title: "Thiếu dữ liệu",
+          description: "Vui lòng chọn mã động cơ để tiếp tục!",
+          variant: "destructive",
+        });
         return;
       }
       // Lưu trạng thái đã sang Bước 3
@@ -121,7 +127,10 @@ export default function DesignProject() {
     } else {
       // Lưu bước cuối cùng và quay lại danh sách dự án
       await saveProject(7);
-      alert("Chúc mừng! Bạn đã hoàn thành thiết kế hệ thống dẫn động.");
+      toast({
+        title: "Hoàn thành!",
+        description: "Chúc mừng! Bạn đã hoàn thành thiết kế hệ thống dẫn động.",
+      });
       navigate('/projects');
     }
     window.scrollTo(0, 0);
