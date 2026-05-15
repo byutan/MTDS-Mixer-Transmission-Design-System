@@ -59,6 +59,8 @@ interface DesignContextType {
   loadSampleData: () => void;
   clearProjectData: (shouldReload?: boolean) => void;
   saveProject: (currentStep: number, overrides?: { formData?: any, step2Data?: any }) => Promise<void>;
+  step5Errors: { I: boolean, II: boolean, III: boolean };
+  setStep5Errors: React.Dispatch<React.SetStateAction<{ I: boolean, II: boolean, III: boolean }>>;
 }
 
 const DesignContext = createContext<DesignContextType | undefined>(undefined);
@@ -115,15 +117,16 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const getInitialStep5Data = (): Step5Data => {
     const saved = localStorage.getItem('mtds_project_step5');
     return saved ? JSON.parse(saved) : {
-      trucI: { d1: '30', lmrc: '42', lmdt: '45', l11: '90' },
-      trucII: { d2: '40', lmrc: '50', lmrt: '60' },
-      trucIII: { d3: '50', lmrt: '65', lmkn: '80' }
+      trucI: { d1: '', lmrc: '', lmdt: '', l11: '' },
+      trucII: { d2: '', lmrc: '', lmrt: '' },
+      trucIII: { d3: '', lmrt: '', lmkn: '' }
     };
   };
 
   const [formData, setFormData] = useState<FormData>(getInitialFormData);
   const [step2Data, setStep2Data] = useState<Step2Data>({ ...getInitialStep2Data(), motorEfficiency: '---' });
   const [step5Data, setStep5Data] = useState<Step5Data>(getInitialStep5Data);
+  const [step5Errors, setStep5Errors] = useState<{ I: boolean, II: boolean, III: boolean }>({ I: false, II: false, III: false });
   const [tableData, setTableData] = useState<any[]>(() => {
     const saved = localStorage.getItem('mtds_project_table');
     return saved ? JSON.parse(saved) : [];
@@ -219,20 +222,20 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           // Cập nhật Step 5
           setStep5Data({
             trucI: {
-              d1: (p.shaft_i_d1 || 30).toString(),
-              lmrc: (p.shaft_i_lmrc || 42).toString(),
-              lmdt: (p.shaft_i_lmdt || 45).toString(),
-              l11: (p.shaft_i_l11 || 90).toString()
+              d1: (p.shaft_i_d1 || '').toString(),
+              lmrc: (p.shaft_i_lmrc || '').toString(),
+              lmdt: (p.shaft_i_lmdt || '').toString(),
+              l11: (p.shaft_i_l11 || '').toString()
             },
             trucII: {
-              d2: (p.shaft_ii_d2 || 40).toString(),
-              lmrc: (p.shaft_ii_lmrc || 50).toString(),
-              lmrt: (p.shaft_ii_lmrt || 60).toString()
+              d2: (p.shaft_ii_d2 || '').toString(),
+              lmrc: (p.shaft_ii_lmrc || '').toString(),
+              lmrt: (p.shaft_ii_lmrt || '').toString()
             },
             trucIII: {
-              d3: (p.shaft_iii_d3 || 50).toString(),
-              lmrt: (p.shaft_iii_lmrt || 65).toString(),
-              lmkn: (p.shaft_iii_lmkn || 80).toString()
+              d3: (p.shaft_iii_d3 || '').toString(),
+              lmrt: (p.shaft_iii_lmrt || '').toString(),
+              lmkn: (p.shaft_iii_lmkn || '').toString()
             }
           });
         }
@@ -357,6 +360,7 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const clearProjectData = (shouldReload = true) => {
     localStorage.removeItem('mtds_project_form');
     localStorage.removeItem('mtds_project_step2');
+    localStorage.removeItem('mtds_project_step5');
     localStorage.removeItem('mtds_project_table');
     localStorage.removeItem('mtds_project_id');
     
@@ -381,7 +385,8 @@ const DesignProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       step2Data, setStep2Data, 
       step5Data, setStep5Data,
       tableData, setTableData,
-      loadSampleData, clearProjectData, saveProject
+      loadSampleData, clearProjectData, saveProject,
+      step5Errors, setStep5Errors
     }}>
       {children}
     </DesignContext.Provider>

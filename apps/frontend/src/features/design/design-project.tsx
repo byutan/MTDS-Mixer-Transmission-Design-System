@@ -17,7 +17,7 @@ const steps = [
 ];
 
 export default function DesignProject() {
-  const { user, formData, step2Data, setStep2Data, saveProject } = useDesign();
+  const { user, formData, step2Data, setStep2Data, saveProject, step5Errors } = useDesign();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -120,6 +120,17 @@ export default function DesignProject() {
       // Lưu trạng thái đã sang Bước 3
       await saveProject(3);
       navigate('step-3');
+    } else if (currentStep === 5) {
+      if (step5Errors.I || step5Errors.II || step5Errors.III) {
+        toast({
+          title: "Lỗi thiết kế",
+          description: "Thông số chiều dài trục đang báo lỗi (vượt tiêu chuẩn). Vui lòng kiểm tra và sửa lại các ô báo đỏ ở Trục I, II, hoặc III.",
+          variant: "destructive",
+        });
+        return;
+      }
+      await saveProject(6);
+      navigate('step-6');
     } else if (currentStep < 7) {
       // Lưu bước tiếp theo trước khi chuyển
       await saveProject(nextStep);
