@@ -7,7 +7,7 @@ import { useDesign } from "@/features/design/context/DesignContext";
 import demoData from "../../../../../../demodata.json";
 
 export default function Step5Shaft() {
-  const { formData, step2Data, step5Data, setStep5Data } = useDesign();
+  const { formData, step2Data, step5Data, setStep5Data, setStep5Errors } = useDesign();
   const [activeTab, setActiveTab] = useState<"I" | "II" | "III">("I");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -140,56 +140,69 @@ export default function Step5Shaft() {
       }
 
       if (dataD.success) {
+        const dList = (dataD.data.d1_danhSach || []).map((d: any) => d.toString());
         setDesignSuggestions({
-          d_list: dataD.data.d1_danhSach || [],
+          d_list: dList.map((d: any) => Number(d)),
           limits: dataLimits.success ? dataLimits.data : null,
           l11_limit: dataL11.success ? dataL11.data : null
         });
         
-        if (currentD !== lastDRef.current && dataLimits.success) {
-          const limits = dataLimits.data as any;
-          const l11_limit = dataL11.data as any;
-          const trucKey = activeTab === "I" ? "trucI" : activeTab === "II" ? "trucII" : "trucIII";
+        const trucKey = activeTab === "I" ? "trucI" : activeTab === "II" ? "trucII" : "trucIII";
+        const dKey = activeTab === "I" ? "d1" : activeTab === "II" ? "d2" : "d3";
+        
+        // ÉP CHỌN: Nếu d chưa có HOẶC d hiện tại không nằm trong danh sách tiêu chuẩn mới
+        if (dList.length > 0 && (!currentD || !dList.includes(currentD.toString()))) {
+          const minD = dList[0];
+          setStep5Data(prev => ({
+            ...prev,
+            [trucKey]: { ...prev[trucKey], [dKey]: minD }
+          }));
+          return;
+        }
+        
+        const parsedD = safeParse(currentD);
+        if (parsedD > 0 && dataLimits.success) {
+          const isFirstLoad = lastDRef.current === null;
+          const hasChanged = lastDRef.current !== null && currentD !== lastDRef.current;
           
-          let updates: any = {};
-          if (activeTab === "I" && limits) {
-             const current = step5Data.trucI;
-             // Chỉ tự động cập nhật nếu giá trị hiện tại là trống hoặc là giá trị mặc định ban đầu
-             const shouldUpdateLmrc = !current.lmrc || current.lmrc === '42';
-             const shouldUpdateLmdt = !current.lmdt || current.lmdt === '45';
-             const shouldUpdateL11 = !current.l11 || current.l11 === '90';
+          // Lấy dữ liệu hiện tại để kiểm tra xem có trống không
+          const currentData = step5Data[trucKey];
+          const isEmpty = safeParse(currentData.lmrc) === 0 || safeParse(currentData.lmdt) === 0;
 
-             updates = {
-                ...(shouldUpdateLmrc ? { lmrc: Math.round((limits.gh_lmrc.min + limits.gh_lmrc.max) / 2).toString() } : {}),
-                ...(shouldUpdateLmdt ? { lmdt: Math.round((limits.gh_lmdt.min + limits.gh_lmdt.max) / 2).toString() } : {}),
-                ...(shouldUpdateL11 && l11_limit ? { l11: Math.round(((l11_limit as any).min + (l11_limit as any).max) / 2).toString() } : {})
-             };
-          } else if (activeTab === "II" && limits) {
-             const current = step5Data.trucII;
-             const shouldUpdateLmrc = !current.lmrc || current.lmrc === '50';
-             const shouldUpdateLmrt = !current.lmrt || current.lmrt === '60';
-
-             updates = {
-                ...(shouldUpdateLmrc ? { lmrc: Math.round((limits.gh_lmrc.min + limits.gh_lmrc.max) / 2).toString() } : {}),
-                ...(shouldUpdateLmrt ? { lmrt: Math.round((limits.gh_lmrt.min + limits.gh_lmrt.max) / 2).toString() } : {})
-             };
-          } else if (limits) {
-             const current = step5Data.trucIII;
-             const shouldUpdateLmrt = !current.lmrt || current.lmrt === '65';
-             const shouldUpdateLmkn = !current.lmkn || current.lmkn === '80';
-
-             updates = {
-                ...(shouldUpdateLmrt ? { lmrt: Math.round((limits.gh_lmrt.min + limits.gh_lmrt.max) / 2).toString() } : {}),
-                ...(shouldUpdateLmkn ? { lmkn: Math.round((limits.gh_lmkn.min + limits.gh_lmkn.max) / 2).toString() } : {})
-             };
+          // CHỈ TỰ ĐIỀN TRUNG BÌNH KHI:
+          // 1. Đường kính bị thay đổi (không phải load lần đầu)
+          // 2. Lần đầu load nhưng dữ liệu chiều dài đang trống (dự án mới)
+          if (hasChanged || (isFirstLoad && isEmpty)) {
+            const limits = dataLimits.data as any;
+            const l11_limit = dataL11.data as any;
+            
+            let updates: any = {};
+            if (activeTab === "I" && limits) {
+               updates = {
+                  lmrc: Math.round((limits.gh_lmrc.min + limits.gh_lmrc.max) / 2).toString(),
+                  lmdt: Math.round((limits.gh_lmdt.min + limits.gh_lmdt.max) / 2).toString(),
+                  ...(l11_limit ? { l11: Math.round((l11_limit.min + l11_limit.max) / 2).toString() } : {})
+               };
+            } else if (activeTab === "II" && limits) {
+               updates = {
+                  lmrc: Math.round((limits.gh_lmrc.min + limits.gh_lmrc.max) / 2).toString(),
+                  lmrt: Math.round((limits.gh_lmrt.min + limits.gh_lmrt.max) / 2).toString()
+               };
+            } else if (activeTab === "III" && limits) {
+               updates = {
+                  lmrt: Math.round((limits.gh_lmrt.min + limits.gh_lmrt.max) / 2).toString(),
+                  lmkn: Math.round((limits.gh_lmkn.min + limits.gh_lmkn.max) / 2).toString()
+               };
+            }
+            
+            if (Object.keys(updates).length > 0) {
+              setStep5Data(prev => ({
+                ...prev,
+                [trucKey]: { ...prev[trucKey], ...updates }
+              }));
+            }
           }
-          
-          if (Object.keys(updates).length > 0) {
-            setStep5Data({
-              ...step5Data,
-              [trucKey]: { ...step5Data[trucKey], ...updates }
-            });
-          }
+          // Luôn cập nhật ref để ghi nhớ đường kính hiện tại
           lastDRef.current = currentD;
         }
       }
@@ -199,6 +212,12 @@ export default function Step5Shaft() {
   }, [activeTab, getPayload, step5Data]);
 
   const fetchShaftResults = useCallback(async () => {
+    const currentD = activeTab === "I" ? step5Data.trucI.d1 : activeTab === "II" ? step5Data.trucII.d2 : step5Data.trucIII.d3;
+    if (safeParse(currentD) <= 0) {
+      setShaftResults(null);
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
@@ -254,6 +273,35 @@ export default function Step5Shaft() {
     fetchDesignConstraints, 
     fetchShaftResults
   ]);
+
+  useEffect(() => {
+    // Validate the active tab whenever step5Data or designSuggestions changes
+    if (!designSuggestions?.limits) return;
+
+    let hasError = false;
+    const data = activeTab === "I" ? step5Data.trucI : activeTab === "II" ? step5Data.trucII : step5Data.trucIII;
+    const fields = [
+      { id: activeTab === "III" ? "lmrt" : "lmrc", limit: activeTab === "III" ? designSuggestions.limits.gh_lmrt : designSuggestions.limits.gh_lmrc },
+      { id: activeTab === "I" ? "lmdt" : activeTab === "II" ? "lmrt" : "lmkn", limit: activeTab === "I" ? designSuggestions.limits.gh_lmdt : activeTab === "II" ? designSuggestions.limits.gh_lmrt : designSuggestions.limits.gh_lmkn },
+      ...(activeTab === "I" ? [{ id: "l11", limit: designSuggestions.l11_limit }] : [])
+    ];
+
+    for (const field of fields) {
+      if (!field.limit) continue;
+      const rawValue = (data as any)[field.id];
+      const safeMin = Number((field.limit.min + 1).toFixed(1));
+      const safeMax = Number((field.limit.max - 1).toFixed(1));
+      if (safeParse(rawValue) < safeMin || safeParse(rawValue) > safeMax) {
+        hasError = true;
+        break;
+      }
+    }
+
+    setStep5Errors(prev => {
+      if (prev[activeTab] === hasError) return prev;
+      return { ...prev, [activeTab]: hasError };
+    });
+  }, [activeTab, step5Data, designSuggestions, setStep5Errors]);
 
   const handleInputChange = (field: string, value: string) => {
     // Chỉ lấy phần số

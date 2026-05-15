@@ -54,9 +54,9 @@ export const createProject = async (req, res) => {
       specs.belt_ratio_ud, specs.gearbox_ratio_uh, specs.u1, specs.u2, specs.motor_code,
       specs.motor_cos_phi, specs.motor_t_max_tdm, specs.motor_t_kd_tdm,
       specs.motor_power_actual, specs.motor_speed_actual,
-      specs.shaft_i_d1 || 30, specs.shaft_i_lmrc || 42, specs.shaft_i_lmdt || 45, specs.shaft_i_l11 || 90,
-      specs.shaft_ii_d2 || 40, specs.shaft_ii_lmrc || 50, specs.shaft_ii_lmrt || 60,
-      specs.shaft_iii_d3 || 50, specs.shaft_iii_lmrt || 65, specs.shaft_iii_lmkn || 80
+      specs.shaft_i_d1, specs.shaft_i_lmrc, specs.shaft_i_lmdt, specs.shaft_i_l11,
+      specs.shaft_ii_d2, specs.shaft_ii_lmrc, specs.shaft_ii_lmrt,
+      specs.shaft_iii_d3, specs.shaft_iii_lmrt, specs.shaft_iii_lmkn
     ];
 
     const result = await query(sql, params);
